@@ -10,10 +10,11 @@ ROS Distribution on RPi is Groovy.
 
 INSTALL INTO CATKIN_WORKSPACE:
 ==
-$ mkdir ~/ROS-Groovy-RPi-Workspace
 
-$ cd ~/ROS-Groovy-RPi-Workspace
+$ cd ~
 
-$ git clone https://github.com/scheik/ROS-Groovy-RPi-Workspace src
+$ git clone https://github.com/scheik/ROS-Groovy-RPi-Workspace.git
+
+$ cd ~/ROS-Groovy-RPi-workspace
 
 $ catkin_make
