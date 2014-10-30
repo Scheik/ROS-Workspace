@@ -15,6 +15,6 @@ $ cd ~
 
 $ git clone https://github.com/scheik/ROS-Groovy-RPi-Workspace.git
 
-$ cd ~/ROS-Groovy-RPi-workspace
+$ cd ~/ROS-Groovy-RPi-Workspace
 
 $ catkin_make
