@@ -1,0 +1,32 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+#temporary files
+*~
+
+# vi stuff
+.*.sw?
+
+# Python stuff
+*.pyc
+
+# Data files
+*.dat
+*.csv
+
+# Emacs temp files
+.#*
+
+# OSX Files
+.DS_Store
