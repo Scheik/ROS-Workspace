@@ -1,6 +1,8 @@
 .catkin_workspace
 build/
 devel/
+
+# QtCreator files
 *.*.user
 
 # Compiled Object files
