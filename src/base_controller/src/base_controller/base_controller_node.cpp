@@ -86,7 +86,7 @@ filedesc = openSerialPort("/dev/ttyAMA0", B38400);
 if (filedesc == -1) exit(1);
 usleep(40000);									// Sleep for UART to power up and set options
 
-printf("serial Port opened \n");
+ROS_INFO_STREAM("serial Port opened \n");
 
 
 while( n.ok() ) 
