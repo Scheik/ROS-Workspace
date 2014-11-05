@@ -62,6 +62,38 @@ void readBytes(int descriptor, int count) {
 }
 
 
+void read_MD49_Data (void){
+    serialBuffer[0] = 82;							// 82=R Steuerbyte um alle Daten vom MD49 zu lesen
+    writeBytes(fd, 1);
+    //usleep(400000);
+    //Daten lesen und in Array schreiben
+    readBytes(fd, 18);
+    printf("\033[2J");        /*  clear the screen  */
+    printf("\033[H");         /*  position cursor at top-left corner */
+    printf ("MD49-Data read from AVR-Master: \n");
+    printf("====================================================== \n");
+    printf("Encoder1 Byte1: %i ",serialBuffer[0]);
+    printf("Byte2: %i ",serialBuffer[1]);
+    printf("Byte3: % i ",serialBuffer[2]);
+    printf("Byte4: %i \n",serialBuffer[3]);
+    printf("Encoder2 Byte1: %i ",serialBuffer[4]);
+    printf("Byte2: %i ",serialBuffer[5]);
+    printf("Byte3: %i ",serialBuffer[6]);
+    printf("Byte4: %i \n",serialBuffer[7]);
+    printf("====================================================== \n");
+    printf("Speed1: %i ",serialBuffer[8]);
+    printf("Speed2: %i \n",serialBuffer[9]);
+    printf("Volts: %i \n",serialBuffer[10]);
+    printf("Current1: %i ",serialBuffer[11]);
+    printf("Current2: %i \n",serialBuffer[12]);
+    printf("Error: %i \n",serialBuffer[13]);
+    printf("Acceleration: %i \n",serialBuffer[14]);
+    printf("Mode: %i \n",serialBuffer[15]);
+    printf("Regulator: %i \n",serialBuffer[16]);
+    printf("Timeout: %i \n",serialBuffer[17]);
+}
+
+
 void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd)
 { 
     ROS_INFO("I heard: [%f]", vel_cmd.linear.y);
@@ -77,7 +109,7 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd)
 
 int main( int argc, char* argv[] )
 {
-ros::init(argc, argv, "toeminator_publisher" );
+ros::init(argc, argv, "base_controller" );
 
 ros::NodeHandle n;
 ros::Subscriber sub = n.subscribe("/cmd_vel", 1000, cmd_vel_callback);
@@ -93,6 +125,8 @@ while( n.ok() )
 {
     ros::spin();
     //hier code/funktion um md49 daten zu lesen und und auszugeben in konsole und /odom später
+    read_MD49_Data();
+    usleep(100000);
 }
 
 return 1;
