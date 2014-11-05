@@ -123,11 +123,11 @@ ROS_INFO_STREAM("serial Port opened \n");
 
 while( n.ok() ) 
 {
-    //read_MD49_Data();
-    //usleep(100000);
-    ROS_INFO_STREAM("cycle? \n");
-    ros::spin();
-    //hier code/funktion um md49 daten zu lesen und und auszugeben in konsole und /odom später
+    while(1){
+        read_MD49_Data();
+        usleep(100000);
+        ros::spin();
+    }
 
 }
 
