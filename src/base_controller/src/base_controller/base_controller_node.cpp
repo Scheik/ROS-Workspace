@@ -123,11 +123,11 @@ ROS_INFO_STREAM("serial Port opened \n");
 
 while( n.ok() ) 
 {
-    while(1){
+    //while(1){
         read_MD49_Data();
         usleep(100000);
-        ros::spin();
-    }
+        ros::spinOnce();
+   //}
 
 }
 
