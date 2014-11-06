@@ -65,7 +65,6 @@ void readBytes(int descriptor, int count) {
 void read_MD49_Data (void){
     serialBuffer[0] = 82;							// 82=R Steuerbyte um alle Daten vom MD49 zu lesen
     writeBytes(fd, 1);
-    //usleep(400000);
     //Daten lesen und in Array schreiben
     readBytes(fd, 18);
     printf("\033[2J");        /*  clear the screen  */
@@ -96,13 +95,9 @@ void read_MD49_Data (void){
 
 void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd)
 { 
-    ROS_INFO("I heard: [%f]", vel_cmd.linear.y);
-    std::cout << "Twist Received " << std::endl;
+    //ROS_INFO("I heard: [%f]", vel_cmd.linear.y);
+    //std::cout << "Twist Received " << std::endl;
 
-    //hier code um msg in seriellen Befehl umzuwandeln
-
-        //code
-        //usleep(750000);
     if (vel_cmd.linear.x>0){
         serialBuffer[0] = 88;							// 88 =X Steuerbyte um Commands an MD49 zu senden
         serialBuffer[1] = 115;							// 115=s Steuerbyte setSpeed
@@ -117,35 +112,27 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd)
         serialBuffer[3] = 128;					// speed2
         writeBytes(fd, 4);
     }
-
-
-    //
 }
 
 
 int main( int argc, char* argv[] )
 {
-ros::init(argc, argv, "base_controller" );
+    ros::init(argc, argv, "base_controller" );
+    ros::NodeHandle n;
+    ros::Subscriber sub = n.subscribe("/cmd_vel", 1000, cmd_vel_callback);
 
-ros::NodeHandle n;
-ros::Subscriber sub = n.subscribe("/cmd_vel", 1000, cmd_vel_callback);
+    filedesc = openSerialPort("/dev/ttyAMA0", B38400);
+    if (filedesc == -1) exit(1);
+    usleep(40000);// Sleep for UART to power up and set options
 
-filedesc = openSerialPort("/dev/ttyAMA0", B38400);
-if (filedesc == -1) exit(1);
-usleep(40000);									// Sleep for UART to power up and set options
+    //ROS_INFO_STREAM("serial Port opened \n");
 
-//ROS_INFO_STREAM("serial Port opened \n");
+    while( n.ok() )
+    {
+            read_MD49_Data();
+            usleep(100000);//ca.10Hz
+            ros::spinOnce();
+    }
 
-
-while( n.ok() ) 
-{
-    //while(1){
-        read_MD49_Data();
-        usleep(100000);
-        ros::spinOnce();
-   //}
-
-}
-
-return 1;
+    return 1;
 }
