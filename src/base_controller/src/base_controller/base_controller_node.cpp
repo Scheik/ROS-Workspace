@@ -102,7 +102,22 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd)
     //hier code um msg in seriellen Befehl umzuwandeln
 
         //code
-        usleep(500000);
+        //usleep(750000);
+    if (vel_cmd.linear.x>0){
+        serialBuffer[0] = 88;							// 88 =X Steuerbyte um Commands an MD49 zu senden
+        serialBuffer[1] = 115;							// 115=s Steuerbyte setSpeed
+        serialBuffer[2] = 255;					// speed1
+        serialBuffer[3] = 255;					// speed2
+        writeBytes(fd, 4);
+    }
+    if (vel_cmd.linear.x==0){
+        serialBuffer[0] = 88;							// 88 =X Steuerbyte um Commands an MD49 zu senden
+        serialBuffer[1] = 115;							// 115=s Steuerbyte setSpeed
+        serialBuffer[2] = 128;					// speed1
+        serialBuffer[3] = 128;					// speed2
+        writeBytes(fd, 4);
+    }
+
 
     //
 }
@@ -119,7 +134,7 @@ filedesc = openSerialPort("/dev/ttyAMA0", B38400);
 if (filedesc == -1) exit(1);
 usleep(40000);									// Sleep for UART to power up and set options
 
-ROS_INFO_STREAM("serial Port opened \n");
+//ROS_INFO_STREAM("serial Port opened \n");
 
 
 while( n.ok() ) 
