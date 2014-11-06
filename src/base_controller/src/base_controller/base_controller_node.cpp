@@ -102,6 +102,7 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd)
     //hier code um msg in seriellen Befehl umzuwandeln
 
         //code
+        usleep(500000);
 
     //
 }
