@@ -105,11 +105,32 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd)
         serialBuffer[3] = 255;					// speed2
         writeBytes(fd, 4);
     }
-    if (vel_cmd.linear.x==0){
+    if (vel_cmd.linear.x<0){
+        serialBuffer[0] = 88;							// 88 =X Steuerbyte um Commands an MD49 zu senden
+        serialBuffer[1] = 115;							// 115=s Steuerbyte setSpeed
+        serialBuffer[2] = 0;					// speed1
+        serialBuffer[3] = 0;					// speed2
+        writeBytes(fd, 4);
+    }
+    if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){
         serialBuffer[0] = 88;							// 88 =X Steuerbyte um Commands an MD49 zu senden
         serialBuffer[1] = 115;							// 115=s Steuerbyte setSpeed
         serialBuffer[2] = 128;					// speed1
         serialBuffer[3] = 128;					// speed2
+        writeBytes(fd, 4);
+    }
+    if (vel_cmd.angular.z>0){
+        serialBuffer[0] = 88;							// 88 =X Steuerbyte um Commands an MD49 zu senden
+        serialBuffer[1] = 115;							// 115=s Steuerbyte setSpeed
+        serialBuffer[2] = 0;					// speed1
+        serialBuffer[3] = 255;					// speed2
+        writeBytes(fd, 4);
+    }
+    if (vel_cmd.angular.z<0){
+        serialBuffer[0] = 88;							// 88 =X Steuerbyte um Commands an MD49 zu senden
+        serialBuffer[1] = 115;							// 115=s Steuerbyte setSpeed
+        serialBuffer[2] = 255;					// speed1
+        serialBuffer[3] = 0;					// speed2
         writeBytes(fd, 4);
     }
 }
