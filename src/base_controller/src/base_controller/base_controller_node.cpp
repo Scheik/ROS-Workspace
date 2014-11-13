@@ -147,12 +147,13 @@ int main( int argc, char* argv[] )
     usleep(40000);// Sleep for UART to power up and set options
 
     //ROS_INFO_STREAM("serial Port opened \n");
+    ros::Rate loop_rate(10);
 
     while( n.ok() )
     {
             read_MD49_Data();
-            usleep(100000);//ca.10Hz
             ros::spinOnce();
+            loop_rate.sleep();
     }
 
     return 1;
