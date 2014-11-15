@@ -112,7 +112,7 @@ int main(int argc, char **argv){
       }
       else if (Joy_Button_Right_pressed==0 && Joy_Button_Right_pressed!=Joy_Button_Right_pressed_last){
           ROS_INFO("Button Right released");
-          cmd_vel_msg.angular.z=-0.0;
+          cmd_vel_msg.angular.z=0.0;
           cmd_vel_pub.publish(cmd_vel_msg);
           Joy_Button_Right_pressed_last=Joy_Button_Right_pressed;
       }
