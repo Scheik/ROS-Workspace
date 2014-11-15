@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(base_controller)
+project(robot_teleop)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -82,7 +82,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES base_controller
+#  LIBRARIES robot_teleop
 #  CATKIN_DEPENDS geometry_msgs roscpp rospy std_msgs
 #  DEPENDS system_lib
 )
@@ -99,19 +99,19 @@ include_directories(
 )
 
 ## Declare a cpp library
-# add_library(base_controller
-#   src/${PROJECT_NAME}/base_controller.cpp
+# add_library(robot_teleop
+#   src/${PROJECT_NAME}/robot_teleop.cpp
 # )
 
 ## Declare a cpp executable
-# add_executable(base_controller_node src/base_controller_node.cpp)
+# add_executable(robot_teleop_node src/robot_teleop_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(base_controller_node base_controller_generate_messages_cpp)
+# add_dependencies(robot_teleop_node robot_teleop_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(base_controller_node
+# target_link_libraries(robot_teleop_node
 #   ${catkin_LIBRARIES}
 # )
 
@@ -130,7 +130,7 @@ include_directories(
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS base_controller base_controller_node
+# install(TARGETS robot_teleop robot_teleop_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -155,7 +155,7 @@ include_directories(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_base_controller.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_robot_teleop.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
@@ -163,14 +163,5 @@ include_directories(
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-#add_executable(helloworld src/helloworld/helloworld_node.cpp)
-#target_link_libraries(helloworld ${catkin_LIBRARIES})
-
-add_executable(md49_console src/md49_console/md49_console_node.cpp)
-target_link_libraries(md49_console ${catkin_LIBRARIES})
-
-add_executable(base_controller src/base_controller/base_controller_node.cpp)
-target_link_libraries(base_controller ${catkin_LIBRARIES})
-
-#add_executable(joystick_driver src/joystick_driver/joystick_driver_node.cpp)
-#target_link_libraries(joystick_driver ${catkin_LIBRARIES})
+add_executable(joystick_driver src/joystick_driver/joystick_driver_node.cpp)
+target_link_libraries(joystick_driver ${catkin_LIBRARIES})
