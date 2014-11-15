@@ -3,27 +3,30 @@
 #include <geometry_msgs/Twist.h>
 #include <stdlib.h>
 
-int16_t Joy_Button_Up;
-int16_t Joy_Button_Down;
-int16_t Joy_Button_Left;
-int16_t Joy_Button_Right;
+int16_t Joy_Button_Up_pressed;
+int16_t Joy_Button_Down_pressed;
+int16_t Joy_Button_Left_pressed;
+int16_t Joy_Button_Right_pressed;
 bool Joy_Set=false;
+
+#define Joystick_Buttons_Left_Right msg->axes[4]
+#define Joystick_Buttons_Up_Down msg->axes[5]
 
 void myCallback (const sensor_msgs::Joy::ConstPtr& msg)
 {
-  for (unsigned i = 0; i < msg->axes.size(); ++i) {
+  //for (unsigned i = 0; i < msg->axes.size(); ++i) {
     //ROS_INFO("Axis %d is now at position %f", i, msg->axes[i]);
-  }
+  //}
 
   // Joystick Button pressed?
-  if (msg->axes[4]==1) {Joy_Button_Left=msg->axes[4];};
-  if (msg->axes[4]==-1) {Joy_Button_Right=msg->axes[4];};
-  if (msg->axes[5]==1) {Joy_Button_Up=msg->axes[5];};
-  if (msg->axes[5]==-1) {Joy_Button_Down=msg->axes[5];};
-  if (msg->axes[5]==0) {Joy_Button_Down=msg->axes[5];};
-  if (msg->axes[4]==0) {Joy_Button_Left=msg->axes[4];};
-  if (msg->axes[5]==0) {Joy_Button_Up=msg->axes[5];};
-  if (msg->axes[4]==0) {Joy_Button_Right=msg->axes[4];};
+  if (Joystick_Buttons_Left_Right==1) {Joy_Button_Left_pressed=Joystick_Buttons_Left_Right;};
+  if (Joystick_Buttons_Left_Right==-1) {Joy_Button_Right_pressed=Joystick_Buttons_Left_Right;};
+  if (Joystick_Buttons_Up_Down==1) {Joy_Button_Up_pressed=Joystick_Buttons_Up_Down;};
+  if (Joystick_Buttons_Up_Down==-1) {Joy_Button_Down_pressed=Joystick_Buttons_Up_Down;};
+  if (Joystick_Buttons_Up_Down==0) {Joy_Button_Down_pressed=Joystick_Buttons_Up_Down;};
+  if (Joystick_Buttons_Left_Right==0) {Joy_Button_Left_pressed=Joystick_Buttons_Left_Right;};
+  if (Joystick_Buttons_Up_Down==0) {Joy_Button_Up_pressed=Joystick_Buttons_Up_Down;};
+  if (Joystick_Buttons_Left_Right==0) {Joy_Button_Right_pressed=Joystick_Buttons_Left_Right;};
 }
 
 int main(int argc, char **argv)
@@ -45,22 +48,22 @@ int main(int argc, char **argv)
     //
     //cmd_vel_msg.linear.x =2;
     //cmd_vel_pub.publish(cmd_vel_msg);
-      if (Joy_Button_Up==1){
+      if (Joy_Button_Up_pressed==1){
           ROS_INFO("Up");
           cmd_vel_msg.linear.x=2.0;
           cmd_vel_pub.publish(cmd_vel_msg);
       }
-      else if (Joy_Button_Down==-1){
+      else if (Joy_Button_Down_pressed==-1){
           ROS_INFO("Down");
           cmd_vel_msg.linear.x=-2.0;
           cmd_vel_pub.publish(cmd_vel_msg);
       }
-      else if (Joy_Button_Left==1){
+      else if (Joy_Button_Left_pressed==1){
           ROS_INFO("Left");
           cmd_vel_msg.angular.z=2.0;
           cmd_vel_pub.publish(cmd_vel_msg);
       }
-      else if (Joy_Button_Right==-1){
+      else if (Joy_Button_Right_pressed==-1){
           ROS_INFO("Right");
           cmd_vel_msg.angular.z=-2.0;
           cmd_vel_pub.publish(cmd_vel_msg);
