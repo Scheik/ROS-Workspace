@@ -1,11 +1,14 @@
-ROS-Groovy-RPi-Workspace
+ROS-Groovy-Workspace
 ========================
 Includes the following ROS Packages for my mobile Robot:
 
-"base_controller" with nodes: "helloworld", "md49_console"
+Package "base_controller" with nodes: "base_controller", "md49_console"
 
-The Robot Controls are build with Raspberry Pi 
-and AVR-Hardware.
+Package "robot_teleop" with nodes: "joystick_driver"
+
+The Robot Hardware is build around Raspberry Pi 
+and AVR-Controllers. 
+EMG-49 Drives are driven with MD49.
 ROS Distribution on RPi is Groovy.
 
 INSTALL INTO CATKIN_WORKSPACE:
@@ -13,8 +16,8 @@ INSTALL INTO CATKIN_WORKSPACE:
 
 $ cd ~
 
-$ git clone https://github.com/scheik/ROS-Groovy-RPi-Workspace.git
+$ git clone https://github.com/scheik/ROS-Groovy-Workspace.git
 
-$ cd ~/ROS-Groovy-RPi-Workspace
+$ cd ~/ROS-Groovy-Workspace
 
 $ catkin_make
