@@ -125,8 +125,7 @@ int main( int argc, char* argv[] ){
     while( n.ok() )
     {
             read_MD49_Data();
-            printf("vl= %f", vl);
-            printf("vr= %f", vr);
+
 
 
             ros::spinOnce();
@@ -208,4 +207,6 @@ void read_MD49_Data (void){
     printf("Mode: %i \n",serialBuffer[15]);
     printf("Regulator: %i \n",serialBuffer[16]);
     printf("Timeout: %i \n",serialBuffer[17]);
+    printf("vl= %f \n", vl);
+    printf("vr= %f \n", vr);
 }
