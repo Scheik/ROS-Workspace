@@ -15,7 +15,7 @@
 //#include <tf/transform_broadcaster.h>
 #include <nav_msgs/Odometry.h>
 
-double width_robot = 0.1;
+double width_robot = 0.2;
 double vl = 0.0;
 double vr = 0.0;
 ros::Time last_time;
