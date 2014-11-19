@@ -17,8 +17,8 @@
 #include <nav_msgs/Odometry.h>
 #include "std_msgs/Int16.h"
 
-int16_t EncoderL;
-int16_t EncoderR;
+int16_t global_EncoderL;
+int16_t global_EncoderR;
 
 double width_robot = 0.4;
 double vl = 0.0;
@@ -121,8 +121,8 @@ int main( int argc, char* argv[] ){
     // Node subscribes to topic /cmd_vel (geometry_msgs/Twist)
     ros::Subscriber sub = n.subscribe("/cmd_vel", 100, cmd_vel_callback);
     // Node publishes to topics /lwheel and /rwheel
-    ros::Publisher lwheel_pub = n.advertise<std_msgs::Int16>("lwheel", 100);
-    ros::Publisher rwheel_pub = n.advertise<std_msgs::Int16>("rwheel", 100);
+    ros::Publisher encoder_l_pub = n.advertise<std_msgs::Int16>("encoder_l", 100);
+    ros::Publisher encoder_r_pub = n.advertise<std_msgs::Int16>("encoder_r", 100);
 
 
     filedesc = openSerialPort("/dev/ttyAMA0", B38400);
@@ -135,12 +135,12 @@ int main( int argc, char* argv[] ){
     while( n.ok() )
     {
             read_MD49_Data();
-            std_msgs::Int16 lwheel;
-            std_msgs::Int16 rwheel;
-            lwheel.data = EncoderL;
-            rwheel.data=EncoderR;
-            lwheel_pub.publish(lwheel);
-            rwheel_pub.publish(rwheel);
+            std_msgs::Int16 encoder_l;
+            std_msgs::Int16 encoder_r;
+            encoder_l.data = global_EncoderL;
+            encoder_r.data=global_EncoderR;
+            encoder_l_pub.publish(encoder_l);
+            encoder_r_pub.publish(encoder_r);
 
             ros::spinOnce();
             loop_rate.sleep();
@@ -198,14 +198,14 @@ void read_MD49_Data (void){
     writeBytes(fd, 1);
     //Daten lesen und in Array schreiben
     readBytes(fd, 18);
-    EncoderL = serialBuffer[0] << 24;                        // Put together first encoder value
-    EncoderL |= (serialBuffer[1] << 16);
-    EncoderL |= (serialBuffer[2] << 8);
-    EncoderL |= (serialBuffer[3]);
-    EncoderR = serialBuffer[4] << 24;                        // Put together second encoder value
-    EncoderR |= (serialBuffer[5] << 16);
-    EncoderR |= (serialBuffer[6] << 8);
-    EncoderR |= (serialBuffer[7]);
+    global_EncoderL = serialBuffer[0] << 24;                        // Put together first encoder value
+    global_EncoderL |= (serialBuffer[1] << 16);
+    global_EncoderL |= (serialBuffer[2] << 8);
+    global_EncoderL |= (serialBuffer[3]);
+    global_EncoderR = serialBuffer[4] << 24;                        // Put together second encoder value
+    global_EncoderR |= (serialBuffer[5] << 16);
+    global_EncoderR |= (serialBuffer[6] << 8);
+    global_EncoderR |= (serialBuffer[7]);
 
 
     printf("\033[2J");        /*  clear the screen  */
@@ -220,8 +220,8 @@ void read_MD49_Data (void){
     printf("Byte2: %i ",serialBuffer[5]);
     printf("Byte3: %i ",serialBuffer[6]);
     printf("Byte4: %i \n",serialBuffer[7]);
-    printf("EncoderL: %i ",EncoderL);
-    printf("EncoderR: %i \n",EncoderR);
+    printf("EncoderL: %i ",global_EncoderL);
+    printf("EncoderR: %i \n",global_EncoderR);
     printf("====================================================== \n");
     printf("Speed1: %i ",serialBuffer[8]);
     printf("Speed2: %i \n",serialBuffer[9]);
