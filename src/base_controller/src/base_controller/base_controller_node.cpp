@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdio.h>   								/* Standard input/output definitions */
+#include <stdint.h>   								/* Standard input/output definitions */
 #include <stdlib.h>  								/* exit */
 #include <string.h>  								/* String function definitions */
 #include <unistd.h>  								/* UNIX standard function definitions */
@@ -14,8 +15,12 @@
 #include <sensor_msgs/JointState.h>
 //#include <tf/transform_broadcaster.h>
 #include <nav_msgs/Odometry.h>
+#include "std_msgs/Int16.h"
 
-double width_robot = 0.2;
+int16_t EncoderL;
+int16_t EncoderR;
+
+double width_robot = 0.4;
 double vl = 0.0;
 double vr = 0.0;
 ros::Time last_time;
@@ -113,7 +118,12 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
 int main( int argc, char* argv[] ){
     ros::init(argc, argv, "base_controller" );
     ros::NodeHandle n;
-    ros::Subscriber sub = n.subscribe("/cmd_vel", 1000, cmd_vel_callback);
+    // Node subscribes to topic /cmd_vel (geometry_msgs/Twist)
+    ros::Subscriber sub = n.subscribe("/cmd_vel", 100, cmd_vel_callback);
+    // Node publishes to topics /lwheel and /rwheel
+    ros::Publisher lwheel_pub = n.advertise<std_msgs::Int16>("lwheel", 100);
+    ros::Publisher rwheel_pub = n.advertise<std_msgs::Int16>("rwheel", 100);
+
 
     filedesc = openSerialPort("/dev/ttyAMA0", B38400);
     if (filedesc == -1) exit(1);
@@ -125,8 +135,12 @@ int main( int argc, char* argv[] ){
     while( n.ok() )
     {
             read_MD49_Data();
-
-
+            std_msgs::Int16 lwheel;
+            std_msgs::Int16 rwheel;
+            lwheel.data = EncoderL;
+            rwheel.data=EncoderR;
+            lwheel_pub.publish(lwheel);
+            rwheel_pub.publish(rwheel);
 
             ros::spinOnce();
             loop_rate.sleep();
@@ -184,6 +198,16 @@ void read_MD49_Data (void){
     writeBytes(fd, 1);
     //Daten lesen und in Array schreiben
     readBytes(fd, 18);
+    EncoderL = serialBuffer[0] << 24;                        // Put together first encoder value
+    EncoderL |= (serialBuffer[1] << 16);
+    EncoderL |= (serialBuffer[2] << 8);
+    EncoderL |= (serialBuffer[3]);
+    EncoderR = serialBuffer[4] << 24;                        // Put together second encoder value
+    EncoderR |= (serialBuffer[5] << 16);
+    EncoderR |= (serialBuffer[6] << 8);
+    EncoderR |= (serialBuffer[7]);
+
+
     printf("\033[2J");        /*  clear the screen  */
     printf("\033[H");         /*  position cursor at top-left corner */
     printf ("MD49-Data read from AVR-Master: \n");
@@ -196,6 +220,8 @@ void read_MD49_Data (void){
     printf("Byte2: %i ",serialBuffer[5]);
     printf("Byte3: %i ",serialBuffer[6]);
     printf("Byte4: %i \n",serialBuffer[7]);
+    printf("EncoderL: %i ",EncoderL);
+    printf("EncoderR: %i \n",EncoderR);
     printf("====================================================== \n");
     printf("Speed1: %i ",serialBuffer[8]);
     printf("Speed2: %i \n",serialBuffer[9]);
@@ -207,6 +233,9 @@ void read_MD49_Data (void){
     printf("Mode: %i \n",serialBuffer[15]);
     printf("Regulator: %i \n",serialBuffer[16]);
     printf("Timeout: %i \n",serialBuffer[17]);
+
     printf("vl= %f \n", vl);
     printf("vr= %f \n", vr);
+
+
 }
