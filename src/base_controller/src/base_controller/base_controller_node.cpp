@@ -284,29 +284,29 @@ void read_MD49_Data (void){
 
     printf("\033[2J");        /*  clear the screen  */
     printf("\033[H");         /*  position cursor at top-left corner */
-    ROS_INFO ("MD49-Data read from AVR-Master: \n");
-    ROS_INFO("====================================================== \n");
-    //ROS_INFO("Encoder1 Byte1: %i ",serialBuffer[0]);
-    //ROS_INFO("Byte2: %i ",serialBuffer[1]);
-    //ROS_INFO("Byte3: % i ",serialBuffer[2]);
-    //ROS_INFO("Byte4: %i \n",serialBuffer[3]);
-    //ROS_INFO("Encoder2 Byte1: %i ",serialBuffer[4]);
-    //ROS_INFO("Byte2: %i ",serialBuffer[5]);
-    //ROS_INFO("Byte3: %i ",serialBuffer[6]);
-    //ROS_INFO("Byte4: %i \n",serialBuffer[7]);
-    ROS_INFO("EncoderL: %i ",EncoderL);
-    ROS_INFO("EncoderR: %i \n",EncoderR);
-    ROS_INFO("====================================================== \n");
-    ROS_INFO("Speed1: %i ",serialBuffer[8]);
-    ROS_INFO("Speed2: %i \n",serialBuffer[9]);
-    ROS_INFO("Volts: %i \n",serialBuffer[10]);
-    ROS_INFO("Current1: %i ",serialBuffer[11]);
-    ROS_INFO("Current2: %i \n",serialBuffer[12]);
-    ROS_INFO("Error: %i \n",serialBuffer[13]);
-    ROS_INFO("Acceleration: %i \n",serialBuffer[14]);
-    ROS_INFO("Mode: %i \n",serialBuffer[15]);
-    ROS_INFO("Regulator: %i \n",serialBuffer[16]);
-    ROS_INFO("Timeout: %i \n",serialBuffer[17]);
+    printf ("MD49-Data read from AVR-Master: \n");
+    printf("====================================================== \n");
+    //printf("Encoder1 Byte1: %i ",serialBuffer[0]);
+    //printf("Byte2: %i ",serialBuffer[1]);
+    //printf("Byte3: % i ",serialBuffer[2]);
+    //printf("Byte4: %i \n",serialBuffer[3]);
+    //printf("Encoder2 Byte1: %i ",serialBuffer[4]);
+    //printf("Byte2: %i ",serialBuffer[5]);
+    //printf("Byte3: %i ",serialBuffer[6]);
+    //printf("Byte4: %i \n",serialBuffer[7]);
+    printf("EncoderL: %i ",EncoderL);
+    printf("EncoderR: %i \n",EncoderR);
+    printf("====================================================== \n");
+    printf("Speed1: %i ",serialBuffer[8]);
+    printf("Speed2: %i \n",serialBuffer[9]);
+    printf("Volts: %i \n",serialBuffer[10]);
+    printf("Current1: %i ",serialBuffer[11]);
+    printf("Current2: %i \n",serialBuffer[12]);
+    printf("Error: %i \n",serialBuffer[13]);
+    printf("Acceleration: %i \n",serialBuffer[14]);
+    printf("Mode: %i \n",serialBuffer[15]);
+    printf("Regulator: %i \n",serialBuffer[16]);
+    printf("Timeout: %i \n",serialBuffer[17]);
 
     //printf("vl= %f \n", vl);
     //printf("vr= %f \n", vr);
