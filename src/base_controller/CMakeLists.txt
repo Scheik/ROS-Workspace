@@ -175,3 +175,6 @@ target_link_libraries(base_controller ${catkin_LIBRARIES})
 
 add_executable(joystick_driver src/joystick_driver/joystick_driver_node.cpp)
 target_link_libraries(joystick_driver ${catkin_LIBRARIES})
+
+add_executable(odometry src/odometry/odometry_node.cpp)
+target_link_libraries(odometry ${catkin_LIBRARIES})

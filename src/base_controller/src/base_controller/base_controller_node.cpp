@@ -148,7 +148,7 @@ int main( int argc, char* argv[] ){
             // calculate odomety
             // *****************
             deltaLeft = EncoderL - previous_EncoderL;
-            deltaRight = EncoderR - previous_EncoderL;
+            deltaRight = EncoderR - previous_EncoderR;
 
             vx = deltaLeft * meter_per_tick;
             vy = deltaRight * meter_per_tick;
