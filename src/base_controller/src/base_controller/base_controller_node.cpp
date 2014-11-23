@@ -11,7 +11,8 @@
 
 #include <ros/ros.h>
 #include "std_msgs/Int16.h"
-#include <geometry_msgs/Twist.h>
+#include <geometry_msgs/Twist.h>                    /* Message keeps encoder-values as Vector3.x (left) and .y (right) */
+#include <geometry_msgs/Vector3.h>
 #include <sensor_msgs/JointState.h>
 #include <tf/transform_broadcaster.h>
 #include <nav_msgs/Odometry.h>
@@ -122,8 +123,9 @@ int main( int argc, char* argv[] ){
     ros::init(argc, argv, "base_controller" );
     ros::NodeHandle n;
     ros::Subscriber sub = n.subscribe("/cmd_vel", 100, cmd_vel_callback);
-    ros::Publisher encoder_l_pub = n.advertise<std_msgs::Int16>("encoder_l", 100);
-    ros::Publisher encoder_r_pub = n.advertise<std_msgs::Int16>("encoder_r", 100);
+    ros::Publisher encoders_pub = n.advertise<geometry_msgs::Vector3>("/encoders", 100);
+    //ros::Publisher encoder_l_pub = n.advertise<std_msgs::Int16>("encoder_l", 100);
+    //ros::Publisher encoder_r_pub = n.advertise<std_msgs::Int16>("encoder_r", 100);
     ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("odom", 50);
     tf::TransformBroadcaster odom_broadcaster;
 
@@ -207,12 +209,18 @@ int main( int argc, char* argv[] ){
 
             // Publish EncoderL and EncoderR to topics encoder_l and encoder_r
             // ***************************************************************
-            std_msgs::Int16 encoder_l;
-            std_msgs::Int16 encoder_r;
-            encoder_l.data = EncoderL;
-            encoder_r.data=EncoderR;
-            encoder_l_pub.publish(encoder_l);
-            encoder_r_pub.publish(encoder_r);
+            // std_msgs::Int16 encoder_l;
+            // std_msgs::Int16 encoder_r;
+            // encoder_l.data = EncoderL;
+            // encoder_r.data=EncoderR;
+            // encoder_l_pub.publish(encoder_l);
+            // encoder_r_pub.publish(encoder_r);
+
+            geometry_msgs::Vector3 encoders;
+            encoders.x=EncoderL;
+            encoders.y=EncoderR;
+            encoders_pub.publish(encoders);
+
 
             // Loop
             // ****
