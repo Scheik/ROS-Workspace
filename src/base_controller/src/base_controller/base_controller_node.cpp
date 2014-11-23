@@ -124,7 +124,7 @@ int main( int argc, char* argv[] ){
     ros::init(argc, argv, "base_controller" );
     ros::NodeHandle n;
     ros::Subscriber sub = n.subscribe("/cmd_vel", 100, cmd_vel_callback);
-    ros::Publisher encoders_pub = n.advertise<geometry_msgs::Vector3>("/encoders", 100);
+    ros::Publisher encoders_pub = n.advertise<geometry_msgs::Vector3>("encoders", 100);
     //ros::Publisher encoder_l_pub = n.advertise<std_msgs::Int16>("encoder_l", 100);
     //ros::Publisher encoder_r_pub = n.advertise<std_msgs::Int16>("encoder_r", 100);
     ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("odom", 50);
