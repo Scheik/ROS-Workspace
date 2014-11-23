@@ -182,6 +182,7 @@ include_directories(
 
 add_executable(base_controller src/base_controller/base_controller_node.cpp)
 target_link_libraries(base_controller ${catkin_LIBRARIES})
+add_dependencies(base_controller base_controller_generate_messages_cpp)
 
 add_executable(joystick_driver src/joystick_driver/joystick_driver_node.cpp)
 target_link_libraries(joystick_driver ${catkin_LIBRARIES})
@@ -189,5 +190,5 @@ target_link_libraries(joystick_driver ${catkin_LIBRARIES})
 add_executable(odometry src/odometry/odometry_node.cpp)
 target_link_libraries(odometry ${catkin_LIBRARIES})
 
-add_dependencies(base_controller base_controller_generate_messages_cpp)
-add_dependencies(odometry base_controller_generate_messages_cpp)
+
+
