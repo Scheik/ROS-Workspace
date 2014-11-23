@@ -177,8 +177,8 @@ include_directories(
 #add_executable(helloworld src/helloworld/helloworld_node.cpp)
 #target_link_libraries(helloworld ${catkin_LIBRARIES})
 
-add_executable(md49_console src/md49_console/md49_console_node.cpp)
-target_link_libraries(md49_console ${catkin_LIBRARIES})
+#add_executable(md49_console src/md49_console/md49_console_node.cpp)
+#target_link_libraries(md49_console ${catkin_LIBRARIES})
 
 add_executable(base_controller src/base_controller/base_controller_node.cpp)
 target_link_libraries(base_controller ${catkin_LIBRARIES})
