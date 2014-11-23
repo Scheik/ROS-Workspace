@@ -13,11 +13,6 @@
 #include "std_msgs/Int16.h"
 #include <geometry_msgs/Twist.h>
 #include <base_controller/encoders.h>               /* Custom message /encoders */
-//#include <geometry_msgs/Vector3.h>                /* Message keeps encoder-values as Vector3.x (left) and .y (right) */
-#include <sensor_msgs/JointState.h>
-#include <tf/transform_broadcaster.h>
-#include <nav_msgs/Odometry.h>
-
 
 const char* serialport="/dev/ttyAMA0";
 int serialport_bps=B38400;
