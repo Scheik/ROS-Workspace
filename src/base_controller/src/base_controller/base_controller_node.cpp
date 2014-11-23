@@ -12,6 +12,7 @@
 #include <ros/ros.h>
 #include "std_msgs/Int16.h"
 #include <geometry_msgs/Twist.h>                    /* Message keeps encoder-values as Vector3.x (left) and .y (right) */
+#include <base_controller/encoders.h>
 #include <geometry_msgs/Vector3.h>
 #include <sensor_msgs/JointState.h>
 #include <tf/transform_broadcaster.h>
