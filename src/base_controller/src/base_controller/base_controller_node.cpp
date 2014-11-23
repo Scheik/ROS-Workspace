@@ -124,9 +124,10 @@ int main( int argc, char* argv[] ){
     ros::init(argc, argv, "base_controller" );
     ros::NodeHandle n;
     ros::Subscriber sub = n.subscribe("/cmd_vel", 100, cmd_vel_callback);
-    ros::Publisher encoders_pub = n.advertise<geometry_msgs::Vector3>("encoders", 100);
-    //ros::Publisher encoder_l_pub = n.advertise<std_msgs::Int16>("encoder_l", 100);
-    //ros::Publisher encoder_r_pub = n.advertise<std_msgs::Int16>("encoder_r", 100);
+    //ros::Publisher encoders_pub = n.advertise<geometry_msgs::Vector3>("encoders", 100);   // use if wheel encoder data is stored to geometry_msgs::Vector3
+    //ros::Publisher encoder_l_pub = n.advertise<std_msgs::Int16>("encoder_l", 100);        // use if wheel encoder data l + r is stored to separate Topics encoder_l and encoder_r
+    //ros::Publisher encoder_r_pub = n.advertise<std_msgs::Int16>("encoder_r", 100);        // use if wheel encoder data l + r is stored to separate Topics encoder_l and encoder_r
+    ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",100);   // use if encoder values are stored in custom message base_controller::encoders
     ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("odom", 50);
     tf::TransformBroadcaster odom_broadcaster;
 
@@ -217,9 +218,14 @@ int main( int argc, char* argv[] ){
             // encoder_l_pub.publish(encoder_l);
             // encoder_r_pub.publish(encoder_r);
 
-            geometry_msgs::Vector3 encoders;
-            encoders.x=EncoderL;
-            encoders.y=EncoderR;
+            //geometry_msgs::Vector3 encoders;
+            //encoders.x=EncoderL;
+            //encoders.y=EncoderR;
+            //encoders_pub.publish(encoders);
+
+            base_controller::encoders encoders;
+            encoders.encoder_l=EncoderL;
+            encoders.encoder_r=EncoderR;
             encoders_pub.publish(encoders);
 
 
