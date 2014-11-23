@@ -17,12 +17,12 @@ double th = 0.0;
 double vx;
 double vy;
 double vth;
-ros::Time current_time_encoder, last_time_encoder;
+//ros::Time current_time_encoder, last_time_encoder;
 
 void encoderdata_callback(const base_controller::encoders& encoders){
     //EncoderL=encoders.encoder_l;
     //EncoderR=encoders.encoder_r;
-    current_time_encoder = ros::Time::now();
+    //current_time_encoder = ros::Time::now();
     // calculate odomety
     // *****************
     deltaLeft = encoders.encoder_l - previous_EncoderL;
@@ -33,7 +33,7 @@ void encoderdata_callback(const base_controller::encoders& encoders){
 
     previous_EncoderL = encoders.encoder_l;
     previous_EncoderR = encoders.encoder_r;
-    last_time_encoder = current_time_encoder;
+    //last_time_encoder = current_time_encoder;
 }
 
 int main( int argc, char* argv[] ){
