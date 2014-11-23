@@ -190,3 +190,4 @@ add_executable(odometry src/odometry/odometry_node.cpp)
 target_link_libraries(odometry ${catkin_LIBRARIES})
 
 add_dependencies(base_controller base_controller_generate_messages_cpp)
+add_dependencies(odometry base_controller_generate_messages_cpp)
