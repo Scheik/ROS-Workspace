@@ -1,5 +1,6 @@
 #include "ros/ros.h"
 #include <base_controller/encoders.h>               /* Custom message /encoders */
+#include <sensor_msgs/JointState.h>
 #include <tf/transform_broadcaster.h>
 #include <nav_msgs/Odometry.h>
 
