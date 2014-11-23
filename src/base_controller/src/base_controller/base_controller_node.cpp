@@ -11,9 +11,9 @@
 
 #include <ros/ros.h>
 #include "std_msgs/Int16.h"
-#include <geometry_msgs/Twist.h>                    /* Message keeps encoder-values as Vector3.x (left) and .y (right) */
-#include <base_controller/encoders.h>
-#include <geometry_msgs/Vector3.h>
+#include <geometry_msgs/Twist.h>
+#include <base_controller/encoders.h>               /* Custom message /encoders */
+//#include <geometry_msgs/Vector3.h>                /* Message keeps encoder-values as Vector3.x (left) and .y (right) */
 #include <sensor_msgs/JointState.h>
 #include <tf/transform_broadcaster.h>
 #include <nav_msgs/Odometry.h>
@@ -23,24 +23,9 @@ const char* serialport="/dev/ttyAMA0";
 int serialport_bps=B38400;
 int16_t EncoderL;
 int16_t EncoderR;
-int16_t previous_EncoderL;
-int16_t previous_EncoderR;
-double deltaLeft;
-double deltaRight;
-double meter_per_tick = 0.001;
-double x = 0.0;
-double y = 0.0;
-double th = 0.0;
-double vx;
-double vy;
-double vth;
-double Kettenabstand = 0.4;
-double Antriebsrolle_Radius=0.03;
-double vl = 0.0;
-double vr = 0.0;
 
-ros::Time current_time_encoder, last_time_encoder;
-geometry_msgs::Quaternion odom_quat;
+double Kettenabstand = 0.4;
+
 
 struct termios orig;
 int filedesc;
@@ -55,6 +40,7 @@ void read_MD49_Data (void);
 
 
 void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){ 
+
     ROS_DEBUG("geometry_msgs/Twist received: linear.x= %f angular.z= %f", vel_cmd.linear.x, vel_cmd.angular.z);
 
     //ANFANG Alternative
@@ -77,42 +63,40 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
         left_vel = vel_linear_x - vel_angular_z * Kettenabstand / 2.0;
         right_vel = vel_linear_x + vel_angular_z * Kettenabstand / 2.0;
     }
-    vl = left_vel;
-    vr = right_vel;
     //ENDE Alternative
 
 
     if (vel_cmd.linear.x>0){
-        serialBuffer[0] = 88;							// 88 =X Steuerbyte um Commands an MD49 zu senden
-        serialBuffer[1] = 115;							// 115=s Steuerbyte setSpeed
+        serialBuffer[0] = 88;					// 88 =X Steuerbyte um Commands an MD49 zu senden
+        serialBuffer[1] = 115;					// 115=s Steuerbyte setSpeed
         serialBuffer[2] = 255;					// speed1
         serialBuffer[3] = 255;					// speed2
         writeBytes(fd, 4);
     }
     if (vel_cmd.linear.x<0){
-        serialBuffer[0] = 88;							// 88 =X Steuerbyte um Commands an MD49 zu senden
-        serialBuffer[1] = 115;							// 115=s Steuerbyte setSpeed
+        serialBuffer[0] = 88;					// 88 =X Steuerbyte um Commands an MD49 zu senden
+        serialBuffer[1] = 115;					// 115=s Steuerbyte setSpeed
         serialBuffer[2] = 0;					// speed1
         serialBuffer[3] = 0;					// speed2
         writeBytes(fd, 4);
     }
     if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){
-        serialBuffer[0] = 88;							// 88 =X Steuerbyte um Commands an MD49 zu senden
-        serialBuffer[1] = 115;							// 115=s Steuerbyte setSpeed
+        serialBuffer[0] = 88;					// 88 =X Steuerbyte um Commands an MD49 zu senden
+        serialBuffer[1] = 115;					// 115=s Steuerbyte setSpeed
         serialBuffer[2] = 128;					// speed1
         serialBuffer[3] = 128;					// speed2
         writeBytes(fd, 4);
     }
     if (vel_cmd.angular.z>0){
-        serialBuffer[0] = 88;							// 88 =X Steuerbyte um Commands an MD49 zu senden
-        serialBuffer[1] = 115;							// 115=s Steuerbyte setSpeed
+        serialBuffer[0] = 88;					// 88 =X Steuerbyte um Commands an MD49 zu senden
+        serialBuffer[1] = 115;					// 115=s Steuerbyte setSpeed
         serialBuffer[2] = 0;					// speed1
         serialBuffer[3] = 255;					// speed2
         writeBytes(fd, 4);
     }
     if (vel_cmd.angular.z<0){
-        serialBuffer[0] = 88;							// 88 =X Steuerbyte um Commands an MD49 zu senden
-        serialBuffer[1] = 115;							// 115=s Steuerbyte setSpeed
+        serialBuffer[0] = 88;					// 88 =X Steuerbyte um Commands an MD49 zu senden
+        serialBuffer[1] = 115;					// 115=s Steuerbyte setSpeed
         serialBuffer[2] = 255;					// speed1
         serialBuffer[3] = 0;					// speed2
         writeBytes(fd, 4);
@@ -121,24 +105,21 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
 
 
 int main( int argc, char* argv[] ){
+
     ros::init(argc, argv, "base_controller" );
     ros::NodeHandle n;
     ros::Subscriber sub = n.subscribe("/cmd_vel", 100, cmd_vel_callback);
-    //ros::Publisher encoders_pub = n.advertise<geometry_msgs::Vector3>("encoders", 100);   // use if wheel encoder data is stored to geometry_msgs::Vector3
-    //ros::Publisher encoder_l_pub = n.advertise<std_msgs::Int16>("encoder_l", 100);        // use if wheel encoder data l + r is stored to separate Topics encoder_l and encoder_r
-    //ros::Publisher encoder_r_pub = n.advertise<std_msgs::Int16>("encoder_r", 100);        // use if wheel encoder data l + r is stored to separate Topics encoder_l and encoder_r
-    ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",100);   // use if encoder values are stored in custom message base_controller::encoders
-    ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("odom", 50);
-    tf::TransformBroadcaster odom_broadcaster;
+    ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",100);
 
+    // Open serial port
+    // ****************
     filedesc = openSerialPort("/dev/ttyAMA0", B38400);
     if (filedesc == -1) exit(1);
-    usleep(40000);// Sleep for UART to power up and set options
+    usleep(40000);                                      // Sleep for UART to power up and set options
     ROS_DEBUG("Serial Port opened \n");
 
-    //ros::Time current_time, last_time;
-    current_time_encoder = ros::Time::now();
-    last_time_encoder = ros::Time::now();
+    // Set nodes looprate 10Hz
+    // ***********************
     ros::Rate loop_rate(10);
 
     while( n.ok() )
@@ -147,96 +128,21 @@ int main( int argc, char* argv[] ){
             // *************************************
             read_MD49_Data();
 
-            current_time_encoder = ros::Time::now();
-
-            // calculate odomety
-            // *****************
-            deltaLeft = EncoderL - previous_EncoderL;
-            deltaRight = EncoderR - previous_EncoderR;
-
-            vx = deltaLeft * meter_per_tick;
-            vy = deltaRight * meter_per_tick;
-
-            previous_EncoderL = EncoderL;
-            previous_EncoderR = EncoderR;
-            //last_time_encoder = current_time_encoder;
-            //compute odometry in a typical way given the velocities of the robot
-            double dt = (current_time_encoder - last_time_encoder).toSec();
-            double delta_x = (vx * cos(th) - vy * sin(th)) * dt;
-            double delta_y = (vx * sin(th) + vy * cos(th)) * dt;
-            double delta_th = vth * dt;
-
-            x += delta_x;
-            y += delta_y;
-            th += delta_th;
-
-            //since all odometry is 6DOF we'll need a quaternion created from yaw
-            geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(th);
-
-            //first, we'll publish the transform over tf
-            geometry_msgs::TransformStamped odom_trans;
-            odom_trans.header.stamp = current_time_encoder;
-            odom_trans.header.frame_id = "odom";
-            odom_trans.child_frame_id = "base_link";
-
-            odom_trans.transform.translation.x = x;
-            odom_trans.transform.translation.y = y;
-            odom_trans.transform.translation.z = 0.0;
-            odom_trans.transform.rotation = odom_quat;
-
-            //send the transform
-            odom_broadcaster.sendTransform(odom_trans);
-
-            //next, we'll publish the odometry message over ROS
-            nav_msgs::Odometry odom;
-            odom.header.stamp = current_time_encoder;
-            odom.header.frame_id = "odom";
-
-            //set the position
-            odom.pose.pose.position.x = x;
-            odom.pose.pose.position.y = y;
-            odom.pose.pose.position.z = 0.0;
-            odom.pose.pose.orientation = odom_quat;
-
-            //set the velocity
-            odom.child_frame_id = "base_link";
-            odom.twist.twist.linear.x = vx;
-            odom.twist.twist.linear.y = vy;
-            odom.twist.twist.angular.z = vth;
-
-            //publish the message
-            odom_pub.publish(odom);
-
-            last_time_encoder = current_time_encoder;
-
-            // Publish EncoderL and EncoderR to topics encoder_l and encoder_r
-            // ***************************************************************
-            // std_msgs::Int16 encoder_l;
-            // std_msgs::Int16 encoder_r;
-            // encoder_l.data = EncoderL;
-            // encoder_r.data=EncoderR;
-            // encoder_l_pub.publish(encoder_l);
-            // encoder_r_pub.publish(encoder_r);
-
-            //geometry_msgs::Vector3 encoders;
-            //encoders.x=EncoderL;
-            //encoders.y=EncoderR;
-            //encoders_pub.publish(encoders);
-
+            // Publish encoder values to topic /encoders (custom message)
+            // ********************************************************************
             base_controller::encoders encoders;
             encoders.encoder_l=EncoderL;
             encoders.encoder_r=EncoderR;
             encoders_pub.publish(encoders);
 
-
             // Loop
             // ****
             ros::spinOnce();
             loop_rate.sleep();
-    }
+    }// end.mainloop
 
     return 1;
-}
+} // end.main
 
 int openSerialPort(const char * device, int bps){
    struct termios neu;
