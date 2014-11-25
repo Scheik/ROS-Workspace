@@ -42,11 +42,8 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
 
 
     //ANFANG Alternative
-    //double vel_linear_x = vel_cmd.linear.x;
-   // double vel_angular_z = vel_cmd.angular.z;
-
-
-    if(vel_cmd.linear.x == 0){
+    if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){vl=0;vr=0;}
+    else if(vel_cmd.linear.x == 0){
         // turning
         vr = vel_cmd.angular.z * base_width / 2.0;
         vl = (-1) * vr;
