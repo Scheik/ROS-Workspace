@@ -1,37 +1,33 @@
-#include <iostream>
+#include <iostream>                                 /* allows to perform standard input and output operations */
 #include <stdio.h>   								/* Standard input/output definitions */
 #include <stdint.h>   								/* Standard input/output definitions */
-#include <stdlib.h>  								/* exit */
+#include <stdlib.h>  								/* defines several general purpose functions */
 //#include <string>  								/* String function definitions */
 #include <unistd.h>  								/* UNIX standard function definitions */
 #include <fcntl.h>  	 							/* File control definitions */
 #include <errno.h>   								/* Error number definitions */
 #include <termios.h> 								/* POSIX terminal control definitions */
-#include <ctype.h>   								/* isxxx() */
-
-#include <ros/ros.h>
-#include "std_msgs/Int16.h"
+//#include <ctype.h>   								/* isxxx() */
+#include <ros/ros.h>                                /* ROS */
 #include <geometry_msgs/Twist.h>
 #include <base_controller/encoders.h>               /* Custom message /encoders */
 
 const char* serialport="/dev/ttyAMA0";
 int serialport_bps=B38400;
-int16_t EncoderL;
-int16_t EncoderR;
+int16_t EncoderL;                                   /* Stores encoder value left read from md49 */
+int16_t EncoderR;                                   /* Stores encoder value right read from md49 */
+double base_width = 0.4;                            /* Base width in meters */
 
-double Kettenabstand = 0.4;
 
-
-struct termios orig;
+struct termios orig;                                /* stores original settings */
 int filedesc;
-int fd;                                             // serial port file descriptor
-unsigned char serialBuffer[16];						// Serial buffer to store data for I/O
+int fd;                                             /* serial port file descriptor */
+unsigned char serialBuffer[16];						/* Serial buffer to store uart data */
 
 int openSerialPort(const char * device, int bps);
 void writeBytes(int descriptor, int count);
 void readBytes(int descriptor, int count);
 void read_MD49_Data (void);
-
 
 
 void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){ 
@@ -46,7 +42,7 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
 
     if(vel_linear_x == 0){
         // turning
-        right_vel = vel_angular_z * Kettenabstand / 2.0;
+        right_vel = vel_angular_z * base_width / 2.0;
         left_vel = (-1) * right_vel;
     }
     else if(vel_angular_z == 0){
@@ -55,8 +51,8 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
     }
     else{
         // moving doing arcs
-        left_vel = vel_linear_x - vel_angular_z * Kettenabstand / 2.0;
-        right_vel = vel_linear_x + vel_angular_z * Kettenabstand / 2.0;
+        left_vel = vel_linear_x - vel_angular_z * base_width / 2.0;
+        right_vel = vel_linear_x + vel_angular_z * base_width / 2.0;
     }
     //ENDE Alternative
 
