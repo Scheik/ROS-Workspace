@@ -1,28 +1,34 @@
-#include <iostream>                                 /* allows to perform standard input and output operations */
-#include <stdio.h>   								/* Standard input/output definitions */
-#include <stdint.h>   								/* Standard input/output definitions */
-#include <stdlib.h>  								/* defines several general purpose functions */
-//#include <string>  								/* String function definitions */
-#include <unistd.h>  								/* UNIX standard function definitions */
-#include <fcntl.h>  	 							/* File control definitions */
-#include <errno.h>   								/* Error number definitions */
-#include <termios.h> 								/* POSIX terminal control definitions */
-//#include <ctype.h>   								/* isxxx() */
-#include <ros/ros.h>                                /* ROS */
-#include <geometry_msgs/Twist.h>
-#include <base_controller/encoders.h>               /* Custom message /encoders */
+#include <iostream>                                         /* allows to perform standard input and output operations */
+#include <stdio.h>                                          /* Standard input/output definitions */
+#include <stdint.h>                                         /* Standard input/output definitions */
+#include <stdlib.h>                                         /* defines several general purpose functions */
+//#include <string>                                         /* String function definitions */
+#include <unistd.h>                                         /* UNIX standard function definitions */
+#include <fcntl.h>                                          /* File control definitions */
+#include <errno.h>                                          /* Error number definitions */
+#include <termios.h>                                        /* POSIX terminal control definitions */
+//#include <ctype.h>                                        /* isxxx() */
+#include <ros/ros.h>                                        /* ROS */
+#include <geometry_msgs/Twist.h>                            /* ROS Twist message */
+#include <base_controller/encoders.h>                       /* Custom message /encoders */
 
-const char* serialport="/dev/ttyAMA0";
-int serialport_bps=B38400;
-int16_t EncoderL;                                   /* Stores encoder value left read from md49 */
-int16_t EncoderR;                                   /* Stores encoder value right read from md49 */
-double base_width = 0.4;                            /* Base width in meters */
+const char* serialport="/dev/ttyAMA0";                      /* defines used serialport */
+int serialport_bps=B38400;                                  /* defines baudrate od serialport */
+int16_t EncoderL;                                           /* stores encoder value left read from md49 */
+int16_t EncoderR;                                           /* stores encoder value right read from md49 */
+double vr = 0.0;
+double vl = 0.0;
+double max_vr = 0.2;
+double max_vl = 0.2;
+double min_vr = 0.2;
+double min_vl = 0.2;
+double base_width = 0.4;                                    /* Base width in meters */
 
+int filedesc;                                               /* filedescriptor serialport */
+int fd;                                                     /* serial port file descriptor */
+unsigned char serialBuffer[16];                             /* Serial buffer to store uart data */
+struct termios orig;                                        /* stores original settings */
 
-struct termios orig;                                /* stores original settings */
-int filedesc;
-int fd;                                             /* serial port file descriptor */
-unsigned char serialBuffer[16];						/* Serial buffer to store uart data */
 
 int openSerialPort(const char * device, int bps);
 void writeBytes(int descriptor, int count);
@@ -34,25 +40,29 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
 
     ROS_DEBUG("geometry_msgs/Twist received: linear.x= %f angular.z= %f", vel_cmd.linear.x, vel_cmd.angular.z);
 
-    //ANFANG Alternative
-    double vel_linear_x = vel_cmd.linear.x;
-    double vel_angular_z = vel_cmd.angular.z;
-    double right_vel = 0.0;
-    double left_vel = 0.0;
 
-    if(vel_linear_x == 0){
+    //ANFANG Alternative
+    //double vel_linear_x = vel_cmd.linear.x;
+   // double vel_angular_z = vel_cmd.angular.z;
+
+
+    if(vel_cmd.linear.x == 0){
         // turning
-        right_vel = vel_angular_z * base_width / 2.0;
-        left_vel = (-1) * right_vel;
+        vr = vel_cmd.angular.z * base_width / 2.0;
+        vl = (-1) * vr;
     }
-    else if(vel_angular_z == 0){
+    else if(vel_cmd.angular.z == 0){
         // forward / backward
-        left_vel = right_vel = vel_linear_x;
+        vl = vr = vel_cmd.linear.x;
     }
     else{
         // moving doing arcs
-        left_vel = vel_linear_x - vel_angular_z * base_width / 2.0;
-        right_vel = vel_linear_x + vel_angular_z * base_width / 2.0;
+        vl = vel_cmd.linear.x - vel_cmd.angular.z * base_width / 2.0;
+        if (vl > max_vl) {vl=max_vl;}
+        if (vl < min_vl) {vl=min_vl;}
+        vr = vel_cmd.linear.x + vel_cmd.angular.z * base_width / 2.0;
+        if (vr > max_vr) {vr=max_vr;}
+        if (vr < min_vr) {vr=min_vr;}
     }
     //ENDE Alternative
 
@@ -220,8 +230,8 @@ void read_MD49_Data (void){
     printf("Regulator: %i \n",serialBuffer[16]);
     printf("Timeout: %i \n",serialBuffer[17]);
 
-    //printf("vl= %f \n", vl);
-    //printf("vr= %f \n", vr);
+    printf("vl= %f \n", vl);
+    printf("vr= %f \n", vr);
 
 
 }
