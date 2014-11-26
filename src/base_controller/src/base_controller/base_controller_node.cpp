@@ -118,7 +118,7 @@ int main( int argc, char* argv[] ){
 
     // Set nodes looprate 10Hz
     // ***********************
-    ros::Rate loop_rate(10);
+    ros::Rate loop_rate(5);
 
     while( n.ok() )
     {    
