@@ -7,7 +7,7 @@
 #include <fcntl.h>                                          /* File control definitions */
 #include <errno.h>                                          /* Error number definitions */
 #include <termios.h>                                        /* POSIX terminal control definitions */
-//#include <ctype.h>                                        /* isxxx() */
+#include <ctype.h>                                        /* isxxx() */
 #include <ros/ros.h>                                        /* ROS */
 #include <geometry_msgs/Twist.h>                            /* ROS Twist message */
 #include <base_controller/encoders.h>                       /* Custom message /encoders */
@@ -113,7 +113,7 @@ int main( int argc, char* argv[] ){
 
     // Set nodes looprate 10Hz
     // ***********************
-    ros::Rate loop_rate(1);
+    ros::Rate loop_rate(10);
 
     while( n.ok() )
     {
