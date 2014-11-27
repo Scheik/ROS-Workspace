@@ -123,7 +123,8 @@ int main( int argc, char* argv[] ){
 
             // Set speed left andright for MD49
             // ********************************
-            if (cmd_vel_received=true) {set_MD49_speed(speed_l,speed_r); cmd_vel_received=false;}
+            //if (cmd_vel_received=true) {set_MD49_speed(speed_l,speed_r); cmd_vel_received=false;}
+            set_MD49_speed(speed_l,speed_r);
 
             // Publish encoder values to topic /encoders (custom message)
             // ********************************************************************
@@ -184,7 +185,6 @@ void readBytes(int descriptor, int count) {
     }
 }
 
-
 void read_MD49_Data (void){
     serialBuffer[0] = 82;							// 82=R Steuerbyte um alle Daten vom MD49 zu lesen
     writeBytes(fd, 1);
@@ -200,7 +200,7 @@ void read_MD49_Data (void){
     EncoderR |= (serialBuffer[7]);
 
 
-    printf("\033[2J");        /*  clear the screen  */
+    //printf("\033[2J");        /*  clear the screen  */
     printf("\033[H");         /*  position cursor at top-left corner */
     printf ("MD49-Data read from AVR-Master: \n");
     printf("====================================================== \n");
