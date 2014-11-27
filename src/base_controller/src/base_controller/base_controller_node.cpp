@@ -123,8 +123,8 @@ int main( int argc, char* argv[] ){
 
             // Set speed left andright for MD49
             // ********************************
-            //if (cmd_vel_received=true) {set_MD49_speed(speed_l,speed_r); cmd_vel_received=false;}
-            set_MD49_speed(speed_l,speed_r);
+            if (cmd_vel_received=true) {set_MD49_speed(speed_l,speed_r); cmd_vel_received=false;}
+            //set_MD49_speed(speed_l,speed_r);
 
             // Publish encoder values to topic /encoders (custom message)
             // ********************************************************************
