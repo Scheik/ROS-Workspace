@@ -16,6 +16,8 @@ const char* serialport="/dev/ttyAMA0";                      /* defines used seri
 int serialport_bps=B38400;                                  /* defines baudrate od serialport */
 int16_t EncoderL;                                           /* stores encoder value left read from md49 */
 int16_t EncoderR;                                           /* stores encoder value right read from md49 */
+int speed_l=128, speed_r=128;                               /* speed to set for MD49 */
+bool cmd_vel_received=true;
 double vr = 0.0;
 double vl = 0.0;
 double max_vr = 0.2;
@@ -34,6 +36,7 @@ int openSerialPort(const char * device, int bps);
 void writeBytes(int descriptor, int count);
 void readBytes(int descriptor, int count);
 void read_MD49_Data (void);
+void set_MD49_speed (int speed_l, int speed_r);
 
 
 void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
@@ -65,40 +68,32 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
 
 
     if (vel_cmd.linear.x>0){
-        serialBuffer[0] = 88;					// 88 =X Steuerbyte um Commands an MD49 zu senden
-        serialBuffer[1] = 115;					// 115=s Steuerbyte setSpeed
-        serialBuffer[2] = 255;					// speed1
-        serialBuffer[3] = 255;					// speed2
-        writeBytes(fd, 4);
+        speed_l = 255;
+        speed_r = 255;
+        //serialBuffer[0] = 88;					// 88 =X Steuerbyte um Commands an MD49 zu senden
+        //serialBuffer[1] = 115;					// 115=s Steuerbyte setSpeed
+        //serialBuffer[2] = 255;					// speed1
+        //serialBuffer[3] = 255;					// speed2
+        //writeBytes(fd, 4);
     }
     if (vel_cmd.linear.x<0){
-        serialBuffer[0] = 88;					// 88 =X Steuerbyte um Commands an MD49 zu senden
-        serialBuffer[1] = 115;					// 115=s Steuerbyte setSpeed
-        serialBuffer[2] = 0;					// speed1
-        serialBuffer[3] = 0;					// speed2
-        writeBytes(fd, 4);
+        speed_l = 0;
+        speed_r = 0;
     }
     if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){
-        serialBuffer[0] = 88;					// 88 =X Steuerbyte um Commands an MD49 zu senden
-        serialBuffer[1] = 115;					// 115=s Steuerbyte setSpeed
-        serialBuffer[2] = 128;					// speed1
-        serialBuffer[3] = 128;					// speed2
-        writeBytes(fd, 4);
+        speed_l = 128;
+        speed_r = 128;
     }
     if (vel_cmd.angular.z>0){
-        serialBuffer[0] = 88;					// 88 =X Steuerbyte um Commands an MD49 zu senden
-        serialBuffer[1] = 115;					// 115=s Steuerbyte setSpeed
-        serialBuffer[2] = 0;					// speed1
-        serialBuffer[3] = 255;					// speed2
-        writeBytes(fd, 4);
+        speed_l = 0;
+        speed_r = 255;
     }
     if (vel_cmd.angular.z<0){
-        serialBuffer[0] = 88;					// 88 =X Steuerbyte um Commands an MD49 zu senden
-        serialBuffer[1] = 115;					// 115=s Steuerbyte setSpeed
-        serialBuffer[2] = 255;					// speed1
-        serialBuffer[3] = 0;					// speed2
-        writeBytes(fd, 4);
+        speed_l = 255;
+        speed_r = 0;
     }
+
+    cmd_vel_received=true;
 }
 
 
@@ -118,13 +113,18 @@ int main( int argc, char* argv[] ){
 
     // Set nodes looprate 10Hz
     // ***********************
-    ros::Rate loop_rate(5);
+    ros::Rate loop_rate(10);
 
     while( n.ok() )
     {
             // Read encoder and other data from MD49
             // *************************************
             read_MD49_Data();
+
+            // Set speed left andright for MD49
+            // ********************************
+            //if (cmd_vel_received=true) {set_MD49_speed(speed_l,speed_r); cmd_vel_received=false;}
+            set_MD49_speed(speed_l,speed_r);
 
             // Publish encoder values to topic /encoders (custom message)
             // ********************************************************************
@@ -185,7 +185,6 @@ void readBytes(int descriptor, int count) {
     }
 }
 
-
 void read_MD49_Data (void){
     serialBuffer[0] = 82;							// 82=R Steuerbyte um alle Daten vom MD49 zu lesen
     writeBytes(fd, 1);
@@ -201,7 +200,7 @@ void read_MD49_Data (void){
     EncoderR |= (serialBuffer[7]);
 
 
-    printf("\033[2J");        /*  clear the screen  */
+    //printf("\033[2J");        /*  clear the screen  */
     printf("\033[H");         /*  position cursor at top-left corner */
     printf ("MD49-Data read from AVR-Master: \n");
     printf("====================================================== \n");
@@ -229,6 +228,12 @@ void read_MD49_Data (void){
 
     printf("vl= %f \n", vl);
     printf("vr= %f \n", vr);
+}
 
-
+void set_MD49_speed (int speed_l, int speed_r){
+    serialBuffer[0] = 88;					// 88 =X Steuerbyte um Commands an MD49 zu senden
+    serialBuffer[1] = 115;					// 115=s Steuerbyte setSpeed
+    serialBuffer[2] = speed_l;					// speed1
+    serialBuffer[3] = speed_r;					// speed2
+    writeBytes(fd, 4);
 }
