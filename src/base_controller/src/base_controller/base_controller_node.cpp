@@ -14,8 +14,8 @@
 
 const char* serialport="/dev/ttyAMA0";                      /* defines used serialport */
 int serialport_bps=B38400;                                  /* defines baudrate od serialport */
-int16_t EncoderL;                                           /* stores encoder value left read from md49 */
-int16_t EncoderR;                                           /* stores encoder value right read from md49 */
+int32_t EncoderL;                                           /* stores encoder value left read from md49 */
+int32_t EncoderR;                                           /* stores encoder value right read from md49 */
 unsigned char speed_l=128, speed_r=128;                               /* speed to set for MD49 */
 bool cmd_vel_received=true;
 double vr = 0.0;
