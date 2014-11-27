@@ -10,10 +10,14 @@ int16_t previous_EncoderL;
 int16_t previous_EncoderR;
 double deltaLeft;
 double deltaRight;
-double meter_per_tick = 0.001;
+double meter_per_tick = 0.0008;
 double x = 0.0;
 double y = 0.0;
 double th = 0.0;
+double v_linear=0.0;
+double v_angular=0.0;
+double distance_traveled=0.0;
+double base_width=0.4;
 double vx;
 double vy;
 double vth;
@@ -62,6 +66,13 @@ int main( int argc, char* argv[] ){
         x += delta_x;
         y += delta_y;
         th += delta_th;
+
+        //distance_traveled=(vx+vy)/2;
+        //v_linear = distance_traveled/dt;       // linear velocity
+        //th = ( vy - vx ) / base_width;
+        //v_angular = th/dt;                      //angular velocity
+
+
 
         //since all odometry is 6DOF we'll need a quaternion created from yaw
         geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(th);
