@@ -200,7 +200,7 @@ void read_MD49_Data (void){
     EncoderR |= (serialBuffer[7]);
 
 
-    //printf("\033[2J");        /*  clear the screen  */
+    printf("\033[2J");        /*  clear the screen  */
     printf("\033[H");         /*  position cursor at top-left corner */
     printf ("MD49-Data read from AVR-Master: \n");
     printf("====================================================== \n");
