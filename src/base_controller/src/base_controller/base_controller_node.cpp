@@ -117,7 +117,8 @@ int main( int argc, char* argv[] ){
 
     while( n.ok() )
     {
-            // Read encoder and other data from MD49
+        ros::spinOnce();
+        // Read encoder and other data from MD49
             // *************************************
             read_MD49_Data();
 
@@ -139,7 +140,7 @@ int main( int argc, char* argv[] ){
 
             // Loop
             // ****
-            ros::spinOnce();
+
             loop_rate.sleep();
     }// end.mainloop
 
