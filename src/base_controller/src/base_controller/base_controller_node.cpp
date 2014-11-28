@@ -26,7 +26,7 @@ double min_vr = 0.2;
 double min_vl = 0.2;
 double base_width = 0.4;                                    /* Base width in meters */
 
-int filedesc;                                               /* filedescriptor serialport */
+int filedesc;                                               // File descriptor of serial port we will talk to
 int fd;                                                     /* serial port file descriptor */
 unsigned char serialBuffer[16];                             /* Serial buffer to store uart data */
 struct termios orig;                                        // Port options
@@ -41,9 +41,9 @@ void set_MD49_speed (unsigned char speed_l, unsigned char speed_r);
 
 void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
 
-    ROS_DEBUG("geometry_msgs/Twist received: linear.x= %f angular.z= %f", vel_cmd.linear.x, vel_cmd.angular.z);
+//    ROS_DEBUG("geometry_msgs/Twist received: linear.x= %f angular.z= %f", vel_cmd.linear.x, vel_cmd.angular.z);
 
-
+/*
     //ANFANG Alternative
     if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){vl=0;vr=0;}
     else if(vel_cmd.linear.x == 0){
@@ -65,7 +65,7 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
         if (vr < min_vr) {vr=min_vr;}
     }
     //ENDE Alternative
-
+*/
 
     if (vel_cmd.linear.x>0){
         speed_l = 255;
