@@ -29,7 +29,7 @@ double base_width = 0.4;                                    /* Base width in met
 int filedesc;                                               /* filedescriptor serialport */
 int fd;                                                     /* serial port file descriptor */
 unsigned char serialBuffer[16];                             /* Serial buffer to store uart data */
-struct termios orig;                                        /* stores original settings */
+struct termios orig;                                        // Port options
 
 
 int openSerialPort(const char * device, int bps);
@@ -108,7 +108,7 @@ int main( int argc, char* argv[] ){
     // ****************
     filedesc = openSerialPort("/dev/ttyAMA0", B38400);
     if (filedesc == -1) exit(1);
-    usleep(40000);                                      // Sleep for UART to power up and set options
+    usleep(10000);                                      // Sleep for UART to power up and set options
     ROS_DEBUG("Serial Port opened \n");
 
     // Set nodes looprate 10Hz
@@ -140,7 +140,7 @@ int main( int argc, char* argv[] ){
             // Loop
             // ****
             ros::spinOnce();
-            //loop_rate.sleep();
+            loop_rate.sleep();
     }// end.mainloop
 
     return 1;
@@ -166,6 +166,7 @@ int openSerialPort(const char * device, int bps){
       //fprintf(stderr, "speed=%d\n", bps);
       cfsetispeed(&neu, bps);
       cfsetospeed(&neu, bps);
+      tcflush(fd, TCIFLUSH);
       tcsetattr(fd, TCSANOW, &neu); 				/* set new serial settings */
       fcntl (fd, F_SETFL, O_RDWR);
    }
