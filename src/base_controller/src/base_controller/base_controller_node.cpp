@@ -113,7 +113,7 @@ int main( int argc, char* argv[] ){
 
     // Set nodes looprate 10Hz
     // ***********************
-    ros::Rate loop_rate(10);
+    ros::Rate loop_rate(50);
 
     while( n.ok() )
     {
@@ -125,7 +125,7 @@ int main( int argc, char* argv[] ){
             // ********************************
             if (cmd_vel_received==true) {
                 set_MD49_speed(speed_l,speed_r);
-                set_MD49_speed(speed_l,speed_r);
+                //set_MD49_speed(speed_l,speed_r);
                 cmd_vel_received=false;
             }
             //set_MD49_speed(speed_l,speed_r);
