@@ -113,11 +113,22 @@ int main( int argc, char* argv[] ){
 
     // Set nodes looprate 10Hz
     // ***********************
-    ros::Rate loop_rate(3);
+    ros::Rate loop_rate(5);
 
     while( n.ok() )
     {
 
+        // Publish encoder values to topic /encoders (custom message)
+        // ********************************************************************
+        base_controller::encoders encoders;
+        encoders.encoder_l=EncoderL;
+        encoders.encoder_r=EncoderR;
+        encoders_pub.publish(encoders);
+
+        // Loop
+        // ****
+        ros::spinOnce();
+        loop_rate.sleep();
         // Read encoder and other data from MD49
             // *************************************
             read_MD49_Data();
@@ -131,17 +142,7 @@ int main( int argc, char* argv[] ){
             }
             //set_MD49_speed(speed_l,speed_r);
 
-            // Publish encoder values to topic /encoders (custom message)
-            // ********************************************************************
-            base_controller::encoders encoders;
-            encoders.encoder_l=EncoderL;
-            encoders.encoder_r=EncoderR;
-            encoders_pub.publish(encoders);
 
-            // Loop
-            // ****
-            ros::spinOnce();
-            loop_rate.sleep();
     }// end.mainloop
 
     return 1;
@@ -231,20 +232,20 @@ void read_MD49_Data (void){
 
    // printf("vl= %f \n", vl);
   //  printf("vr= %f \n", vr);
-    //EncoderL = serialBuffer[0] << 24;                        // Put together first encoder value
-    //EncoderL |= (serialBuffer[1] << 16);
-    //EncoderL |= (serialBuffer[2] << 8);
-    //EncoderL |= (serialBuffer[3]);
-    //EncoderR = serialBuffer[4] << 24;                        // Put together second encoder value
-    //EncoderR |= (serialBuffer[5] << 16);
-    //EncoderR |= (serialBuffer[6] << 8);
-    //EncoderR |= (serialBuffer[7]);
+    EncoderL = serialBuffer[0] << 24;                        // Put together first encoder value
+    EncoderL |= (serialBuffer[1] << 16);
+    EncoderL |= (serialBuffer[2] << 8);
+    EncoderL |= (serialBuffer[3]);
+    EncoderR = serialBuffer[4] << 24;                        // Put together second encoder value
+    EncoderR |= (serialBuffer[5] << 16);
+    EncoderR |= (serialBuffer[6] << 8);
+    EncoderR |= (serialBuffer[7]);
 }
 
 void set_MD49_speed (unsigned char speed_l, unsigned char speed_r){
     serialBuffer[0] = 88;					// 88 =X Steuerbyte um Commands an MD49 zu senden
     serialBuffer[1] = 115;					// 115=s Steuerbyte setSpeed
-    serialBuffer[2] = speed_l;					// speed1
-    serialBuffer[3] = speed_r;					// speed2
+    serialBuffer[2] = speed_l;				// speed1
+    serialBuffer[3] = speed_r;				// speed2
     writeBytes(fd, 4);
 }
