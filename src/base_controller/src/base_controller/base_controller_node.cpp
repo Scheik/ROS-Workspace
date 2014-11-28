@@ -194,14 +194,10 @@ void read_MD49_Data (void){
     writeBytes(fd, 1);
     //Daten lesen und in Array schreiben
     readBytes(fd, 18);
-    EncoderL = serialBuffer[0] << 24;                        // Put together first encoder value
-    EncoderL |= (serialBuffer[1] << 16);
-    EncoderL |= (serialBuffer[2] << 8);
-    EncoderL |= (serialBuffer[3]);
-    EncoderR = serialBuffer[4] << 24;                        // Put together second encoder value
-    EncoderR |= (serialBuffer[5] << 16);
-    EncoderR |= (serialBuffer[6] << 8);
-    EncoderR |= (serialBuffer[7]);
+
+
+
+
 
 
     printf("\033[2J");        /*  clear the screen  */
@@ -232,6 +228,14 @@ void read_MD49_Data (void){
 
     printf("vl= %f \n", vl);
     printf("vr= %f \n", vr);
+    EncoderL = serialBuffer[0] << 24;                        // Put together first encoder value
+    EncoderL |= (serialBuffer[1] << 16);
+    EncoderL |= (serialBuffer[2] << 8);
+    EncoderL |= (serialBuffer[3]);
+    EncoderR = serialBuffer[4] << 24;                        // Put together second encoder value
+    EncoderR |= (serialBuffer[5] << 16);
+    EncoderR |= (serialBuffer[6] << 8);
+    EncoderR |= (serialBuffer[7]);
 }
 
 void set_MD49_speed (unsigned char speed_l, unsigned char speed_r){
