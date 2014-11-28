@@ -113,11 +113,11 @@ int main( int argc, char* argv[] ){
 
     // Set nodes looprate 10Hz
     // ***********************
-    ros::Rate loop_rate(5);
+    ros::Rate loop_rate(2);
 
     while( n.ok() )
     {
-        ros::spinOnce();
+
         // Read encoder and other data from MD49
             // *************************************
             read_MD49_Data();
@@ -140,7 +140,7 @@ int main( int argc, char* argv[] ){
 
             // Loop
             // ****
-
+            ros::spinOnce();
             loop_rate.sleep();
     }// end.mainloop
 
