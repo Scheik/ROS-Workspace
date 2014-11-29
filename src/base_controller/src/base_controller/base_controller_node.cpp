@@ -102,7 +102,7 @@ int main( int argc, char* argv[] ){
     ros::init(argc, argv, "base_controller" );
     ros::NodeHandle n;
     ros::Subscriber sub = n.subscribe("/cmd_vel", 100, cmd_vel_callback);
-    ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",100);
+    //ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",100);
 
     // Open serial port
     // ****************
@@ -119,10 +119,10 @@ int main( int argc, char* argv[] ){
     {
         // Publish encoder values to topic /encoders (custom message)
         // ********************************************************************
-        base_controller::encoders encoders;
-        encoders.encoder_l=EncoderL;
-        encoders.encoder_r=EncoderR;
-        encoders_pub.publish(encoders);
+        //base_controller::encoders encoders;
+        //encoders.encoder_l=EncoderL;
+        //encoders.encoder_r=EncoderR;
+        //encoders_pub.publish(encoders);
 
 
 
