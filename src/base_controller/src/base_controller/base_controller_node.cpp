@@ -92,7 +92,7 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
         speed_l = 255;
         speed_r = 0;
     }
-    //set_MD49_speed(speed_l,speed_r);
+    set_MD49_speed(speed_l,speed_r);
     cmd_vel_received=true;
 }
 
@@ -130,10 +130,10 @@ int main( int argc, char* argv[] ){
 
         // Set speed left and right for MD49
         // ********************************
-        if (cmd_vel_received==true) {
-            set_MD49_speed(speed_l,speed_r);
-            cmd_vel_received=false;
-        }
+        //if (cmd_vel_received==true) {
+            //set_MD49_speed(speed_l,speed_r);
+            //cmd_vel_received=false;
+        //}
 
         // Loop
         // ****
