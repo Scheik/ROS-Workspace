@@ -128,97 +128,97 @@ int main(int argc, char **argv){
           ROS_INFO("Button Up pressed");
           cmd_vel_msg.linear.x=0.2;
           cmd_vel_msg.angular.z=0.0;
-          //cmd_vel_pub.publish(cmd_vel_msg);
-          //cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
           cmd_vel_pub.publish(cmd_vel_msg);
           Joy_Button_Up_pressed_last=Joy_Button_Up_pressed;
-          //cmd_vel_pub.publish(cmd_vel_msg);
-          //cmd_vel_pub.publish(cmd_vel_msg);
-          //cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
       }
       else if (Joy_Button_Down_pressed==-1 && Joy_Button_Down_pressed!=Joy_Button_Down_pressed_last){
           ROS_INFO("Button Down pressed");
           cmd_vel_msg.linear.x=-0.2;
           cmd_vel_msg.angular.z=0.0;
-          //cmd_vel_pub.publish(cmd_vel_msg);
-          //cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
           cmd_vel_pub.publish(cmd_vel_msg);
           Joy_Button_Down_pressed_last=Joy_Button_Down_pressed;
-          //cmd_vel_pub.publish(cmd_vel_msg);
-          //cmd_vel_pub.publish(cmd_vel_msg);
-          //cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
       }
       else if (Joy_Button_Left_pressed==1 && Joy_Button_Left_pressed!=Joy_Button_Left_pressed_last){
           ROS_INFO("Button Left pressed");
           cmd_vel_msg.angular.z=1.0;
           cmd_vel_msg.linear.x=0.0;
-          //cmd_vel_pub.publish(cmd_vel_msg);
-          //cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
           cmd_vel_pub.publish(cmd_vel_msg);
           Joy_Button_Left_pressed_last=Joy_Button_Left_pressed;
-          //cmd_vel_pub.publish(cmd_vel_msg);
-          //cmd_vel_pub.publish(cmd_vel_msg);
-          //cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
       }
       else if (Joy_Button_Right_pressed==-1 && Joy_Button_Right_pressed!=Joy_Button_Right_pressed_last){
           ROS_INFO("Button Right pressed");
           cmd_vel_msg.angular.z=-1.0;
           cmd_vel_msg.linear.x=0.0;
-          //cmd_vel_pub.publish(cmd_vel_msg);
-          //cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
           cmd_vel_pub.publish(cmd_vel_msg);
           Joy_Button_Right_pressed_last=Joy_Button_Right_pressed;
-          //cmd_vel_pub.publish(cmd_vel_msg);
-          //cmd_vel_pub.publish(cmd_vel_msg);
-          //cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
       }
       else if (Joy_Button_Up_pressed==0 && Joy_Button_Up_pressed!=Joy_Button_Up_pressed_last){
           ROS_INFO("Button Up released");
           cmd_vel_msg.linear.x=0.0;
           cmd_vel_msg.angular.z=0.0;
-          //cmd_vel_pub.publish(cmd_vel_msg);
-          //cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
           cmd_vel_pub.publish(cmd_vel_msg);
           Joy_Button_Up_pressed_last=Joy_Button_Up_pressed;
-          //cmd_vel_pub.publish(cmd_vel_msg);
-          //cmd_vel_pub.publish(cmd_vel_msg);
-          //cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
       }
       else if (Joy_Button_Down_pressed==0 && Joy_Button_Down_pressed!=Joy_Button_Down_pressed_last){
           ROS_INFO("Button Down released");
           cmd_vel_msg.linear.x=0.0;
           cmd_vel_msg.angular.z=0.0;
-          //cmd_vel_pub.publish(cmd_vel_msg);
-          //cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
           cmd_vel_pub.publish(cmd_vel_msg);
           Joy_Button_Down_pressed_last=Joy_Button_Down_pressed;
-          //cmd_vel_pub.publish(cmd_vel_msg);
-          //cmd_vel_pub.publish(cmd_vel_msg);
-          //cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
       }
       else if (Joy_Button_Left_pressed==0 && Joy_Button_Left_pressed!=Joy_Button_Left_pressed_last){
           ROS_INFO("Button Left released");
           cmd_vel_msg.angular.z=0.0;
           cmd_vel_msg.linear.x=0.0;
-          //cmd_vel_pub.publish(cmd_vel_msg);
-          //cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
           cmd_vel_pub.publish(cmd_vel_msg);
           Joy_Button_Left_pressed_last=Joy_Button_Left_pressed;
-          //cmd_vel_pub.publish(cmd_vel_msg);
-          //cmd_vel_pub.publish(cmd_vel_msg);
-          //cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
       }
       else if (Joy_Button_Right_pressed==0 && Joy_Button_Right_pressed!=Joy_Button_Right_pressed_last){
           ROS_INFO("Button Right released");
           cmd_vel_msg.angular.z=0.0;
           cmd_vel_msg.linear.x=0.0;
-          //cmd_vel_pub.publish(cmd_vel_msg);
-          //cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
           cmd_vel_pub.publish(cmd_vel_msg);
           Joy_Button_Right_pressed_last=Joy_Button_Right_pressed;
-          //cmd_vel_pub.publish(cmd_vel_msg);
-          //cmd_vel_pub.publish(cmd_vel_msg);
-          //cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
+          cmd_vel_pub.publish(cmd_vel_msg);
       }
 
 

@@ -93,8 +93,6 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
         speed_r = 0;
     }
     set_MD49_speed(speed_l,speed_r);
-    set_MD49_speed(speed_l,speed_r);
-    set_MD49_speed(speed_l,speed_r);
     cmd_vel_received=true;
 }
 
