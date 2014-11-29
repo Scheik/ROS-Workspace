@@ -92,7 +92,7 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
         speed_l = 255;
         speed_r = 0;
     }
-
+    set_MD49_speed(speed_l,speed_r);
     cmd_vel_received=true;
 }
 
@@ -117,7 +117,6 @@ int main( int argc, char* argv[] ){
 
     while( n.ok() )
     {
-
         // Publish encoder values to topic /encoders (custom message)
         // ********************************************************************
         base_controller::encoders encoders;
@@ -125,22 +124,24 @@ int main( int argc, char* argv[] ){
         encoders.encoder_r=EncoderR;
         encoders_pub.publish(encoders);
 
+
+
         // Loop
         // ****
         ros::spinOnce();
         loop_rate.sleep();
         // Read encoder and other data from MD49
-            // *************************************
-            read_MD49_Data();
+        // *************************************
+        read_MD49_Data();
 
-            // Set speed left and right for MD49
-            // ********************************
-            if (cmd_vel_received==true) {
-                set_MD49_speed(speed_l,speed_r);
-                //set_MD49_speed(speed_l,speed_r);
-                cmd_vel_received=false;
-            }
+        // Set speed left and right for MD49
+        // ********************************
+        if (cmd_vel_received==true) {
             //set_MD49_speed(speed_l,speed_r);
+            //set_MD49_speed(speed_l,speed_r);
+            cmd_vel_received=false;
+        }
+        //set_MD49_speed(speed_l,speed_r);
 
 
     }// end.mainloop
