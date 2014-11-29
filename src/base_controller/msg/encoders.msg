@@ -1,3 +1,3 @@
 Header header
-int16 encoder_l
-int16 encoder_r
+int32 encoder_l
+int32 encoder_r
