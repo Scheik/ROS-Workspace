@@ -209,14 +209,14 @@ void read_MD49_Data (void){
     printf("\033[H");         /*  position cursor at top-left corner */
     printf ("MD49-Data read from AVR-Master: \n");
     printf("====================================================== \n");
-    //printf("Encoder1 Byte1: %i ",serialBuffer[0]);
-    //printf("Byte2: %i ",serialBuffer[1]);
-    //printf("Byte3: % i ",serialBuffer[2]);
-    //printf("Byte4: %i \n",serialBuffer[3]);
-    //printf("Encoder2 Byte1: %i ",serialBuffer[4]);
-    //printf("Byte2: %i ",serialBuffer[5]);
-    //printf("Byte3: %i ",serialBuffer[6]);
-    //printf("Byte4: %i \n",serialBuffer[7]);
+    printf("Encoder1 Byte1: %i ",serialBuffer[0]);
+    printf("Byte2: %i ",serialBuffer[1]);
+    printf("Byte3: % i ",serialBuffer[2]);
+    printf("Byte4: %i \n",serialBuffer[3]);
+    printf("Encoder2 Byte1: %i ",serialBuffer[4]);
+    printf("Byte2: %i ",serialBuffer[5]);
+    printf("Byte3: %i ",serialBuffer[6]);
+    printf("Byte4: %i \n",serialBuffer[7]);
     printf("EncoderL: %i ",EncoderL);
     printf("EncoderR: %i \n",EncoderR);
     printf("====================================================== \n");
