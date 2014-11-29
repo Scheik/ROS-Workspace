@@ -106,7 +106,7 @@ int main( int argc, char* argv[] ){
 
     // Open serial port
     // ****************
-    filedesc = openSerialPort("/dev/ttyAMA0", B38400);
+    filedesc = openSerialPort("/dev/ttyAMA0", serialport_bps);
     if (filedesc == -1) exit(1);
     usleep(10000);                                      // Sleep for UART to power up and set options
     ROS_DEBUG("Serial Port opened \n");
