@@ -17,7 +17,7 @@ int serialport_bps=B38400;                                  /* defines baudrate 
 int32_t EncoderL;                                           /* stores encoder value left read from md49 */
 int32_t EncoderR;                                           /* stores encoder value right read from md49 */
 unsigned char speed_l=128, speed_r=128;                               /* speed to set for MD49 */
-bool cmd_vel_received=true;
+//bool cmd_vel_received=true;
 double vr = 0.0;
 double vl = 0.0;
 double max_vr = 0.2;
@@ -70,11 +70,6 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
     if (vel_cmd.linear.x>0){
         speed_l = 255;
         speed_r = 255;
-        //serialBuffer[0] = 88;					// 88 =X Steuerbyte um Commands an MD49 zu senden
-        //serialBuffer[1] = 115;					// 115=s Steuerbyte setSpeed
-        //serialBuffer[2] = 255;					// speed1
-        //serialBuffer[3] = 255;					// speed2
-        //writeBytes(fd, 4);
     }
     if (vel_cmd.linear.x<0){
         speed_l = 0;
@@ -93,7 +88,7 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
         speed_r = 0;
     }
     set_MD49_speed(speed_l,speed_r);
-    cmd_vel_received=true;
+    //cmd_vel_received=true;
 }
 
 
