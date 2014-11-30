@@ -1,36 +1,27 @@
 #include <iostream>                                         /* allows to perform standard input and output operations */
+#include <fstream>
 #include <stdio.h>                                          /* Standard input/output definitions */
 #include <stdint.h>                                         /* Standard input/output definitions */
 #include <stdlib.h>                                         /* defines several general purpose functions */
-//#include <string>                                         /* String function definitions */
 #include <unistd.h>                                         /* UNIX standard function definitions */
 #include <fcntl.h>                                          /* File control definitions */
 #include <errno.h>                                          /* Error number definitions */
 #include <termios.h>                                        /* POSIX terminal control definitions */
 #include <ctype.h>                                        /* isxxx() */
-//#include <ros/ros.h>                                        /* ROS */
-//#include <geometry_msgs/Twist.h>                            /* ROS Twist message */
-//#include <base_controller/encoders.h>                       /* Custom message /encoders */
+
 
 const char* serialport="/dev/ttyAMA0";                      /* defines used serialport */
 int serialport_bps=B38400;                                  /* defines baudrate od serialport */
 int32_t EncoderL;                                           /* stores encoder value left read from md49 */
 int32_t EncoderR;                                           /* stores encoder value right read from md49 */
 unsigned char speed_l=128, speed_r=128;                               /* speed to set for MD49 */
-//bool cmd_vel_received=true;
-double vr = 0.0;
-double vl = 0.0;
-//double max_vr = 0.2;
-//double max_vl = 0.2;
-//double min_vr = 0.2;
-//double min_vl = 0.2;
-double base_width = 0.4;                                    /* Base width in meters */
 
 int filedesc;                                               // File descriptor of serial port we will talk to
 int fd;                                                     /* serial port file descriptor */
 unsigned char serialBuffer[16];                             /* Serial buffer to store uart data */
 struct termios orig;                                        // Port options
 
+using namespace std;
 
 int openSerialPort(const char * device, int bps);
 void writeBytes(int descriptor, int count);
@@ -38,7 +29,6 @@ void readBytes(int descriptor, int count);
 void read_MD49_Data (void);
 void set_MD49_speed (unsigned char speed_l, unsigned char speed_r);
 
-using namespace std;
 
 int main( int argc, char* argv[] ){
 
@@ -54,15 +44,17 @@ int main( int argc, char* argv[] ){
     {
 
         // Read encoder and other data from MD49
+        // and put into sqlite db
         // *************************************
         read_MD49_Data();
         usleep(250000);
-        // Set speed left and right for MD49
-        // ********************************
-        //if (cmd_vel_received==true) {
-            //set_MD49_speed(speed_l,speed_r);
-            //cmd_vel_received=false;
-        //}
+        // Read commands from sqlite db and
+        // set speed and other commands to MD49
+        // ************************************
+        ofstream myfile;
+        myfile.open ("example.txt");
+        myfile << "Writing this to a file.\n";
+        myfile.close();
 
     }// end.mainloop
 
@@ -102,7 +94,6 @@ void writeBytes(int descriptor, int count) {
         close(descriptor);				// Close port if there is an error
         exit(1);
     }
-    //write(fd,serialBuffer, count);
 
 }
 
@@ -148,8 +139,7 @@ void read_MD49_Data (void){
     printf("Regulator: %i \n",serialBuffer[16]);
     printf("Timeout: %i \n",serialBuffer[17]);
 
-   // printf("vl= %f \n", vl);
-  //  printf("vr= %f \n", vr);
+
     EncoderL = serialBuffer[0] << 24;                        // Put together first encoder value
     EncoderL |= (serialBuffer[1] << 16);
     EncoderL |= (serialBuffer[2] << 8);
