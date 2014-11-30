@@ -175,41 +175,41 @@ void read_MD49_Data (void){
 
     printf("\033[2J");        /*  clear the screen  */
     printf("\033[H");         /*  position cursor at top-left corner */
-    //printf ("MD49-Data read from AVR-Master: \n");
-    //printf("====================================================== \n");
-    //printf("Encoder1 Byte1: %i ",serialBuffer[0]);
-    //printf("Byte2: %i ",serialBuffer[1]);
-    //printf("Byte3: % i ",serialBuffer[2]);
-    //printf("Byte4: %i \n",serialBuffer[3]);
-    //printf("Encoder2 Byte1: %i ",serialBuffer[4]);
-    //printf("Byte2: %i ",serialBuffer[5]);
-    //printf("Byte3: %i ",serialBuffer[6]);
-    //printf("Byte4: %i \n",serialBuffer[7]);
-    printf("EncoderL: %i ",EncoderL);
-    printf("EncoderR: %i \n",EncoderR);
-    //printf("====================================================== \n");
-    printf("Speed1: %i ",serialBuffer[8]);
-    printf("Speed2: %i \n",serialBuffer[9]);
-    //printf("Volts: %i \n",serialBuffer[10]);
-    //printf("Current1: %i ",serialBuffer[11]);
-    //printf("Current2: %i \n",serialBuffer[12]);
-   // printf("Error: %i \n",serialBuffer[13]);
-    //printf("Acceleration: %i \n",serialBuffer[14]);
-    //printf("Mode: %i \n",serialBuffer[15]);
-    //printf("Regulator: %i \n",serialBuffer[16]);
-    //printf("Timeout: %i \n",serialBuffer[17]);
+    printf ("MD49-Data read from AVR-Master: \n");
+    printf("====================================================== \n");
+    printf("Encoder1 Byte1: %i ",serialBuffer[0]);
+    printf("Byte2: %i ",serialBuffer[1]);
+    printf("Byte3: % i ",serialBuffer[2]);
+    printf("Byte4: %i \n",serialBuffer[3]);
+    printf("Encoder2 Byte1: %i ",serialBuffer[4]);
+    printf("Byte2: %i ",serialBuffer[5]);
+    printf("Byte3: %i ",serialBuffer[6]);
+    printf("Byte4: %i \n",serialBuffer[7]);
+    printf("EncoderL: %i ",serialBuffer[8]);
+    printf("EncoderR: %i \n",serialBuffer[9]);
+    printf("====================================================== \n");
+    printf("Speed1: %i ",serialBuffer[10]);
+    printf("Speed2: %i \n",serialBuffer[11]);
+    printf("Volts: %i \n",serialBuffer[12]);
+    printf("Current1: %i ",serialBuffer[13]);
+    printf("Current2: %i \n",serialBuffer[14]);
+    printf("Error: %i \n",serialBuffer[15]);
+    printf("Acceleration: %i \n",serialBuffer[16]);
+    printf("Mode: %i \n",serialBuffer[17]);
+    printf("Regulator: %i \n",serialBuffer[18]);
+    printf("Timeout: %i \n",serialBuffer[19]);
 
    // printf("vl= %f \n", vl);
   //  printf("vr= %f \n", vr);
 
-    EncoderL = serialBuffer[0] << 24;                        // Put together first encoder value
-    EncoderL |= (serialBuffer[1] << 16);
-    EncoderL |= (serialBuffer[2] << 8);
-    EncoderL |= (serialBuffer[3]);
-    EncoderR = serialBuffer[4] << 24;                        // Put together second encoder value
-    EncoderR |= (serialBuffer[5] << 16);
-    EncoderR |= (serialBuffer[6] << 8);
-    EncoderR |= (serialBuffer[7]);
+    //EncoderL = serialBuffer[0] << 24;                        // Put together first encoder value
+    //EncoderL |= (serialBuffer[1] << 16);
+    //EncoderL |= (serialBuffer[2] << 8);
+    //EncoderL |= (serialBuffer[3]);
+   //EncoderR = serialBuffer[4] << 24;                        // Put together second encoder value
+    //EncoderR |= (serialBuffer[5] << 16);
+    //EncoderR |= (serialBuffer[6] << 8);
+    //EncoderR |= (serialBuffer[7]);
 
 }
 
