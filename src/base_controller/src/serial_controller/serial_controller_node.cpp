@@ -157,28 +157,62 @@ void read_MD49_Data (void){
     else{
         myfile << itoa(serialBuffer[0],buffer,10);
     }
-
     myfile << "\n";
     printf("Byte2: %i ",serialBuffer[1]);
-    myfile << itoa(serialBuffer[1],buffer,10);
+    if (serialBuffer[1]==0){
+        myfile << "000";
+    }
+    else{
+        myfile << itoa(serialBuffer[1],buffer,10);
+    }
     myfile << "\n";
     printf("Byte3: % i ",serialBuffer[2]);
-    myfile <<  itoa(serialBuffer[2],buffer,10);
+    if (serialBuffer[2]==0){
+        myfile << "000";
+    }
+    else{
+        myfile << itoa(serialBuffer[2],buffer,10);
+    }
     myfile << "\n";
     printf("Byte4: %i \n",serialBuffer[3]);
-    myfile <<  itoa(serialBuffer[3],buffer,10);
+    if (serialBuffer[3]==0){
+        myfile << "000";
+    }
+    else{
+        myfile << itoa(serialBuffer[3],buffer,10);
+    }
     myfile << "\n";
     printf("Encoder2 Byte1: %i ",serialBuffer[4]);
-    myfile <<  itoa(serialBuffer[4],buffer,10);
+    if (serialBuffer[4]==0){
+        myfile << "000";
+    }
+    else{
+        myfile << itoa(serialBuffer[4],buffer,10);
+    }
     myfile << "\n";
     printf("Byte2: %i ",serialBuffer[5]);
-    myfile <<  itoa(serialBuffer[5],buffer,10);
+    if (serialBuffer[5]==0){
+        myfile << "000";
+    }
+    else{
+        myfile << itoa(serialBuffer[5],buffer,10);
+    }
     myfile << "\n";
     printf("Byte3: %i ",serialBuffer[6]);
-    myfile <<  itoa(serialBuffer[6],buffer,10);
+    if (serialBuffer[6]==0){
+        myfile << "000";
+    }
+    else{
+        myfile << itoa(serialBuffer[6],buffer,10);
+    }
     myfile << "\n";
     printf("Byte4: %i \n",serialBuffer[7]);
-    myfile <<  itoa(serialBuffer[7],buffer,10);
+    if (serialBuffer[7]==0){
+        myfile << "000";
+    }
+    else{
+        myfile << itoa(serialBuffer[7],buffer,10);
+    }
     myfile << "\n";
     printf("EncoderL: %i ",EncoderL);
    // myfile <<  itoa(EncoderL,buffer,10);
@@ -188,34 +222,84 @@ void read_MD49_Data (void){
     //myfile << "\n";
     printf("====================================================== \n");
     printf("Speed1: %i ",serialBuffer[8]);
-    myfile << itoa(serialBuffer[8],buffer,10);
+    if (serialBuffer[8]==0){
+        myfile << "000";
+    }
+    else{
+        myfile << itoa(serialBuffer[8],buffer,10);
+    }
     myfile << "\n";
     printf("Speed2: %i \n",serialBuffer[9]);
-    myfile << itoa(serialBuffer[9],buffer,10);
+    if (serialBuffer[9]==0){
+        myfile << "000";
+    }
+    else{
+        myfile << itoa(serialBuffer[9],buffer,10);
+    }
     myfile << "\n";
     printf("Volts: %i \n",serialBuffer[10]);
-    myfile << itoa(serialBuffer[10],buffer,10);
+    if (serialBuffer[10]==0){
+        myfile << "000";
+    }
+    else{
+        myfile << itoa(serialBuffer[10],buffer,10);
+    }
     myfile << "\n";
     printf("Current1: %i ",serialBuffer[11]);
-    myfile << itoa(serialBuffer[11],buffer,10);
+    if (serialBuffer[11]==0){
+        myfile << "000";
+    }
+    else{
+        myfile << itoa(serialBuffer[11],buffer,10);
+    }
     myfile << "\n";
     printf("Current2: %i \n",serialBuffer[12]);
-    myfile << itoa(serialBuffer[12],buffer,10);
+    if (serialBuffer[12]==0){
+        myfile << "000";
+    }
+    else{
+        myfile << itoa(serialBuffer[12],buffer,10);
+    }
     myfile << "\n";
     printf("Error: %i \n",serialBuffer[13]);
-    myfile << itoa(serialBuffer[13],buffer,10);
+    if (serialBuffer[13]==0){
+        myfile << "000";
+    }
+    else{
+        myfile << itoa(serialBuffer[13],buffer,10);
+    }
     myfile << "\n";
     printf("Acceleration: %i \n",serialBuffer[14]);
-    myfile << itoa(serialBuffer[14],buffer,10);
+    if (serialBuffer[14]==0){
+        myfile << "000";
+    }
+    else{
+        myfile << itoa(serialBuffer[14],buffer,10);
+    }
     myfile << "\n";
     printf("Mode: %i \n",serialBuffer[15]);
-    myfile << itoa(serialBuffer[15],buffer,10);
+    if (serialBuffer[15]==0){
+        myfile << "000";
+    }
+    else{
+        myfile << itoa(serialBuffer[15],buffer,10);
+    }
     myfile << "\n";
     printf("Regulator: %i \n",serialBuffer[16]);
-    myfile << itoa(serialBuffer[16],buffer,10);
+    if (serialBuffer[16]==0){
+        myfile << "000";
+    }
+    else{
+        myfile << itoa(serialBuffer[16],buffer,10);
+    }
     myfile << "\n";
     printf("Timeout: %i \n",serialBuffer[17]);
-    myfile << itoa(serialBuffer[17],buffer,10);
+    if (serialBuffer[17]==0){
+        myfile << "000";
+    }
+    else{
+        myfile << itoa(serialBuffer[17],buffer,10);
+    }
     myfile << "\n";
     printf("speed_l = %i \n",speed_l);
     printf("speed_r = %i \n",speed_r);
