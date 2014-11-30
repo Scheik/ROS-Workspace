@@ -29,6 +29,29 @@ void readBytes(int descriptor, int count);
 void read_MD49_Data (void);
 void set_MD49_speed (unsigned char speed_l, unsigned char speed_r);
 
+char* itoa(int value, char* result, int base) {
+        // check that the base if valid
+        if (base < 2 || base > 36) { *result = '\0'; return result; }
+
+        char* ptr = result, *ptr1 = result, tmp_char;
+        int tmp_value;
+
+        do {
+            tmp_value = value;
+            value /= base;
+            *ptr++ = "zyxwvutsrqponmlkjihgfedcba9876543210123456789abcdefghijklmnopqrstuvwxyz" [35 + (tmp_value - value * base)];
+        } while ( value );
+
+        // Apply negative sign
+        if (tmp_value < 0) *ptr++ = '-';
+        *ptr-- = '\0';
+        while(ptr1 < ptr) {
+            tmp_char = *ptr;
+            *ptr--= *ptr1;
+            *ptr1++ = tmp_char;
+        }
+        return result;
+    }
 
 int main( int argc, char* argv[] ){
 
@@ -119,7 +142,7 @@ void read_MD49_Data (void){
     printf ("MD49-Data read from AVR-Master: \n");
     printf("====================================================== \n");
     printf("Encoder1 Byte1: %i ",serialBuffer[0]);
-    myfile << ("%i",serialBuffer[0]);
+    myfile << itoa(serialBuffer[0],buffer,10);
     myfile << "\n";
     printf("Byte2: %i ",serialBuffer[1]);
     myfile << ("%i", serialBuffer[1]);
