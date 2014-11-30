@@ -50,7 +50,7 @@ int main( int argc, char* argv[] ){
         // and put into sqlite db
         // *************************************
         read_MD49_Data();
-        usleep(100000);
+        usleep(50000);
 
         // Read commands from sqlite db and
         // set speed and other commands to MD49
@@ -74,7 +74,7 @@ int main( int argc, char* argv[] ){
         }
         else cout << "Unable to open file";
         set_MD49_speed(speed_l, speed_r);
-        usleep(100000);
+        usleep(50000);
 
 
     }// end.mainloop
