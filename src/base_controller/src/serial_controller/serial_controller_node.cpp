@@ -74,8 +74,17 @@ int main( int argc, char* argv[] ){
         // Read commands from sqlite db and
         // set speed and other commands to MD49
         // ************************************
-        ofstream myfile;
-        myfile.open ("md49_commands.txt");
+        string line;
+        ifstream myfile ("md49_commands.txt");
+        if (myfile.is_open())
+        {
+            while ( getline (myfile,line) )
+            {
+                cout << line << '\n';
+            }
+            myfile.close();
+        }
+        else cout << "Unable to open file";
 
     }// end.mainloop
 
