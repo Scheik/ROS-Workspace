@@ -29,7 +29,7 @@ double base_width = 0.4;                                    /* Base width in met
 
 //int filedesc;                                               // File descriptor of serial port we will talk to
 //int fd;                                                     /* serial port file descriptor */
-unsigned char serialBuffer[16];                             /* Serial buffer to store uart data */
+unsigned char serialBuffer[18];                             /* Serial buffer to store uart data */
 //struct termios orig;                                        // Port options
 
 //int openSerialPort(const char * device, int bps);
