@@ -151,7 +151,13 @@ void read_MD49_Data (void){
     printf ("MD49-Data read from AVR-Master: \n");
     printf("====================================================== \n");
     printf("Encoder1 Byte1: %i ",serialBuffer[0]);
-    myfile << itoa(serialBuffer[0],buffer,10);
+    if (serialBuffer[0]==0){
+        myfile << "000";
+    }
+    else{
+        myfile << itoa(serialBuffer[0],buffer,10);
+    }
+
     myfile << "\n";
     printf("Byte2: %i ",serialBuffer[1]);
     myfile << itoa(serialBuffer[1],buffer,10);
