@@ -221,6 +221,7 @@ void read_MD49_Data (void){
     myfile << itoa(serialBuffer[17],buffer,10);
     myfile << "\n";
     printf("speed_l = %i \n",speed_l);
+     printf("speed_l = %i \n",speed_r);
 
     EncoderL = serialBuffer[0] << 24;                        // Put together first encoder value
     EncoderL |= (serialBuffer[1] << 16);
