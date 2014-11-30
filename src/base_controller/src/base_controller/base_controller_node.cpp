@@ -141,7 +141,7 @@ int main( int argc, char* argv[] ){
 
         // Loop
         // ****
-        set_MD49_speed(speed_l,speed_r);
+        //set_MD49_speed(speed_l,speed_r);
         ros::spinOnce();
         loop_rate.sleep();
 
