@@ -112,13 +112,14 @@ void read_MD49_Data (void){
     myfile.open ("example.txt");
     //myfile << "Writing this to a file.\n";
 
+     char buffer[33];
 
     printf("\033[2J");        /*  clear the screen  */
     printf("\033[H");         /*  position cursor at top-left corner */
     printf ("MD49-Data read from AVR-Master: \n");
     printf("====================================================== \n");
     printf("Encoder1 Byte1: %i ",serialBuffer[0]);
-    myfile << serialBuffer[0];
+    myfile << printf ("%i",serialBuffer[0]);
     myfile << "\n";
     printf("Byte2: %i ",serialBuffer[1]);
     myfile << serialBuffer[1];
