@@ -86,7 +86,7 @@ int main( int argc, char* argv[] ){
                 char data[10];
                 std::copy(line.begin(), line.end(), data);
                 md49_data[i]=atoi(data);
-                i +=i;
+                i =i++;
             }
             myfile.close();
             speed_l=md49_data[0];
