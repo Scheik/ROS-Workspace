@@ -175,11 +175,11 @@ void read_MD49_Data (void){
     myfile <<  itoa(serialBuffer[7],buffer,10);
     myfile << "\n";
     printf("EncoderL: %i ",EncoderL);
-    myfile <<  itoa(EncoderL,buffer,10);
-    myfile << "\n";
+   // myfile <<  itoa(EncoderL,buffer,10);
+    //myfile << "\n";
     printf("EncoderR: %i \n",EncoderR);
-    myfile <<  itoa(EncoderR,buffer,10);
-    myfile << "\n";
+    //myfile <<  itoa(EncoderR,buffer,10);
+    //myfile << "\n";
     printf("====================================================== \n");
     printf("Speed1: %i ",serialBuffer[8]);
     myfile << itoa(serialBuffer[8],buffer,10);
