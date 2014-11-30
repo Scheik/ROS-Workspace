@@ -39,18 +39,18 @@ void read_MD49_Data (void);
 void set_MD49_speed (unsigned char speed_l, unsigned char speed_r);
 char* itoa(int value, char* result, int base);
 
-bool serial_busy = false;
+//bool serial_busy = false;
 
 using namespace std;
 
 
 void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
-    if (serial_busy==true)
-    {
-        return;
-    }
-    else
-    {
+    //if (serial_busy==true)
+    //{
+    //    return;
+    //}
+    //else
+    //{
         if (vel_cmd.linear.x>0){
             speed_l = 255;
             speed_r = 255;
@@ -72,7 +72,7 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
             speed_r = 000;
         }
         set_MD49_speed(speed_l,speed_r);
-    }
+    //}
     //cmd_vel_received=true;
 
 
@@ -171,14 +171,7 @@ void read_MD49_Data (void){
     }
     else cout << "Unable to open file";
 
-    EncoderL = serialBuffer[0] << 24;                        // Put together first encoder value
-    EncoderL |= (serialBuffer[1] << 16);
-    EncoderL |= (serialBuffer[2] << 8);
-    EncoderL |= (serialBuffer[3]);
-    EncoderR = serialBuffer[4] << 24;                        // Put together second encoder value
-    EncoderR |= (serialBuffer[5] << 16);
-    EncoderR |= (serialBuffer[6] << 8);
-    EncoderR |= (serialBuffer[7]);
+
 
     printf("\033[2J");        /*  clear the screen  */
     printf("\033[H");         /*  position cursor at top-left corner */
@@ -208,6 +201,15 @@ void read_MD49_Data (void){
 
    // printf("vl= %f \n", vl);
   //  printf("vr= %f \n", vr);
+
+    EncoderL = serialBuffer[0] << 24;                        // Put together first encoder value
+    EncoderL |= (serialBuffer[1] << 16);
+    EncoderL |= (serialBuffer[2] << 8);
+    EncoderL |= (serialBuffer[3]);
+    EncoderR = serialBuffer[4] << 24;                        // Put together second encoder value
+    EncoderR |= (serialBuffer[5] << 16);
+    EncoderR |= (serialBuffer[6] << 8);
+    EncoderR |= (serialBuffer[7]);
 
 }
 
