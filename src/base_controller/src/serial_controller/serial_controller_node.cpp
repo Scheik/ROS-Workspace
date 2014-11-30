@@ -1,5 +1,4 @@
 #include <iostream>                                         /* allows to perform standard input and output operations */
-#include <fstream>
 #include <stdio.h>                                          /* Standard input/output definitions */
 #include <stdint.h>                                         /* Standard input/output definitions */
 #include <stdlib.h>                                         /* defines several general purpose functions */
@@ -49,10 +48,7 @@ int main( int argc, char* argv[] ){
     if (filedesc == -1) exit(1);
     usleep(10000);                                      // Sleep for UART to power up and set options
 
-    ofstream MD49Data;
-    MD49Data.open ("MD49Data.txt");
-    MD49Data << "Writing this to a file.\n";
-    MD49Data.close();
+
 
     while( 1 )
     {
@@ -60,7 +56,7 @@ int main( int argc, char* argv[] ){
         // Read encoder and other data from MD49
         // *************************************
         read_MD49_Data();
-
+        usleep(250000);
         // Set speed left and right for MD49
         // ********************************
         //if (cmd_vel_received==true) {
