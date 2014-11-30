@@ -290,7 +290,13 @@ void read_MD49_Data (void){
         myfile << "000";
     }
     else{
-        myfile << itoa(serialBuffer[16],buffer,10);
+        if (serialBuffer[16]<10){
+            myfile << "00";
+            myfile << itoa(serialBuffer[16],buffer,10);
+        }
+        else{
+            myfile << itoa(serialBuffer[16],buffer,10);
+        }
     }
     myfile << "\n";
     printf("Timeout: %i \n",serialBuffer[17]);
