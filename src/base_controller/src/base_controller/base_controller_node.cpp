@@ -1,4 +1,5 @@
 #include <iostream>                                         /* allows to perform standard input and output operations */
+#include <fstream>
 #include <stdio.h>                                          /* Standard input/output definitions */
 #include <stdint.h>                                         /* Standard input/output definitions */
 #include <stdlib.h>                                         /* defines several general purpose functions */
@@ -31,7 +32,6 @@ int fd;                                                     /* serial port file 
 unsigned char serialBuffer[16];                             /* Serial buffer to store uart data */
 struct termios orig;                                        // Port options
 
-
 int openSerialPort(const char * device, int bps);
 void writeBytes(int descriptor, int count);
 void readBytes(int descriptor, int count);
@@ -39,6 +39,8 @@ void read_MD49_Data (void);
 void set_MD49_speed (unsigned char speed_l, unsigned char speed_r);
 
 bool serial_busy = false;
+
+using namespace std;
 
 
 void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
@@ -108,10 +110,10 @@ int main( int argc, char* argv[] ){
 
     // Open serial port
     // ****************
-    filedesc = openSerialPort("/dev/ttyAMA0", serialport_bps);
-    if (filedesc == -1) exit(1);
-    usleep(10000);                                      // Sleep for UART to power up and set options
-    ROS_DEBUG("Serial Port opened \n");
+    //filedesc = openSerialPort("/dev/ttyAMA0", serialport_bps);
+    //if (filedesc == -1) exit(1);
+    //usleep(10000);                                      // Sleep for UART to power up and set options
+    //ROS_DEBUG("Serial Port opened \n");
 
     // Set nodes looprate 10Hz
     // ***********************
@@ -128,9 +130,9 @@ int main( int argc, char* argv[] ){
 
         // Read encoder and other data from MD49
         // *************************************
-        serial_busy=true;
+        //serial_busy=true;
         read_MD49_Data();
-        serial_busy=false;
+        //serial_busy=false;
 
         // Set speed left and right for MD49
         // ********************************
@@ -198,10 +200,28 @@ void readBytes(int descriptor, int count) {
 
 void read_MD49_Data (void){
 
-    serialBuffer[0] = 82;							// 82=R Steuerbyte um alle Daten vom MD49 zu lesen
-    writeBytes(fd, 1);
+    //serialBuffer[0] = 82;							// 82=R Steuerbyte um alle Daten vom MD49 zu lesen
+    //writeBytes(fd, 1);
     //Daten lesen und in Array schreiben
-    readBytes(fd, 18);
+    //readBytes(fd, 18);
+
+    string line;
+    ifstream myfile ("md49_data.txt");
+    if (myfile.is_open())
+    {
+        int i=0;
+        while ( getline (myfile,line) )
+        {
+            //cout << line << '\n';
+            char data[10];
+            std::copy(line.begin(), line.end(), data);
+            serialBuffer[i]=atoi(data);
+            i =i++;
+        }
+        myfile.close();
+
+    }
+    else cout << "Unable to open file";
 
     EncoderL = serialBuffer[0] << 24;                        // Put together first encoder value
     EncoderL |= (serialBuffer[1] << 16);
