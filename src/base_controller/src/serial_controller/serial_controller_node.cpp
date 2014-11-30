@@ -146,327 +146,53 @@ void read_MD49_Data (void){
     EncoderR |= (serialBuffer[6] << 8);
     EncoderR |= (serialBuffer[7]);
 
+    int i=0;
+
+    for (i=0;i<18;i++){
+        if (serialBuffer[i]==0){
+            myfile << "000";
+        }
+        else if (serialBuffer[i]<10){
+            myfile << "00";
+            myfile << itoa(serialBuffer[i],buffer,10);
+        }
+        else if (serialBuffer[i]<100){
+            myfile << "0";
+            myfile << itoa(serialBuffer[i],buffer,10);
+        }
+        else{
+            myfile << itoa(serialBuffer[i],buffer,10);
+        }
+        myfile << "\n";
+    }
+
     printf("\033[2J");        /*  clear the screen  */
     printf("\033[H");         /*  position cursor at top-left corner */
     printf ("MD49-Data read from AVR-Master: \n");
     printf("====================================================== \n");
     printf("Encoder1 Byte1: %i ",serialBuffer[0]);
-    if (serialBuffer[0]==0){
-        myfile << "000";
-    }
-    else if (serialBuffer[0]<10){
-        myfile << "00";
-        myfile << itoa(serialBuffer[0],buffer,10);
-    }
-    else if (serialBuffer[0]<100){
-        myfile << "0";
-        myfile << itoa(serialBuffer[0],buffer,10);
-    }
-    else{
-        myfile << itoa(serialBuffer[0],buffer,10);
-    }
-
-    myfile << "\n";
     printf("Byte2: %i ",serialBuffer[1]);
-    if (serialBuffer[1]==0){
-        myfile << "000";
-    }
-    else if (serialBuffer[1]<10){
-        myfile << "00";
-        myfile << itoa(serialBuffer[1],buffer,10);
-    }
-    else if (serialBuffer[1]<100){
-        myfile << "0";
-        myfile << itoa(serialBuffer[1],buffer,10);
-    }
-    else{
-        myfile << itoa(serialBuffer[1],buffer,10);
-    }
-
-    myfile << "\n";
     printf("Byte3: % i ",serialBuffer[2]);
-    if (serialBuffer[2]==0){
-        myfile << "000";
-    }
-    else if (serialBuffer[2]<10){
-        myfile << "00";
-        myfile << itoa(serialBuffer[2],buffer,10);
-    }
-    else if (serialBuffer[2]<100){
-        myfile << "0";
-        myfile << itoa(serialBuffer[2],buffer,10);
-    }
-    else{
-        myfile << itoa(serialBuffer[2],buffer,10);
-    }
-
-    myfile << "\n";
     printf("Byte4: %i \n",serialBuffer[3]);
-    if (serialBuffer[3]==0){
-        myfile << "000";
-    }
-    else if (serialBuffer[3]<10){
-        myfile << "00";
-        myfile << itoa(serialBuffer[3],buffer,10);
-    }
-    else if (serialBuffer[3]<100){
-        myfile << "0";
-        myfile << itoa(serialBuffer[3],buffer,10);
-    }
-    else{
-        myfile << itoa(serialBuffer[3],buffer,10);
-    }
-
-    myfile << "\n";
     printf("Encoder2 Byte1: %i ",serialBuffer[4]);
-    if (serialBuffer[4]==0){
-        myfile << "000";
-    }
-    else if (serialBuffer[4]<10){
-        myfile << "00";
-        myfile << itoa(serialBuffer[4],buffer,10);
-    }
-    else if (serialBuffer[4]<100){
-        myfile << "0";
-        myfile << itoa(serialBuffer[4],buffer,10);
-    }
-    else{
-        myfile << itoa(serialBuffer[4],buffer,10);
-    }
-
-    myfile << "\n";
     printf("Byte2: %i ",serialBuffer[5]);
-    if (serialBuffer[5]==0){
-        myfile << "000";
-    }
-    else if (serialBuffer[5]<10){
-        myfile << "00";
-        myfile << itoa(serialBuffer[5],buffer,10);
-    }
-    else if (serialBuffer[5]<100){
-        myfile << "0";
-        myfile << itoa(serialBuffer[5],buffer,10);
-    }
-    else{
-        myfile << itoa(serialBuffer[5],buffer,10);
-    }
-
-    myfile << "\n";
     printf("Byte3: %i ",serialBuffer[6]);
-    if (serialBuffer[6]==0){
-        myfile << "000";
-    }
-    else if (serialBuffer[6]<10){
-        myfile << "00";
-        myfile << itoa(serialBuffer[6],buffer,10);
-    }
-    else if (serialBuffer[6]<100){
-        myfile << "0";
-        myfile << itoa(serialBuffer[6],buffer,10);
-    }
-    else{
-        myfile << itoa(serialBuffer[6],buffer,10);
-    }
-
-    myfile << "\n";
     printf("Byte4: %i \n",serialBuffer[7]);
-    if (serialBuffer[7]==0){
-        myfile << "000";
-    }
-    else if (serialBuffer[7]<10){
-        myfile << "00";
-        myfile << itoa(serialBuffer[7],buffer,10);
-    }
-    else if (serialBuffer[7]<100){
-        myfile << "0";
-        myfile << itoa(serialBuffer[7],buffer,10);
-    }
-    else{
-        myfile << itoa(serialBuffer[7],buffer,10);
-    }
-
-    myfile << "\n";
     printf("EncoderL: %i ",EncoderL);
-   // myfile <<  itoa(EncoderL,buffer,10);
-    //myfile << "\n";
     printf("EncoderR: %i \n",EncoderR);
-    //myfile <<  itoa(EncoderR,buffer,10);
-    //myfile << "\n";
     printf("====================================================== \n");
     printf("Speed1: %i ",serialBuffer[8]);
-    if (serialBuffer[8]==0){
-        myfile << "000";
-    }
-    else if (serialBuffer[8]<10){
-        myfile << "00";
-        myfile << itoa(serialBuffer[8],buffer,10);
-    }
-    else if (serialBuffer[8]<100){
-        myfile << "0";
-        myfile << itoa(serialBuffer[8],buffer,10);
-    }
-    else{
-        myfile << itoa(serialBuffer[8],buffer,10);
-    }
-
-    myfile << "\n";
     printf("Speed2: %i \n",serialBuffer[9]);
-    if (serialBuffer[9]==0){
-        myfile << "000";
-    }
-    else if (serialBuffer[9]<10){
-        myfile << "00";
-        myfile << itoa(serialBuffer[9],buffer,10);
-    }
-    else if (serialBuffer[9]<100){
-        myfile << "0";
-        myfile << itoa(serialBuffer[9],buffer,10);
-    }
-    else{
-        myfile << itoa(serialBuffer[9],buffer,10);
-    }
-
-    myfile << "\n";
     printf("Volts: %i \n",serialBuffer[10]);
-    if (serialBuffer[10]==0){
-        myfile << "000";
-    }
-    else if (serialBuffer[10]<10){
-        myfile << "00";
-        myfile << itoa(serialBuffer[10],buffer,10);
-    }
-    else if (serialBuffer[10]<100){
-        myfile << "0";
-        myfile << itoa(serialBuffer[10],buffer,10);
-    }
-    else{
-        myfile << itoa(serialBuffer[10],buffer,10);
-    }
-
-    myfile << "\n";
     printf("Current1: %i ",serialBuffer[11]);
-    if (serialBuffer[11]==0){
-        myfile << "000";
-    }
-    else if (serialBuffer[11]<10){
-        myfile << "00";
-        myfile << itoa(serialBuffer[11],buffer,10);
-    }
-    else if (serialBuffer[11]<100){
-        myfile << "0";
-        myfile << itoa(serialBuffer[11],buffer,10);
-    }
-    else{
-        myfile << itoa(serialBuffer[11],buffer,10);
-    }
-
-    myfile << "\n";
     printf("Current2: %i \n",serialBuffer[12]);
-    if (serialBuffer[12]==0){
-        myfile << "000";
-    }
-    else if (serialBuffer[12]<10){
-        myfile << "00";
-        myfile << itoa(serialBuffer[12],buffer,10);
-    }
-    else if (serialBuffer[12]<100){
-        myfile << "0";
-        myfile << itoa(serialBuffer[12],buffer,10);
-    }
-    else{
-        myfile << itoa(serialBuffer[12],buffer,10);
-    }
-
-    myfile << "\n";
     printf("Error: %i \n",serialBuffer[13]);
-    if (serialBuffer[13]==0){
-        myfile << "000";
-    }
-    else if (serialBuffer[13]<10){
-        myfile << "00";
-        myfile << itoa(serialBuffer[13],buffer,10);
-    }
-    else if (serialBuffer[13]<100){
-        myfile << "0";
-        myfile << itoa(serialBuffer[13],buffer,10);
-    }
-    else{
-        myfile << itoa(serialBuffer[13],buffer,10);
-    }
-
-    myfile << "\n";
     printf("Acceleration: %i \n",serialBuffer[14]);
-    if (serialBuffer[14]==0){
-        myfile << "000";
-    }
-    else if (serialBuffer[14]<10){
-        myfile << "00";
-        myfile << itoa(serialBuffer[14],buffer,10);
-    }
-    else if (serialBuffer[14]<100){
-        myfile << "0";
-        myfile << itoa(serialBuffer[14],buffer,10);
-    }
-    else{
-        myfile << itoa(serialBuffer[14],buffer,10);
-    }
-
-    myfile << "\n";
     printf("Mode: %i \n",serialBuffer[15]);
-    if (serialBuffer[15]==0){
-        myfile << "000";
-    }
-    else if (serialBuffer[15]<10){
-        myfile << "00";
-        myfile << itoa(serialBuffer[15],buffer,10);
-    }
-    else if (serialBuffer[15]<100){
-        myfile << "0";
-        myfile << itoa(serialBuffer[15],buffer,10);
-    }
-    else{
-        myfile << itoa(serialBuffer[15],buffer,10);
-    }
-
-    myfile << "\n";
     printf("Regulator: %i \n",serialBuffer[16]);
-    if (serialBuffer[16]==0){
-        myfile << "000";
-    }
-    else{
-        if (serialBuffer[16]<10){
-            myfile << "00";
-            myfile << itoa(serialBuffer[16],buffer,10);
-        }
-        else if (serialBuffer[16]<100){
-            myfile << "0";
-            myfile << itoa(serialBuffer[16],buffer,10);
-        }
-        else{
-            myfile << itoa(serialBuffer[16],buffer,10);
-        }
-    }
-
-    myfile << "\n";
     printf("Timeout: %i \n",serialBuffer[17]);
-    if (serialBuffer[17]==0){
-        myfile << "000";
-    }
-    else if (serialBuffer[17]<10){
-        myfile << "00";
-        myfile << itoa(serialBuffer[17],buffer,10);
-    }
-    else if (serialBuffer[17]<100){
-        myfile << "0";
-        myfile << itoa(serialBuffer[17],buffer,10);
-    }
-    else{
-        myfile << itoa(serialBuffer[17],buffer,10);
-    }
-    myfile << "\n";
     printf("speed_l = %i \n",speed_l);
     printf("speed_r = %i \n",speed_r);
-
 
     myfile.close();
 }
