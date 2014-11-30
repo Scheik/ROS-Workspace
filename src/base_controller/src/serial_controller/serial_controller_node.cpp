@@ -119,10 +119,10 @@ void read_MD49_Data (void){
     printf ("MD49-Data read from AVR-Master: \n");
     printf("====================================================== \n");
     printf("Encoder1 Byte1: %i ",serialBuffer[0]);
-    myfile << printf ("%i",serialBuffer[0]);
+    myfile << ("%i",serialBuffer[0]);
     myfile << "\n";
     printf("Byte2: %i ",serialBuffer[1]);
-    myfile << printf ("%i", serialBuffer[1]);
+    myfile << ("%i", serialBuffer[1]);
     myfile << "\n";
     printf("Byte3: % i ",serialBuffer[2]);
     myfile <<  printf ("%i",serialBuffer[2]);
