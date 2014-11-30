@@ -132,7 +132,7 @@ void read_MD49_Data (void){
     readBytes(fd, 18);
 
     ofstream myfile;
-    myfile.open ("example.txt");
+    myfile.open ("md49_data.txt");
     //myfile << "Writing this to a file.\n";
 
     char buffer[33];
