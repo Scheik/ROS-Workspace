@@ -28,31 +28,10 @@ void writeBytes(int descriptor, int count);
 void readBytes(int descriptor, int count);
 void read_MD49_Data (void);
 void set_MD49_speed (unsigned char speed_l, unsigned char speed_r);
+char* itoa(int value, char* result, int base);
 unsigned char md49_data[18];
 
-char* itoa(int value, char* result, int base) {
-        // check that the base if valid
-        if (base < 2 || base > 36) { *result = '\0'; return result; }
 
-        char* ptr = result, *ptr1 = result, tmp_char;
-        int tmp_value;
-
-        do {
-            tmp_value = value;
-            value /= base;
-            *ptr++ = "zyxwvutsrqponmlkjihgfedcba9876543210123456789abcdefghijklmnopqrstuvwxyz" [35 + (tmp_value - value * base)];
-        } while ( value );
-
-        // Apply negative sign
-        if (tmp_value < 0) *ptr++ = '-';
-        *ptr-- = '\0';
-        while(ptr1 < ptr) {
-            tmp_char = *ptr;
-            *ptr--= *ptr1;
-            *ptr1++ = tmp_char;
-        }
-        return result;
-    }
 
 int main( int argc, char* argv[] ){
 
@@ -155,8 +134,16 @@ void read_MD49_Data (void){
     ofstream myfile;
     myfile.open ("md49_data.txt");
     //myfile << "Writing this to a file.\n";
-
     char buffer[33];
+
+    EncoderL = serialBuffer[0] << 24;                        // Put together first encoder value
+    EncoderL |= (serialBuffer[1] << 16);
+    EncoderL |= (serialBuffer[2] << 8);
+    EncoderL |= (serialBuffer[3]);
+    EncoderR = serialBuffer[4] << 24;                        // Put together second encoder value
+    EncoderR |= (serialBuffer[5] << 16);
+    EncoderR |= (serialBuffer[6] << 8);
+    EncoderR |= (serialBuffer[7]);
 
     printf("\033[2J");        /*  clear the screen  */
     printf("\033[H");         /*  position cursor at top-left corner */
@@ -224,16 +211,8 @@ void read_MD49_Data (void){
     myfile << itoa(serialBuffer[17],buffer,10);
     myfile << "\n";
     printf("speed_l = %i \n",speed_l);
-     printf("speed_l = %i \n",speed_r);
+    printf("speed_r = %i \n",speed_r);
 
-    EncoderL = serialBuffer[0] << 24;                        // Put together first encoder value
-    EncoderL |= (serialBuffer[1] << 16);
-    EncoderL |= (serialBuffer[2] << 8);
-    EncoderL |= (serialBuffer[3]);
-    EncoderR = serialBuffer[4] << 24;                        // Put together second encoder value
-    EncoderR |= (serialBuffer[5] << 16);
-    EncoderR |= (serialBuffer[6] << 8);
-    EncoderR |= (serialBuffer[7]);
 
     myfile.close();
 }
@@ -245,3 +224,27 @@ void set_MD49_speed (unsigned char speed_l, unsigned char speed_r){
     serialBuffer[3] = speed_r;				// speed2
     writeBytes(fd, 4);
 }
+
+char* itoa(int value, char* result, int base) {
+        // check that the base if valid
+        if (base < 2 || base > 36) { *result = '\0'; return result; }
+
+        char* ptr = result, *ptr1 = result, tmp_char;
+        int tmp_value;
+
+        do {
+            tmp_value = value;
+            value /= base;
+            *ptr++ = "zyxwvutsrqponmlkjihgfedcba9876543210123456789abcdefghijklmnopqrstuvwxyz" [35 + (tmp_value - value * base)];
+        } while ( value );
+
+        // Apply negative sign
+        if (tmp_value < 0) *ptr++ = '-';
+        *ptr-- = '\0';
+        while(ptr1 < ptr) {
+            tmp_char = *ptr;
+            *ptr--= *ptr1;
+            *ptr1++ = tmp_char;
+        }
+        return result;
+    }
