@@ -80,7 +80,10 @@ int main( int argc, char* argv[] ){
         {
             while ( getline (myfile,line) )
             {
-                cout << line << '\n';
+                //cout << line << '\n';
+                char data[10];
+                std::copy(line.begin(), line.end(), data);
+                speed_l=atoi(data);
             }
             myfile.close();
         }
@@ -212,6 +215,7 @@ void read_MD49_Data (void){
     printf("Timeout: %i \n",serialBuffer[17]);
     myfile << itoa(serialBuffer[17],buffer,10);
     myfile << "\n";
+    printf("speed_l = %i \n",speed_l);
 
     EncoderL = serialBuffer[0] << 24;                        // Put together first encoder value
     EncoderL |= (serialBuffer[1] << 16);
