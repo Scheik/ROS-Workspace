@@ -147,9 +147,9 @@ void read_MD49_Data (void){
     else cout << "Unable to open file";
 
 
-
-    printf("\033[2J");        /*  clear the screen  */
-    printf("\033[H");         /*  position cursor at top-left corner */
+/*
+    printf("\033[2J");        //  clear the screen
+    printf("\033[H");         //  position cursor at top-left corner
     printf ("MD49-Data read from AVR-Master: \n");
     printf("====================================================== \n");
     printf("Encoder1 Byte1: %i ",serialBuffer[0]);
@@ -173,6 +173,7 @@ void read_MD49_Data (void){
     printf("Mode: %i \n",serialBuffer[15]);
     printf("Regulator: %i \n",serialBuffer[16]);
     printf("Timeout: %i \n",serialBuffer[17]);
+*/
 
    // printf("vl= %f \n", vl);
   //  printf("vr= %f \n", vr);
