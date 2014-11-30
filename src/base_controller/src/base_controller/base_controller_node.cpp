@@ -13,8 +13,8 @@
 #include <geometry_msgs/Twist.h>                            /* ROS Twist message */
 #include <base_controller/encoders.h>                       /* Custom message /encoders */
 
-const char* serialport="/dev/ttyAMA0";                      /* defines used serialport */
-int serialport_bps=B38400;                                  /* defines baudrate od serialport */
+//const char* serialport="/dev/ttyAMA0";                      /* defines used serialport */
+//int serialport_bps=B38400;                                  /* defines baudrate od serialport */
 int32_t EncoderL;                                           /* stores encoder value left read from md49 */
 int32_t EncoderR;                                           /* stores encoder value right read from md49 */
 unsigned char speed_l=128, speed_r=128;                               /* speed to set for MD49 */
@@ -27,16 +27,17 @@ double min_vr = 0.2;
 double min_vl = 0.2;
 double base_width = 0.4;                                    /* Base width in meters */
 
-int filedesc;                                               // File descriptor of serial port we will talk to
-int fd;                                                     /* serial port file descriptor */
+//int filedesc;                                               // File descriptor of serial port we will talk to
+//int fd;                                                     /* serial port file descriptor */
 unsigned char serialBuffer[16];                             /* Serial buffer to store uart data */
-struct termios orig;                                        // Port options
+//struct termios orig;                                        // Port options
 
-int openSerialPort(const char * device, int bps);
-void writeBytes(int descriptor, int count);
-void readBytes(int descriptor, int count);
+//int openSerialPort(const char * device, int bps);
+//void writeBytes(int descriptor, int count);
+//void readBytes(int descriptor, int count);
 void read_MD49_Data (void);
 void set_MD49_speed (unsigned char speed_l, unsigned char speed_r);
+char* itoa(int value, char* result, int base);
 
 bool serial_busy = false;
 
@@ -55,20 +56,20 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
             speed_r = 255;
         }
         if (vel_cmd.linear.x<0){
-            speed_l = 0;
-            speed_r = 0;
+            speed_l = 000;
+            speed_r = 000;
         }
         if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){
             speed_l = 128;
             speed_r = 128;
         }
         if (vel_cmd.angular.z>0){
-            speed_l = 0;
+            speed_l = 000;
             speed_r = 255;
         }
         if (vel_cmd.angular.z<0){
             speed_l = 255;
-            speed_r = 0;
+            speed_r = 000;
         }
         set_MD49_speed(speed_l,speed_r);
     }
@@ -108,16 +109,9 @@ int main( int argc, char* argv[] ){
     ros::Subscriber sub = n.subscribe("/cmd_vel", 1, cmd_vel_callback);
     ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",1);
 
-    // Open serial port
-    // ****************
-    //filedesc = openSerialPort("/dev/ttyAMA0", serialport_bps);
-    //if (filedesc == -1) exit(1);
-    //usleep(10000);                                      // Sleep for UART to power up and set options
-    //ROS_DEBUG("Serial Port opened \n");
-
-    // Set nodes looprate 10Hz
+    // Set nodes looprate 5Hz
     // ***********************
-    ros::Rate loop_rate(10);
+    ros::Rate loop_rate(5);
 
     while( n.ok() )
     {
@@ -130,9 +124,7 @@ int main( int argc, char* argv[] ){
 
         // Read encoder and other data from MD49
         // *************************************
-        //serial_busy=true;
         read_MD49_Data();
-        //serial_busy=false;
 
         // Set speed left and right for MD49
         // ********************************
@@ -153,50 +145,6 @@ int main( int argc, char* argv[] ){
     return 1;
 } // end.main
 
-int openSerialPort(const char * device, int bps){
-   struct termios neu;
-   char buf[128];
-
-   //fd = open(device, O_RDWR | O_NOCTTY | O_NDELAY | O_NONBLOCK);
-   fd = open(device, O_RDWR | O_NOCTTY);
-
-   if (fd == -1)
-   {
-      sprintf(buf, "openSerialPort %s error", device);
-      perror(buf);
-   }
-   else
-   {
-      tcgetattr(fd, &orig); 						/* save current serial settings */
-      tcgetattr(fd, &neu);
-      cfmakeraw(&neu);
-      //fprintf(stderr, "speed=%d\n", bps);
-      cfsetispeed(&neu, bps);
-      cfsetospeed(&neu, bps);
-      tcflush(fd, TCIFLUSH);
-      tcsetattr(fd, TCSANOW, &neu); 				/* set new serial settings */
-      fcntl (fd, F_SETFL, O_RDWR);
-   }
-   return fd;
-}
-
-void writeBytes(int descriptor, int count) {
-    if ((write(descriptor, serialBuffer, count)) == -1) {	// Send data out
-        perror("Error writing");
-        close(descriptor);				// Close port if there is an error
-        exit(1);
-    }
-    //write(fd,serialBuffer, count);
-
-}
-
-void readBytes(int descriptor, int count) {
-    if (read(descriptor, serialBuffer, count) == -1) {	// Read back data into buf[]
-        perror("Error reading ");
-        close(descriptor);				// Close port if there is an error
-        exit(1);
-    }
-}
 
 void read_MD49_Data (void){
 
@@ -264,9 +212,37 @@ void read_MD49_Data (void){
 }
 
 void set_MD49_speed (unsigned char speed_l, unsigned char speed_r){
-    serialBuffer[0] = 88;					// 88 =X Steuerbyte um Commands an MD49 zu senden
-    serialBuffer[1] = 115;					// 115=s Steuerbyte setSpeed
-    serialBuffer[2] = speed_l;				// speed1
-    serialBuffer[3] = speed_r;				// speed2
-    writeBytes(fd, 4);
+    char buffer[33];
+    ofstream myfile;
+    myfile.open ("md49_commands.txt");
+    //myfile << "Writing this to a file.\n";
+    myfile << itoa(speed_l,buffer,10);
+    myfile << "\n";
+    myfile << itoa(speed_r,buffer,10);
+    myfile << "\n";
+    myfile.close();
 }
+
+char* itoa(int value, char* result, int base) {
+        // check that the base if valid
+        if (base < 2 || base > 36) { *result = '\0'; return result; }
+
+        char* ptr = result, *ptr1 = result, tmp_char;
+        int tmp_value;
+
+        do {
+            tmp_value = value;
+            value /= base;
+            *ptr++ = "zyxwvutsrqponmlkjihgfedcba9876543210123456789abcdefghijklmnopqrstuvwxyz" [35 + (tmp_value - value * base)];
+        } while ( value );
+
+        // Apply negative sign
+        if (tmp_value < 0) *ptr++ = '-';
+        *ptr-- = '\0';
+        while(ptr1 < ptr) {
+            tmp_char = *ptr;
+            *ptr--= *ptr1;
+            *ptr1++ = tmp_char;
+        }
+        return result;
+    }
