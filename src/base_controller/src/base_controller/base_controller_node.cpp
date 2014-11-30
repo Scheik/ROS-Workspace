@@ -12,8 +12,6 @@
 #include <geometry_msgs/Twist.h>                            /* ROS Twist message */
 #include <base_controller/encoders.h>                       /* Custom message /encoders */
 
-#include <sensor_msgs/Joy.h>
-
 const char* serialport="/dev/ttyAMA0";                      /* defines used serialport */
 int serialport_bps=B38400;                                  /* defines baudrate od serialport */
 int32_t EncoderL;                                           /* stores encoder value left read from md49 */
@@ -42,33 +40,6 @@ void set_MD49_speed (unsigned char speed_l, unsigned char speed_r);
 
 bool serial_busy = false;
 
-
-// Variables
-int16_t Joy_Button_Up_pressed=0;
-int16_t Joy_Button_Down_pressed=0;
-int16_t Joy_Button_Left_pressed=0;
-int16_t Joy_Button_Right_pressed=0;
-int16_t Joy_Button_Up_pressed_last=0;
-int16_t Joy_Button_Down_pressed_last=0;
-int16_t Joy_Button_Left_pressed_last=0;
-int16_t Joy_Button_Right_pressed_last=0;
-// Defines
-#define Joystick_Buttons_Left_Right msg->axes[4]
-#define Joystick_Buttons_Up_Down msg->axes[5]
-
-void Joy_Callback (const sensor_msgs::Joy::ConstPtr& msg)
-{
-
-
-    // Joystick Buttons pressed?
-    if (Joystick_Buttons_Left_Right==1) {Joy_Button_Left_pressed=Joystick_Buttons_Left_Right;};
-    if (Joystick_Buttons_Left_Right==-1) {Joy_Button_Right_pressed=Joystick_Buttons_Left_Right;};
-    if (Joystick_Buttons_Up_Down==1) {Joy_Button_Up_pressed=Joystick_Buttons_Up_Down;};
-    if (Joystick_Buttons_Up_Down==-1) {Joy_Button_Down_pressed=Joystick_Buttons_Up_Down;};
-    if (Joystick_Buttons_Up_Down==0) {Joy_Button_Down_pressed=Joystick_Buttons_Up_Down;Joy_Button_Up_pressed=Joystick_Buttons_Up_Down;};
-    if (Joystick_Buttons_Left_Right==0) {Joy_Button_Left_pressed=Joystick_Buttons_Left_Right;Joy_Button_Right_pressed=Joystick_Buttons_Left_Right;};
-
-}
 
 void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
     if (serial_busy==true)
@@ -135,8 +106,6 @@ int main( int argc, char* argv[] ){
     ros::Subscriber sub = n.subscribe("/cmd_vel", 1, cmd_vel_callback);
     ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",1);
 
-    ros::Subscriber joy_sub = n.subscribe("joy", 1, Joy_Callback);
-
     // Open serial port
     // ****************
     filedesc = openSerialPort("/dev/ttyAMA0", serialport_bps);
@@ -162,57 +131,6 @@ int main( int argc, char* argv[] ){
         serial_busy=true;
         read_MD49_Data();
         serial_busy=false;
-
-
-        // PUBLISH to /cmd_vel if Joystick corresponding Buttons are pressed
-        if (Joy_Button_Up_pressed==1 && Joy_Button_Up_pressed!=Joy_Button_Up_pressed_last){
-            ROS_INFO("Button Up pressed");
-            speed_l = 255;
-            speed_r = 255;
-            Joy_Button_Up_pressed_last=Joy_Button_Up_pressed;
-        }
-        else if (Joy_Button_Down_pressed==-1 && Joy_Button_Down_pressed!=Joy_Button_Down_pressed_last){
-            ROS_INFO("Button Down pressed");
-            speed_l = 0;
-            speed_r = 0;
-            Joy_Button_Down_pressed_last=Joy_Button_Down_pressed;
-        }
-        else if (Joy_Button_Left_pressed==1 && Joy_Button_Left_pressed!=Joy_Button_Left_pressed_last){
-            ROS_INFO("Button Left pressed");
-            speed_l = 255;
-            speed_r = 0;
-            Joy_Button_Left_pressed_last=Joy_Button_Left_pressed;
-        }
-        else if (Joy_Button_Right_pressed==-1 && Joy_Button_Right_pressed!=Joy_Button_Right_pressed_last){
-            ROS_INFO("Button Right pressed");
-            speed_l = 0;
-            speed_r = 255;
-            Joy_Button_Right_pressed_last=Joy_Button_Right_pressed;
-        }
-        else if (Joy_Button_Up_pressed==0 && Joy_Button_Up_pressed!=Joy_Button_Up_pressed_last){
-            ROS_INFO("Button Up released");
-            speed_l = 128;
-            speed_r = 128;
-            Joy_Button_Up_pressed_last=Joy_Button_Up_pressed;
-        }
-        else if (Joy_Button_Down_pressed==0 && Joy_Button_Down_pressed!=Joy_Button_Down_pressed_last){
-            ROS_INFO("Button Down released");
-            speed_l = 128;
-            speed_r = 128;
-            Joy_Button_Down_pressed_last=Joy_Button_Down_pressed;
-        }
-        else if (Joy_Button_Left_pressed==0 && Joy_Button_Left_pressed!=Joy_Button_Left_pressed_last){
-            ROS_INFO("Button Left released");
-            speed_l = 128;
-            speed_r = 128;
-            Joy_Button_Left_pressed_last=Joy_Button_Left_pressed;
-        }
-        else if (Joy_Button_Right_pressed==0 && Joy_Button_Right_pressed!=Joy_Button_Right_pressed_last){
-            ROS_INFO("Button Right released");
-            speed_l = 128;
-            speed_r = 128;
-            Joy_Button_Right_pressed_last=Joy_Button_Right_pressed;
-        }
 
         // Set speed left and right for MD49
         // ********************************
