@@ -6,8 +6,8 @@
 //#include <string>                                         /* String function definitions */
 #include <unistd.h>                                         /* UNIX standard function definitions */
 #include <fcntl.h>                                          /* File control definitions */
-#include <errno.h>                                          /* Error number definitions */
-#include <termios.h>                                        /* POSIX terminal control definitions */
+//#include <errno.h>                                          /* Error number definitions */
+//#include <termios.h>                                        /* POSIX terminal control definitions */
 #include <ctype.h>                                        /* isxxx() */
 #include <ros/ros.h>                                        /* ROS */
 #include <geometry_msgs/Twist.h>                            /* ROS Twist message */
@@ -27,30 +27,15 @@ double min_vr = 0.2;
 double min_vl = 0.2;
 double base_width = 0.4;                                    /* Base width in meters */
 
-//int filedesc;                                               // File descriptor of serial port we will talk to
-//int fd;                                                     /* serial port file descriptor */
 unsigned char serialBuffer[18];                             /* Serial buffer to store uart data */
-//struct termios orig;                                        // Port options
-
-//int openSerialPort(const char * device, int bps);
-//void writeBytes(int descriptor, int count);
-//void readBytes(int descriptor, int count);
 void read_MD49_Data (void);
 void set_MD49_speed (unsigned char speed_l, unsigned char speed_r);
 char* itoa(int value, char* result, int base);
 
-//bool serial_busy = false;
-
 using namespace std;
 
-
 void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
-    //if (serial_busy==true)
-    //{
-    //    return;
-    //}
-    //else
-    //{
+
         if (vel_cmd.linear.x>0){
             speed_l = 255;
             speed_r = 255;
@@ -72,9 +57,6 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
             speed_r = 000;
         }
         set_MD49_speed(speed_l,speed_r);
-    //}
-    //cmd_vel_received=true;
-
 
     /*
         //ANFANG Alternative
@@ -106,12 +88,12 @@ int main( int argc, char* argv[] ){
 
     ros::init(argc, argv, "base_controller" );
     ros::NodeHandle n;
-    ros::Subscriber sub = n.subscribe("/cmd_vel", 1, cmd_vel_callback);
-    ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",1);
+    ros::Subscriber sub = n.subscribe("/cmd_vel", 10, cmd_vel_callback);
+    ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",10);
 
-    // Set nodes looprate 5Hz
+    // Set nodes looprate 10Hz
     // ***********************
-    ros::Rate loop_rate(5);
+    ros::Rate loop_rate(10);
 
     while( n.ok() )
     {
@@ -125,13 +107,6 @@ int main( int argc, char* argv[] ){
         // Read encoder and other data from MD49
         // *************************************
         read_MD49_Data();
-
-        // Set speed left and right for MD49
-        // ********************************
-        //if (cmd_vel_received==true) {
-            //set_MD49_speed(speed_l,speed_r);
-            //cmd_vel_received=false;
-        //}
 
         // Loop
         // ****
@@ -185,8 +160,8 @@ void read_MD49_Data (void){
     printf("Byte2: %i ",serialBuffer[5]);
     printf("Byte3: %i ",serialBuffer[6]);
     printf("Byte4: %i \n",serialBuffer[7]);
-    //printf("EncoderL: %i ",serialBuffer[8]);
-    //printf("EncoderR: %i \n",serialBuffer[9]);
+    printf("EncoderL: %i ",EncoderL);
+    printf("EncoderR: %i \n",EncoderR);
     printf("====================================================== \n");
     printf("Speed1: %i ",serialBuffer[8]);
     printf("Speed2: %i \n",serialBuffer[9]);
@@ -202,14 +177,14 @@ void read_MD49_Data (void){
    // printf("vl= %f \n", vl);
   //  printf("vr= %f \n", vr);
 
-    //EncoderL = serialBuffer[0] << 24;                        // Put together first encoder value
-    //EncoderL |= (serialBuffer[1] << 16);
-    //EncoderL |= (serialBuffer[2] << 8);
-    //EncoderL |= (serialBuffer[3]);
-   //EncoderR = serialBuffer[4] << 24;                        // Put together second encoder value
-    //EncoderR |= (serialBuffer[5] << 16);
-    //EncoderR |= (serialBuffer[6] << 8);
-    //EncoderR |= (serialBuffer[7]);
+    EncoderL = serialBuffer[0] << 24;                        // Put together first encoder value
+    EncoderL |= (serialBuffer[1] << 16);
+    EncoderL |= (serialBuffer[2] << 8);
+    EncoderL |= (serialBuffer[3]);
+    EncoderR = serialBuffer[4] << 24;                        // Put together second encoder value
+    EncoderR |= (serialBuffer[5] << 16);
+    EncoderR |= (serialBuffer[6] << 8);
+    EncoderR |= (serialBuffer[7]);
 
 }
 
