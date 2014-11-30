@@ -188,16 +188,16 @@ void read_MD49_Data (void){
     //printf("EncoderL: %i ",serialBuffer[8]);
     //printf("EncoderR: %i \n",serialBuffer[9]);
     printf("====================================================== \n");
-    printf("Speed1: %i ",serialBuffer[9]);
-    printf("Speed2: %i \n",serialBuffer[10]);
-    printf("Volts: %i \n",serialBuffer[11]);
-    printf("Current1: %i ",serialBuffer[12]);
-    printf("Current2: %i \n",serialBuffer[13]);
-    printf("Error: %i \n",serialBuffer[14]);
-    printf("Acceleration: %i \n",serialBuffer[15]);
-    printf("Mode: %i \n",serialBuffer[16]);
-    printf("Regulator: %i \n",serialBuffer[17]);
-    printf("Timeout: %i \n",serialBuffer[18]);
+    printf("Speed1: %i ",serialBuffer[8]);
+    printf("Speed2: %i \n",serialBuffer[9]);
+    printf("Volts: %i \n",serialBuffer[10]);
+    printf("Current1: %i ",serialBuffer[11]);
+    printf("Current2: %i \n",serialBuffer[12]);
+    printf("Error: %i \n",serialBuffer[13]);
+    printf("Acceleration: %i \n",serialBuffer[14]);
+    printf("Mode: %i \n",serialBuffer[15]);
+    printf("Regulator: %i \n",serialBuffer[16]);
+    printf("Timeout: %i \n",serialBuffer[17]);
 
    // printf("vl= %f \n", vl);
   //  printf("vr= %f \n", vr);
