@@ -74,7 +74,8 @@ int main( int argc, char* argv[] ){
         // Read commands from sqlite db and
         // set speed and other commands to MD49
         // ************************************
-
+        ofstream myfile;
+        myfile.open ("md49_commands.txt");
 
     }// end.mainloop
 
