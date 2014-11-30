@@ -154,6 +154,10 @@ void read_MD49_Data (void){
     if (serialBuffer[0]==0){
         myfile << "000";
     }
+    else if (serialBuffer[0]<100){
+        myfile << "0";
+        myfile << itoa(serialBuffer[0],buffer,10);
+    }
     else{
         myfile << itoa(serialBuffer[0],buffer,10);
     }
@@ -161,6 +165,10 @@ void read_MD49_Data (void){
     printf("Byte2: %i ",serialBuffer[1]);
     if (serialBuffer[1]==0){
         myfile << "000";
+    }
+    else if (serialBuffer[1]<100){
+        myfile << "0";
+        myfile << itoa(serialBuffer[1],buffer,10);
     }
     else{
         myfile << itoa(serialBuffer[1],buffer,10);
@@ -170,6 +178,10 @@ void read_MD49_Data (void){
     if (serialBuffer[2]==0){
         myfile << "000";
     }
+    else if (serialBuffer[2]<100){
+        myfile << "0";
+        myfile << itoa(serialBuffer[2],buffer,10);
+    }
     else{
         myfile << itoa(serialBuffer[2],buffer,10);
     }
@@ -177,6 +189,10 @@ void read_MD49_Data (void){
     printf("Byte4: %i \n",serialBuffer[3]);
     if (serialBuffer[3]==0){
         myfile << "000";
+    }
+    else if (serialBuffer[3]<100){
+        myfile << "0";
+        myfile << itoa(serialBuffer[3],buffer,10);
     }
     else{
         myfile << itoa(serialBuffer[3],buffer,10);
@@ -186,6 +202,10 @@ void read_MD49_Data (void){
     if (serialBuffer[4]==0){
         myfile << "000";
     }
+    else if (serialBuffer[4]<100){
+        myfile << "0";
+        myfile << itoa(serialBuffer[4],buffer,10);
+    }
     else{
         myfile << itoa(serialBuffer[4],buffer,10);
     }
@@ -193,6 +213,10 @@ void read_MD49_Data (void){
     printf("Byte2: %i ",serialBuffer[5]);
     if (serialBuffer[5]==0){
         myfile << "000";
+    }
+    else if (serialBuffer[5]<100){
+        myfile << "0";
+        myfile << itoa(serialBuffer[5],buffer,10);
     }
     else{
         myfile << itoa(serialBuffer[5],buffer,10);
@@ -202,6 +226,10 @@ void read_MD49_Data (void){
     if (serialBuffer[6]==0){
         myfile << "000";
     }
+    else if (serialBuffer[6]<100){
+        myfile << "0";
+        myfile << itoa(serialBuffer[6],buffer,10);
+    }
     else{
         myfile << itoa(serialBuffer[6],buffer,10);
     }
@@ -209,6 +237,10 @@ void read_MD49_Data (void){
     printf("Byte4: %i \n",serialBuffer[7]);
     if (serialBuffer[7]==0){
         myfile << "000";
+    }
+    else if (serialBuffer[7]<100){
+        myfile << "0";
+        myfile << itoa(serialBuffer[7],buffer,10);
     }
     else{
         myfile << itoa(serialBuffer[7],buffer,10);
@@ -225,6 +257,10 @@ void read_MD49_Data (void){
     if (serialBuffer[8]==0){
         myfile << "000";
     }
+    else if (serialBuffer[8]<100){
+        myfile << "0";
+        myfile << itoa(serialBuffer[8],buffer,10);
+    }
     else{
         myfile << itoa(serialBuffer[8],buffer,10);
     }
@@ -232,6 +268,10 @@ void read_MD49_Data (void){
     printf("Speed2: %i \n",serialBuffer[9]);
     if (serialBuffer[9]==0){
         myfile << "000";
+    }
+    else if (serialBuffer[9]<100){
+        myfile << "0";
+        myfile << itoa(serialBuffer[9],buffer,10);
     }
     else{
         myfile << itoa(serialBuffer[9],buffer,10);
@@ -241,6 +281,10 @@ void read_MD49_Data (void){
     if (serialBuffer[10]==0){
         myfile << "000";
     }
+    else if (serialBuffer[10]<100){
+        myfile << "0";
+        myfile << itoa(serialBuffer[10],buffer,10);
+    }
     else{
         myfile << itoa(serialBuffer[10],buffer,10);
     }
@@ -248,6 +292,10 @@ void read_MD49_Data (void){
     printf("Current1: %i ",serialBuffer[11]);
     if (serialBuffer[11]==0){
         myfile << "000";
+    }
+    else if (serialBuffer[11]<100){
+        myfile << "0";
+        myfile << itoa(serialBuffer[11],buffer,10);
     }
     else{
         myfile << itoa(serialBuffer[11],buffer,10);
@@ -257,6 +305,10 @@ void read_MD49_Data (void){
     if (serialBuffer[12]==0){
         myfile << "000";
     }
+    else if (serialBuffer[12]<100){
+        myfile << "0";
+        myfile << itoa(serialBuffer[12],buffer,10);
+    }
     else{
         myfile << itoa(serialBuffer[12],buffer,10);
     }
@@ -264,6 +316,10 @@ void read_MD49_Data (void){
     printf("Error: %i \n",serialBuffer[13]);
     if (serialBuffer[13]==0){
         myfile << "000";
+    }
+    else if (serialBuffer[13]<100){
+        myfile << "0";
+        myfile << itoa(serialBuffer[13],buffer,10);
     }
     else{
         myfile << itoa(serialBuffer[13],buffer,10);
@@ -273,6 +329,10 @@ void read_MD49_Data (void){
     if (serialBuffer[14]==0){
         myfile << "000";
     }
+    else if (serialBuffer[14]<100){
+        myfile << "0";
+        myfile << itoa(serialBuffer[14],buffer,10);
+    }
     else{
         myfile << itoa(serialBuffer[14],buffer,10);
     }
@@ -280,6 +340,10 @@ void read_MD49_Data (void){
     printf("Mode: %i \n",serialBuffer[15]);
     if (serialBuffer[15]==0){
         myfile << "000";
+    }
+    else if (serialBuffer[15]<100){
+        myfile << "0";
+        myfile << itoa(serialBuffer[15],buffer,10);
     }
     else{
         myfile << itoa(serialBuffer[15],buffer,10);
@@ -294,6 +358,10 @@ void read_MD49_Data (void){
             myfile << "00";
             myfile << itoa(serialBuffer[16],buffer,10);
         }
+        else if (serialBuffer[16]<100){
+            myfile << "0";
+            myfile << itoa(serialBuffer[16],buffer,10);
+        }
         else{
             myfile << itoa(serialBuffer[16],buffer,10);
         }
@@ -302,6 +370,10 @@ void read_MD49_Data (void){
     printf("Timeout: %i \n",serialBuffer[17]);
     if (serialBuffer[17]==0){
         myfile << "000";
+    }
+    else if (serialBuffer[17]<100){
+        myfile << "0";
+        myfile << itoa(serialBuffer[17],buffer,10);
     }
     else{
         myfile << itoa(serialBuffer[17],buffer,10);
