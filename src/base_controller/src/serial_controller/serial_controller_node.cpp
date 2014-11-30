@@ -28,6 +28,7 @@ void writeBytes(int descriptor, int count);
 void readBytes(int descriptor, int count);
 void read_MD49_Data (void);
 void set_MD49_speed (unsigned char speed_l, unsigned char speed_r);
+unsigned char md49_data[18];
 
 char* itoa(int value, char* result, int base) {
         // check that the base if valid
@@ -78,14 +79,18 @@ int main( int argc, char* argv[] ){
         ifstream myfile ("md49_commands.txt");
         if (myfile.is_open())
         {
+            int i=0;
             while ( getline (myfile,line) )
             {
                 //cout << line << '\n';
                 char data[10];
                 std::copy(line.begin(), line.end(), data);
-                speed_l=atoi(data);
+                md49_data[i]=atoi(data);
+                i +=i;
             }
             myfile.close();
+            speed_l=md49_data[0];
+            speed_r=md49_data[1];
         }
         else cout << "Unable to open file";
 
