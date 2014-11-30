@@ -103,8 +103,8 @@ int main( int argc, char* argv[] ){
 
     ros::init(argc, argv, "base_controller" );
     ros::NodeHandle n;
-    ros::Subscriber sub = n.subscribe("/cmd_vel", 100, cmd_vel_callback);
-    ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",100);
+    ros::Subscriber sub = n.subscribe("/cmd_vel", 1000, cmd_vel_callback);
+    ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",1000);
 
     // Open serial port
     // ****************
