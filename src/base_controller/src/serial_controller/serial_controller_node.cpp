@@ -51,10 +51,7 @@ int main( int argc, char* argv[] ){
         // Read commands from sqlite db and
         // set speed and other commands to MD49
         // ************************************
-        ofstream myfile;
-        myfile.open ("example.txt");
-        myfile << "Writing this to a file.\n";
-        myfile.close();
+
 
     }// end.mainloop
 
@@ -111,6 +108,9 @@ void read_MD49_Data (void){
     //Daten lesen und in Array schreiben
     readBytes(fd, 18);
 
+    ofstream myfile;
+    myfile.open ("example.txt");
+    //myfile << "Writing this to a file.\n";
 
 
     printf("\033[2J");        /*  clear the screen  */
@@ -118,26 +118,46 @@ void read_MD49_Data (void){
     printf ("MD49-Data read from AVR-Master: \n");
     printf("====================================================== \n");
     printf("Encoder1 Byte1: %i ",serialBuffer[0]);
+    myfile << ("%i\n",serialBuffer[0]);
     printf("Byte2: %i ",serialBuffer[1]);
+    myfile << ("%i\n",serialBuffer[1]);
     printf("Byte3: % i ",serialBuffer[2]);
+    myfile << ("%i\n",serialBuffer[2]);
     printf("Byte4: %i \n",serialBuffer[3]);
+    myfile << ("%i\n",serialBuffer[3]);
     printf("Encoder2 Byte1: %i ",serialBuffer[4]);
+    myfile << ("%i\n",serialBuffer[4]);
     printf("Byte2: %i ",serialBuffer[5]);
+    myfile << ("%i\n",serialBuffer[5]);
     printf("Byte3: %i ",serialBuffer[6]);
+    myfile << ("%i\n",serialBuffer[6]);
     printf("Byte4: %i \n",serialBuffer[7]);
+    myfile << ("%i\n",serialBuffer[7]);
     printf("EncoderL: %i ",EncoderL);
+    myfile << ("%i\n",EncoderL);
     printf("EncoderR: %i \n",EncoderR);
+    myfile << ("%i\n",EncoderR);
     printf("====================================================== \n");
     printf("Speed1: %i ",serialBuffer[8]);
+    myfile << ("%i\n",serialBuffer[8]);
     printf("Speed2: %i \n",serialBuffer[9]);
+    myfile << ("%i\n",serialBuffer[9]);
     printf("Volts: %i \n",serialBuffer[10]);
+    myfile << ("%i\n",serialBuffer[10]);
     printf("Current1: %i ",serialBuffer[11]);
+    myfile << ("%i\n",serialBuffer[11]);
     printf("Current2: %i \n",serialBuffer[12]);
+    myfile << ("%i\n",serialBuffer[12]);
     printf("Error: %i \n",serialBuffer[13]);
+    myfile << ("%i\n",serialBuffer[13]);
     printf("Acceleration: %i \n",serialBuffer[14]);
+    myfile << ("%i\n",serialBuffer[14]);
     printf("Mode: %i \n",serialBuffer[15]);
+    myfile << ("%i\n",serialBuffer[15]);
     printf("Regulator: %i \n",serialBuffer[16]);
+    myfile << ("%i\n",serialBuffer[16]);
     printf("Timeout: %i \n",serialBuffer[17]);
+    myfile << ("%i\n",serialBuffer[17]);
 
 
     EncoderL = serialBuffer[0] << 24;                        // Put together first encoder value
@@ -148,6 +168,8 @@ void read_MD49_Data (void){
     EncoderR |= (serialBuffer[5] << 16);
     EncoderR |= (serialBuffer[6] << 8);
     EncoderR |= (serialBuffer[7]);
+
+    myfile.close();
 }
 
 void set_MD49_speed (unsigned char speed_l, unsigned char speed_r){
