@@ -67,7 +67,7 @@ int main( int argc, char* argv[] ){
         // serial. Data ist stored in md49_data.txt
         // ****************************************
         read_MD49_Data_serial();
-        usleep(50000);
+        usleep(100000);
 
         // Read commands from md49_commands.txt:
         // *************************************
@@ -77,7 +77,7 @@ int main( int argc, char* argv[] ){
         // read from md49_commands.txt
         // ************************************
         set_MD49_speed(speed_l, speed_r);
-        usleep(50000);
+        usleep(100000);
 
     }// end.mainloop
     return 1;
