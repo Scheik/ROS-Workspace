@@ -201,9 +201,37 @@ void set_MD49_speed (unsigned char speed_l, unsigned char speed_r){
     ofstream myfile;
     myfile.open ("md49_commands.txt");
     //myfile << "Writing this to a file.\n";
-    myfile << itoa(speed_l,buffer,10);
+    if (speed_l==0){
+        myfile << "000";
+        myfile << "\n";
+    }
+    else if (speed_l<10){
+        myfile << "00";
+        myfile << itoa(speed_l,buffer,10);
+    }
+    else if (speed_l<100){
+        myfile << "0";
+        myfile << itoa(speed_l,buffer,10);
+    }
+    else{
+        myfile << itoa(speed_l,buffer,10);
+    }
     myfile << "\n";
-    myfile << itoa(speed_r,buffer,10);
+    if (speed_r==0){
+        myfile << "000";
+        myfile << "\n";
+    }
+    else if (speed_r<10){
+        myfile << "00";
+        myfile << itoa(speed_r,buffer,10);
+    }
+    else if (speed_r<100){
+        myfile << "0";
+        myfile << itoa(speed_r,buffer,10);
+    }
+    else{
+        myfile << itoa(speed_r,buffer,10);
+    }
     myfile << "\n";
     myfile.close();
 }

@@ -154,8 +154,6 @@ void read_MD49_Data_serial (void){
     printf("Mode: %i \n",serialBuffer[15]);
     printf("Regulator: %i \n",serialBuffer[16]);
     printf("Timeout: %i \n",serialBuffer[17]);
-    printf("speed_l = %i \n",speed_l);
-    printf("speed_r = %i \n",speed_r);
 
     myfile.close();
 }
