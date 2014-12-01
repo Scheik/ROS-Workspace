@@ -63,7 +63,7 @@ int main( int argc, char* argv[] ){
     ROS_DEBUG("Starting Mainloop...");
     ROS_DEBUG("reading data from MD49 and pushing commands to MD49 @ 10Hz...");
 
-    while( 1 ){
+    while(  n.ok() ){
 
         // Read encoder and other data from MD49
         // serial. Data ist stored in md49_data.txt
