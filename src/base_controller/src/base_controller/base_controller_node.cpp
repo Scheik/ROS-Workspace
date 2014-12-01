@@ -18,6 +18,7 @@
 int32_t EncoderL;                                           /* stores encoder value left read from md49 */
 int32_t EncoderR;                                           /* stores encoder value right read from md49 */
 unsigned char speed_l=128, speed_r=128;                               /* speed to set for MD49 */
+unsigned char last_speed_l=128, last_speed_r=128;                               /* speed to set for MD49 */
 //bool cmd_vel_received=true;
 double vr = 0.0;
 double vl = 0.0;
@@ -40,7 +41,7 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
             speed_l = 255;
             speed_r = 255;
         }
-        if (vel_cmd.linear.x<0){
+        else if (vel_cmd.linear.x<0){
             speed_l = 0;
             speed_r = 0;
         }
@@ -52,11 +53,14 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
             speed_l = 0;
             speed_r = 255;
         }
-        if (vel_cmd.angular.z<0){
+        else if (vel_cmd.angular.z<0){
             speed_l = 255;
             speed_r = 0;
         }
-        set_MD49_speed(speed_l,speed_r);
+        if ((speed_l != last_speed_l) || (speed_r != last_speed_r)){
+            set_MD49_speed(speed_l,speed_r);
+        }
+
 
     /*
         //ANFANG Alternative
