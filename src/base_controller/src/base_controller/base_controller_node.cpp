@@ -99,7 +99,7 @@ int main( int argc, char* argv[] ){
 
     // Set nodes looprate 5Hz
     // ***********************
-    ros::Rate loop_rate(5);
+    ros::Rate loop_rate(20);
     ROS_INFO("base_controller running...");
 
     while( n.ok() )
