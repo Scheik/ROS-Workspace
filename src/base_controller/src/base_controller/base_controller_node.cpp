@@ -91,9 +91,9 @@ int main( int argc, char* argv[] ){
     ros::Subscriber sub = n.subscribe("/cmd_vel", 10, cmd_vel_callback);
     ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",10);
 
-    // Set nodes looprate 10Hz
+    // Set nodes looprate 5Hz
     // ***********************
-    ros::Rate loop_rate(10);
+    ros::Rate loop_rate(5);
     ROS_INFO("base_controller running...");
 
     while( n.ok() )
