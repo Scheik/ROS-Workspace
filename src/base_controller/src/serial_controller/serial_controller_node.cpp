@@ -20,9 +20,10 @@
 #include <errno.h>                                          /* Error number definitions */
 #include <termios.h>                                        /* POSIX terminal control definitions */
 #include <ctype.h>                                          /* isxxx() */
+#include<ros/ros.h>
 
 // Global variables
-const char* serialport="/dev/ttyAMA0";                      /* defines used serialport */
+const char* serialport_name="/dev/ttyAMA0";                      /* defines used serialport */
 int serialport_bps=B38400;                                  /* defines used baudrate on serialport */
 //int filedesc;                                               // File descriptor of serial port we will talk to
 int fd;                                                     /* serial port file descriptor */
@@ -48,15 +49,20 @@ char* itoa(int value, char* result, int base);
 
 int main( int argc, char* argv[] ){
 
+    ros::init(argc, argv, "serial_controller");
+
     // Open serial port
     // ****************
     fd = openSerialPort("/dev/ttyAMA0", serialport_bps);
     if (fd == -1) exit(1);
+    ROS_INFO("Opend serial port at %s with %i Bps",serialport_name,serialport_bps);
     usleep(10000);                                          // Sleep for UART to power up and set options
 
-    while( 1 )
-    {
-        // Mainloop running @ aprox. 10Hz
+    ROS_INFO("Starting Mainloop...");
+    ROS_INFO("reading data from MD49 and pushing commands to MD49 @ 10Hz...");
+
+    while( 1 ){
+
         // Read encoder and other data from MD49
         // serial. Data ist stored in md49_data.txt
         // ****************************************
