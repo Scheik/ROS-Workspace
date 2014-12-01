@@ -20,7 +20,7 @@
 #include <errno.h>                                          /* Error number definitions */
 #include <termios.h>                                        /* POSIX terminal control definitions */
 #include <ctype.h>                                          /* isxxx() */
-//#include<ros/ros.h>
+#include<ros/ros.h>
 
 // Global variables
 const char* serialport_name="/dev/ttyAMA0";                      /* defines used serialport */
@@ -50,7 +50,7 @@ char* itoa(int value, char* result, int base);
 
 int main( int argc, char* argv[] ){
 
-    //ros::init(argc, argv, "serial_controller");
+    ros::init(argc, argv, "serial_controller");
 
     // Open serial port
     // ****************
@@ -59,8 +59,8 @@ int main( int argc, char* argv[] ){
     //ROS_INFO("Opend serial port at %s with %i Bps",serialport_name,serialport_bps);
     usleep(10000);                                          // Sleep for UART to power up and set options
 
-    //ROS_DEBUG("Starting Mainloop...");
-    //ROS_DEBUG("reading data from MD49 and pushing commands to MD49 @ 10Hz...");
+    ROS_DEBUG("Starting Mainloop...");
+    ROS_DEBUG("reading data from MD49 and pushing commands to MD49 @ 10Hz...");
 
     while( 1 ){
 
@@ -68,7 +68,7 @@ int main( int argc, char* argv[] ){
         // serial. Data ist stored in md49_data.txt
         // ****************************************
         read_MD49_Data_serial();
-        usleep(100000);
+        usleep(50000);
 
         // Read commands from md49_commands.txt:
         // *************************************
@@ -78,7 +78,7 @@ int main( int argc, char* argv[] ){
         // read from md49_commands.txt
         // ************************************
         set_MD49_speed(speed_l, speed_r);
-        usleep(100000);
+        usleep(50000);
 
     }// end.mainloop
     return 1;
