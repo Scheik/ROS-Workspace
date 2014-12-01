@@ -208,15 +208,18 @@ void set_MD49_speed (unsigned char speed_l, unsigned char speed_r){
     else if (speed_l<10){
         myfile << "00";
         myfile << itoa(speed_l,buffer,10);
+        myfile << "\n";
     }
     else if (speed_l<100){
         myfile << "0";
         myfile << itoa(speed_l,buffer,10);
+        myfile << "\n";
     }
     else{
         myfile << itoa(speed_l,buffer,10);
+        myfile << "\n";
     }
-    myfile << "\n";
+
     if (speed_r==0){
         myfile << "000";
         myfile << "\n";
@@ -224,15 +227,17 @@ void set_MD49_speed (unsigned char speed_l, unsigned char speed_r){
     else if (speed_r<10){
         myfile << "00";
         myfile << itoa(speed_r,buffer,10);
+        myfile << "\n";
     }
     else if (speed_r<100){
         myfile << "0";
         myfile << itoa(speed_r,buffer,10);
+        myfile << "\n";
     }
     else{
         myfile << itoa(speed_r,buffer,10);
+        myfile << "\n";
     }
-    myfile << "\n";
     myfile.close();
 }
 
