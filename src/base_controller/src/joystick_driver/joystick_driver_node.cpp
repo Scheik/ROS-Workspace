@@ -45,11 +45,11 @@ void Joy_Callback (const sensor_msgs::Joy::ConstPtr& msg)
     // Joystick Buttons pressed?
     if (Joystick_Buttons_Left_Right==1) {
         Joy_Button_Left_pressed=Joystick_Buttons_Left_Right;
-        angular_z=-1;
+        angular_z=1.0;
     }
     if (Joystick_Buttons_Left_Right==-1) {
         Joy_Button_Right_pressed=Joystick_Buttons_Left_Right;
-        angular_z=1;
+        angular_z=-1.0;
     }
     if (Joystick_Buttons_Up_Down==1) {
         Joy_Button_Up_pressed=Joystick_Buttons_Up_Down;
@@ -90,7 +90,7 @@ int main(int argc, char **argv){
 
 
 
-          ROS_INFO("linear.x = %f angular.z = %f",linear_x,angular_z);
+          ROS_INFO("linear.x = %f angular.z = %f",cmd_vel_msg.linear.x,cmd_vel_msg.angular.z);
 
       }
 
