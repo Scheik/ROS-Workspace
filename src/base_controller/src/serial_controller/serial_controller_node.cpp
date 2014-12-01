@@ -51,6 +51,7 @@ char* itoa(int value, char* result, int base);
 int main( int argc, char* argv[] ){
 
     ros::init(argc, argv, "serial_controller");
+    ros::NodeHandle n;
 
     // Open serial port
     // ****************
