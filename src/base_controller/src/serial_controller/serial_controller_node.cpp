@@ -20,7 +20,7 @@
 #include <errno.h>                                          /* Error number definitions */
 #include <termios.h>                                        /* POSIX terminal control definitions */
 #include <ctype.h>                                          /* isxxx() */
-#include<ros/ros.h>
+//#include<ros/ros.h>
 
 // Global variables
 const char* serialport_name="/dev/ttyAMA0";                      /* defines used serialport */
@@ -49,17 +49,17 @@ char* itoa(int value, char* result, int base);
 
 int main( int argc, char* argv[] ){
 
-    ros::init(argc, argv, "serial_controller");
+    //ros::init(argc, argv, "serial_controller");
 
     // Open serial port
     // ****************
     fd = openSerialPort("/dev/ttyAMA0", serialport_bps);
     if (fd == -1) exit(1);
-    ROS_INFO("Opend serial port at %s with %i Bps",serialport_name,serialport_bps);
+    //ROS_INFO("Opend serial port at %s with %i Bps",serialport_name,serialport_bps);
     usleep(10000);                                          // Sleep for UART to power up and set options
 
-    ROS_INFO("Starting Mainloop...");
-    ROS_INFO("reading data from MD49 and pushing commands to MD49 @ 10Hz...");
+    //ROS_DEBUG("Starting Mainloop...");
+    //ROS_DEBUG("reading data from MD49 and pushing commands to MD49 @ 10Hz...");
 
     while( 1 ){
 
