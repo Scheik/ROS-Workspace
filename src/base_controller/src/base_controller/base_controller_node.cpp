@@ -41,22 +41,22 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
             speed_r = 255;
         }
         if (vel_cmd.linear.x<0){
-            speed_l = 000;
-            speed_r = 000;
+            speed_l = 0;
+            speed_r = 0;
         }
         if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){
             speed_l = 128;
             speed_r = 128;
         }
         if (vel_cmd.angular.z>0){
-            speed_l = 000;
+            speed_l = 0;
             speed_r = 255;
         }
         if (vel_cmd.angular.z<0){
             speed_l = 255;
-            speed_r = 000;
+            speed_r = 0;
         }
-       // set_MD49_speed(speed_l,speed_r);
+        set_MD49_speed(speed_l,speed_r);
 
     /*
         //ANFANG Alternative
