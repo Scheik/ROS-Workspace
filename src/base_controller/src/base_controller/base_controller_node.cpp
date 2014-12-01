@@ -59,6 +59,8 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
         }
         if ((speed_l != last_speed_l) || (speed_r != last_speed_r)){
             set_MD49_speed(speed_l,speed_r);
+            last_speed_l=speed_l;
+            last_speed_r=speed_r;
         }
 
 
