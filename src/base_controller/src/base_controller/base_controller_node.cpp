@@ -3,23 +3,17 @@
 #include <stdio.h>                                          /* Standard input/output definitions */
 #include <stdint.h>                                         /* Standard input/output definitions */
 #include <stdlib.h>                                         /* defines several general purpose functions */
-//#include <string>                                         /* String function definitions */
 #include <unistd.h>                                         /* UNIX standard function definitions */
 #include <fcntl.h>                                          /* File control definitions */
-//#include <errno.h>                                          /* Error number definitions */
-//#include <termios.h>                                        /* POSIX terminal control definitions */
-#include <ctype.h>                                        /* isxxx() */
+#include <ctype.h>                                          /* isxxx() */
 #include <ros/ros.h>                                        /* ROS */
 #include <geometry_msgs/Twist.h>                            /* ROS Twist message */
 #include <base_controller/encoders.h>                       /* Custom message /encoders */
 
-//const char* serialport="/dev/ttyAMA0";                      /* defines used serialport */
-//int serialport_bps=B38400;                                  /* defines baudrate od serialport */
 int32_t EncoderL;                                           /* stores encoder value left read from md49 */
 int32_t EncoderR;                                           /* stores encoder value right read from md49 */
-unsigned char speed_l=128, speed_r=128;                               /* speed to set for MD49 */
-unsigned char last_speed_l=128, last_speed_r=128;                               /* speed to set for MD49 */
-//bool cmd_vel_received=true;
+unsigned char speed_l=128, speed_r=128;                     /* speed to set for MD49 */
+unsigned char last_speed_l=128, last_speed_r=128;           /* speed to set for MD49 */
 double vr = 0.0;
 double vl = 0.0;
 double max_vr = 0.2;
@@ -101,6 +95,9 @@ int main( int argc, char* argv[] ){
     // ***********************
     ros::Rate loop_rate(50);
     ROS_INFO("base_controller running...");
+    ROS_INFO("=============================");
+    ROS_INFO("Subscribing to topic /cmd_vel");
+    ROS_INFO("Publishing to topic /encoders");
 
     while( n.ok() )
     {
@@ -115,12 +112,8 @@ int main( int argc, char* argv[] ){
         // *************************************
         read_MD49_Data();
 
-        // Loop
-        // ****
-        //set_MD49_speed(speed_l,speed_r);
         ros::spinOnce();
         loop_rate.sleep();
-
 
     }// end.mainloop
 
@@ -129,11 +122,6 @@ int main( int argc, char* argv[] ){
 
 
 void read_MD49_Data (void){
-
-    //serialBuffer[0] = 82;							// 82=R Steuerbyte um alle Daten vom MD49 zu lesen
-    //writeBytes(fd, 1);
-    //Daten lesen und in Array schreiben
-    //readBytes(fd, 18);
 
     string line;
     ifstream myfile ("md49_data.txt");
@@ -155,9 +143,6 @@ void read_MD49_Data (void){
 
 
 /*
-    printf("\033[2J");        //  clear the screen
-    printf("\033[H");         //  position cursor at top-left corner
-    printf ("MD49-Data read from AVR-Master: \n");
     printf("====================================================== \n");
     printf("Encoder1 Byte1: %i ",serialBuffer[0]);
     printf("Byte2: %i ",serialBuffer[1]);
@@ -170,20 +155,17 @@ void read_MD49_Data (void){
     printf("EncoderL: %i ",EncoderL);
     printf("EncoderR: %i \n",EncoderR);
     printf("====================================================== \n");
-    printf("Speed1: %i ",serialBuffer[8]);
-    printf("Speed2: %i \n",serialBuffer[9]);
+    printf("Speedl: %i ",serialBuffer[8]);
+    printf("Speedr: %i \n",serialBuffer[9]);
     printf("Volts: %i \n",serialBuffer[10]);
-    printf("Current1: %i ",serialBuffer[11]);
-    printf("Current2: %i \n",serialBuffer[12]);
+    printf("Currentl: %i ",serialBuffer[11]);
+    printf("Currentr: %i \n",serialBuffer[12]);
     printf("Error: %i \n",serialBuffer[13]);
     printf("Acceleration: %i \n",serialBuffer[14]);
     printf("Mode: %i \n",serialBuffer[15]);
     printf("Regulator: %i \n",serialBuffer[16]);
     printf("Timeout: %i \n",serialBuffer[17]);
 */
-
-   // printf("vl= %f \n", vl);
-  //  printf("vr= %f \n", vr);
 
     EncoderL = serialBuffer[0] << 24;                        // Put together first encoder value
     EncoderL |= (serialBuffer[1] << 16);
@@ -197,6 +179,7 @@ void read_MD49_Data (void){
 }
 
 void set_MD49_speed (unsigned char speed_l, unsigned char speed_r){
+
     char buffer[33];
     ofstream myfile;
     myfile.open ("md49_commands.txt");
