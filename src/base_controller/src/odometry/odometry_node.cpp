@@ -6,8 +6,8 @@
 
 //int16_t EncoderL;
 //int16_t EncoderR;
-int16_t previous_EncoderL;
-int16_t previous_EncoderR;
+int32_t previous_EncoderL;
+int32_t previous_EncoderR;
 double deltaLeft;
 double deltaRight;
 double meter_per_tick = 0.0008;
