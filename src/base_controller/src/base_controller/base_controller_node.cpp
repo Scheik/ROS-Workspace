@@ -91,7 +91,7 @@ int main( int argc, char* argv[] ){
     ros::Subscriber sub = n.subscribe("/cmd_vel", 10, cmd_vel_callback);
     ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",10);
 
-    // Set nodes looprate 5Hz
+    // Set nodes looprate 50Hz
     // ***********************
     ros::Rate loop_rate(50);
     ROS_INFO("base_controller running...");
@@ -123,6 +123,8 @@ int main( int argc, char* argv[] ){
 
 void read_MD49_Data (void){
 
+    // Read all MD49 data from md49_data.txt
+    // *************************************
     string line;
     ifstream myfile ("md49_data.txt");
     if (myfile.is_open())
@@ -141,6 +143,16 @@ void read_MD49_Data (void){
     }
     else cout << "Unable to open file";
 
+    // Put toghether new encodervalues
+    // *******************************
+    EncoderL = serialBuffer[0] << 24;                        // Put together first encoder value
+    EncoderL |= (serialBuffer[1] << 16);
+    EncoderL |= (serialBuffer[2] << 8);
+    EncoderL |= (serialBuffer[3]);
+    EncoderR = serialBuffer[4] << 24;                        // Put together second encoder value
+    EncoderR |= (serialBuffer[5] << 16);
+    EncoderR |= (serialBuffer[6] << 8);
+    EncoderR |= (serialBuffer[7]);
 
 /*
     printf("====================================================== \n");
@@ -167,14 +179,7 @@ void read_MD49_Data (void){
     printf("Timeout: %i \n",serialBuffer[17]);
 */
 
-    EncoderL = serialBuffer[0] << 24;                        // Put together first encoder value
-    EncoderL |= (serialBuffer[1] << 16);
-    EncoderL |= (serialBuffer[2] << 8);
-    EncoderL |= (serialBuffer[3]);
-    EncoderR = serialBuffer[4] << 24;                        // Put together second encoder value
-    EncoderR |= (serialBuffer[5] << 16);
-    EncoderR |= (serialBuffer[6] << 8);
-    EncoderR |= (serialBuffer[7]);
+
 
 }
 

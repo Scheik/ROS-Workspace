@@ -23,9 +23,9 @@
 #include<ros/ros.h>
 
 // Global variables
-const char* serialport_name="/dev/ttyAMA0";                      /* defines used serialport */
+const char* serialport_name="/dev/ttyAMA0";                 /* defines used serialport */
 int serialport_bps=B38400;                                  /* defines used baudrate on serialport */
-//int filedesc;                                               // File descriptor of serial port we will talk to
+//int filedesc;                                             /* File descriptor of serial port we will talk to*/
 int fd;                                                     /* serial port file descriptor */
 int32_t EncoderL;                                           /* stores encoder value left read from md49 */
 int32_t EncoderR;                                           /* stores encoder value right read from md49 */
@@ -50,6 +50,8 @@ char* itoa(int value, char* result, int base);
 
 int main( int argc, char* argv[] ){
 
+    // Init as ROS node
+    // ****************
     ros::init(argc, argv, "serial_controller");
     ros::NodeHandle n;
 
@@ -77,7 +79,7 @@ int main( int argc, char* argv[] ){
 
         // Set speed and other commands as
         // read from md49_commands.txt
-        // ************************************
+        // *******************************
         set_MD49_speed(speed_l, speed_r);
         usleep(50000);
 
@@ -86,15 +88,11 @@ int main( int argc, char* argv[] ){
 } // end.main
 
 void read_MD49_Data_serial (void){
+    // Read serial MD49 data from AVR-Master
+    // *************************************
     serialBuffer[0] = 82;                                   // 82=R Steuerbyte um alle Daten vom MD49 zu lesen
     writeBytes(fd, 1);
-    //Daten lesen und in Array schreiben
-    readBytes(fd, 18);
-
-    ofstream myfile;
-    myfile.open ("md49_data.txt");
-    //myfile << "Writing this to a file.\n";
-    char buffer[33];
+    readBytes(fd, 18);    
 
     // Put toghether encoder values from their
     // corresponding bytes, read from MD49
@@ -108,9 +106,13 @@ void read_MD49_Data_serial (void){
     EncoderR |= (serialBuffer[6] << 8);
     EncoderR |= (serialBuffer[7]);
 
-    // write read data from MD49 into md49_data.txt
-    // ********************************************
+    // Write data from MD49 into md49_data.txt
+    // ***************************************
     int i=0;
+    char buffer[33];
+    ofstream myfile;
+    myfile.open ("md49_data.txt");
+    //myfile << "Writing this to a file.\n";
     for (i=0;i<18;i++){
         if (serialBuffer[i]==0){
             myfile << "000";
@@ -128,7 +130,10 @@ void read_MD49_Data_serial (void){
         }
         myfile << "\n";
     }
+    myfile.close();
 
+    // Output MD49 data on screen
+    // **************************
     printf("\033[2J");                                      /*  clear the screen  */
     printf("\033[H");                                       /*  position cursor at top-left corner */
     printf ("MD49-Data read from AVR-Master: \n");
@@ -155,7 +160,7 @@ void read_MD49_Data_serial (void){
     printf("Regulator: %i \n",serialBuffer[16]);
     printf("Timeout: %i \n",serialBuffer[17]);
 
-    myfile.close();
+
 }
 
 void set_MD49_speed (unsigned char speed_l, unsigned char speed_r){
