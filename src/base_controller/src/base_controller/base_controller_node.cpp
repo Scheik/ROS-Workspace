@@ -9,6 +9,7 @@
 #include <ros/ros.h>                                        /* ROS */
 #include <geometry_msgs/Twist.h>                            /* ROS Twist message */
 #include <base_controller/encoders.h>                       /* Custom message /encoders */
+#include <base_controller/md49data.h>                       /* Custom message /encoders */
 
 int32_t EncoderL;                                           /* stores encoder value left read from md49 */
 int32_t EncoderR;                                           /* stores encoder value right read from md49 */
@@ -90,6 +91,7 @@ int main( int argc, char* argv[] ){
     ros::NodeHandle n;
     ros::Subscriber sub = n.subscribe("/cmd_vel", 10, cmd_vel_callback);
     ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",10);
+    ros::Publisher md49data_pub = n.advertise<base_controller::md49data>("md49data",10);
 
     // Set nodes looprate 50Hz
     // ***********************
@@ -98,19 +100,37 @@ int main( int argc, char* argv[] ){
     ROS_INFO("=============================");
     ROS_INFO("Subscribing to topic /cmd_vel");
     ROS_INFO("Publishing to topic /encoders");
+    ROS_INFO("Publishing to topic /md49data");
 
-    while( n.ok() )
+    while(n.ok())
     {
+        // Read encoder and other data from MD49
+        // (data is read from serial_controller_node
+        //  and avaiable through md49_data.txt)
+        // *****************************************
+        read_MD49_Data();
+
         // Publish encoder values to topic /encoders (custom message)
-        // ********************************************************************
+        // **********************************************************
         base_controller::encoders encoders;
         encoders.encoder_l=EncoderL;
         encoders.encoder_r=EncoderR;
         encoders_pub.publish(encoders);
 
-        // Read encoder and other data from MD49
-        // *************************************
-        read_MD49_Data();
+        // Publish MD49 data to topic /md49data (custom message)
+        // *****************************************************
+        base_controller::md49data md49data;
+        md49data.speed_l = serialBuffer[8];
+        md49data.speed_r = serialBuffer[9];
+        md49data.volt = serialBuffer[10];
+        md49data.current_l = serialBuffer[11];
+        md49data.current_r = serialBuffer[12];
+        md49data.error = serialBuffer[13];
+        md49data.acceleration = serialBuffer[14];
+        md49data.mode = serialBuffer[15];
+        md49data.regulator = serialBuffer[16];
+        md49data.timeout = serialBuffer[17];
+        encoders_pub.publish(md49data);
 
         ros::spinOnce();
         loop_rate.sleep();
@@ -127,11 +147,9 @@ void read_MD49_Data (void){
     // *************************************
     string line;
     ifstream myfile ("md49_data.txt");
-    if (myfile.is_open())
-    {
+    if (myfile.is_open()){
         int i=0;
-        while ( getline (myfile,line) )
-        {
+        while (getline (myfile,line)){
             //cout << line << '\n';
             char data[10];
             std::copy(line.begin(), line.end(), data);
@@ -141,7 +159,7 @@ void read_MD49_Data (void){
         myfile.close();
 
     }
-    else cout << "Unable to open file";
+    else ROS_ERROR("Unable to open file: md49_data.txt");
 
     // Put toghether new encodervalues
     // *******************************
@@ -153,33 +171,6 @@ void read_MD49_Data (void){
     EncoderR |= (serialBuffer[5] << 16);
     EncoderR |= (serialBuffer[6] << 8);
     EncoderR |= (serialBuffer[7]);
-
-/*
-    printf("====================================================== \n");
-    printf("Encoder1 Byte1: %i ",serialBuffer[0]);
-    printf("Byte2: %i ",serialBuffer[1]);
-    printf("Byte3: % i ",serialBuffer[2]);
-    printf("Byte4: %i \n",serialBuffer[3]);
-    printf("Encoder2 Byte1: %i ",serialBuffer[4]);
-    printf("Byte2: %i ",serialBuffer[5]);
-    printf("Byte3: %i ",serialBuffer[6]);
-    printf("Byte4: %i \n",serialBuffer[7]);
-    printf("EncoderL: %i ",EncoderL);
-    printf("EncoderR: %i \n",EncoderR);
-    printf("====================================================== \n");
-    printf("Speedl: %i ",serialBuffer[8]);
-    printf("Speedr: %i \n",serialBuffer[9]);
-    printf("Volts: %i \n",serialBuffer[10]);
-    printf("Currentl: %i ",serialBuffer[11]);
-    printf("Currentr: %i \n",serialBuffer[12]);
-    printf("Error: %i \n",serialBuffer[13]);
-    printf("Acceleration: %i \n",serialBuffer[14]);
-    printf("Mode: %i \n",serialBuffer[15]);
-    printf("Regulator: %i \n",serialBuffer[16]);
-    printf("Timeout: %i \n",serialBuffer[17]);
-*/
-
-
 
 }
 
