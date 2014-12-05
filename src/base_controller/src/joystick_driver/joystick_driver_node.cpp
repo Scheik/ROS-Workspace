@@ -77,7 +77,7 @@ int main(int argc, char **argv){
   ros::NodeHandle n;
   ros::Subscriber sub = n.subscribe("joy", 100, Joy_Callback);
   ros::Publisher cmd_vel_pub = n.advertise<geometry_msgs::Twist>("/cmd_vel", 100);
-  ros::Rate loop_rate(50);                                                  //Sets the loop to publish at a rate of 10Hz
+  ros::Rate loop_rate(20);                                                  //Sets the loop to publish at a rate of 10Hz
   geometry_msgs::Twist cmd_vel_msg;                                         //Declares the message to be sent
 
   while (n.ok()){
