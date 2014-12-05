@@ -130,7 +130,7 @@ int main( int argc, char* argv[] ){
         md49data.mode = serialBuffer[15];
         md49data.regulator = serialBuffer[16];
         md49data.timeout = serialBuffer[17];
-        encoders_pub.publish(md49data);
+        md49data_pub.publish(md49data);
 
         ros::spinOnce();
         loop_rate.sleep();
