@@ -60,11 +60,11 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
             speed_l = 255;
             speed_r = 0;
         }
-        if ((speed_l != last_speed_l) || (speed_r != last_speed_r)){
+        //if ((speed_l != last_speed_l) || (speed_r != last_speed_r)){
             //set_MD49_speed(speed_l,speed_r);
-            last_speed_l=speed_l;
-            last_speed_r=speed_r;
-        }
+            //last_speed_l=speed_l;
+            //last_speed_r=speed_r;
+        //}
 
     /*
         //ANFANG Alternative
@@ -215,52 +215,11 @@ void read_MD49_Data (void){
 
 void set_MD49_speed (unsigned char speed_l, unsigned char speed_r){
 
-
-
-/*
-    char buffer[33];
-    ofstream myfile;
-    myfile.open ("md49_commands.txt");
-    //myfile << "Writing this to a file.\n";
-    if (speed_l==0){
-        myfile << "000";
-        myfile << "\n";
-    }
-    else if (speed_l<10){
-        myfile << "00";
-        myfile << itoa(speed_l,buffer,10);
-        myfile << "\n";
-    }
-    else if (speed_l<100){
-        myfile << "0";
-        myfile << itoa(speed_l,buffer,10);
-        myfile << "\n";
-    }
-    else{
-        myfile << itoa(speed_l,buffer,10);
-        myfile << "\n";
-    }
-
-    if (speed_r==0){
-        myfile << "000";
-        myfile << "\n";
-    }
-    else if (speed_r<10){
-        myfile << "00";
-        myfile << itoa(speed_r,buffer,10);
-        myfile << "\n";
-    }
-    else if (speed_r<100){
-        myfile << "0";
-        myfile << itoa(speed_r,buffer,10);
-        myfile << "\n";
-    }
-    else{
-        myfile << itoa(speed_r,buffer,10);
-        myfile << "\n";
-    }
-    myfile.close();
-*/
+    const char* command;
+    //command=("Xs%i%i",speed_l,speed_r);
+    device.write("Xs",2);
+    device.write(command,1);
+    //device.write(speed_r,1);
 
 }
 
