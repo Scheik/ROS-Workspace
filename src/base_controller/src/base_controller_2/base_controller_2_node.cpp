@@ -18,7 +18,8 @@
 int32_t EncoderL;                                           /* stores encoder value left read from md49 */
 int32_t EncoderR;                                           /* stores encoder value right read from md49 */
 char reply[REPLY_SIZE];
-unsigned char speed_l=128, speed_r=128;                     /* speed to set for MD49 */
+unsigned char speed_l=128;
+unsigned char speed_r=128;                                  /* speed to set for MD49 */
 unsigned char last_speed_l=128, last_speed_r=128;           /* speed to set for MD49 */
 double vr = 0.0;
 double vl = 0.0;
@@ -213,13 +214,17 @@ void read_MD49_Data (void){
 
 }
 
-void set_MD49_speed (unsigned char speed_l, unsigned char speed_r){
+void set_MD49_speed (unsigned char speed_l[], unsigned char speed_r){
 
     const char* command;
-    //command=("Xs%i%i",speed_l,speed_r);
     device.write("Xs",2);
+    command=(const char*)speed_l;
     device.write(command,1);
-    //device.write(speed_r,1);
+    command=(const char*)speed_r;
+    device.write(command,1);
+
+    //device.write(((const char *)speed_l[0]),1);
+    //device.write((const char *)speed_r,1);
 
 }
 

@@ -107,8 +107,9 @@ void cereal::CerealPort::close()
 }
 
 int cereal::CerealPort::write(const char * data, int length)
+//int cereal::CerealPort::write(unsigned char data, int length)
 {
-	int len = length==-1 ? strlen(data) : length;
+    int len = length==-1 ? strlen(data) : length;
 
 	// IO is currently non-blocking. This is what we want for the more cerealon read case.
 	int origflags = fcntl(fd_, F_GETFL, 0);

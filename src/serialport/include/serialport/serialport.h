@@ -71,6 +71,7 @@ namespace cereal
 		*  \return Number of bytes writen.	
 		*/
 		int write(const char * data, int length = -1);
+		//int write(unsigned char data, int length = -1);
 		
 		//! Read from the port
 		/*!
