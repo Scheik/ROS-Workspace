@@ -108,7 +108,6 @@ int main( int argc, char* argv[] ){
     ROS_INFO("Subscribing to topic /cmd_vel");
     ROS_INFO("Publishing to topic /encoders");
     ROS_INFO("Publishing to topic /md49data");
-    sleep(2);
 
     // Open serial port
     // ****************
