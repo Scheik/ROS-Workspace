@@ -17,6 +17,7 @@
 
 int32_t EncoderL;                                           /* stores encoder value left read from md49 */
 int32_t EncoderR;                                           /* stores encoder value right read from md49 */
+char reply[REPLY_SIZE];
 unsigned char speed_l=128, speed_r=128;                     /* speed to set for MD49 */
 unsigned char last_speed_l=128, last_speed_r=128;           /* speed to set for MD49 */
 double vr = 0.0;
@@ -34,7 +35,10 @@ char* itoa(int value, char* result, int base);
 
 using namespace std;
 cereal::CerealPort device;
-char reply[REPLY_SIZE];
+base_controller::encoders encoders;
+base_controller::md49data md49data;
+
+
 
 void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
 
@@ -129,15 +133,13 @@ int main( int argc, char* argv[] ){
 
 
         // Publish encoder values to topic /encoders (custom message)
-        // **********************************************************
-        base_controller::encoders encoders;
+        // **********************************************************       
         encoders.encoder_l=EncoderL;
         encoders.encoder_r=EncoderR;
         encoders_pub.publish(encoders);
 
         // Publish MD49 data to topic /md49data (custom message)
-        // *****************************************************
-        base_controller::md49data md49data;
+        // *****************************************************        
         md49data.speed_l = reply[8];
         md49data.speed_r = reply[9];
         md49data.volt = reply[10];
@@ -150,6 +152,7 @@ int main( int argc, char* argv[] ){
         md49data.timeout = reply[17];
         md49data_pub.publish(md49data);
 
+        // ****
         ros::spinOnce();
         loop_rate.sleep();
 
