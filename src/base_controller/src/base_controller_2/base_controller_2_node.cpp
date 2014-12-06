@@ -38,8 +38,6 @@ cereal::CerealPort device;
 base_controller::encoders encoders;
 base_controller::md49data md49data;
 
-
-
 void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
 
         if (vel_cmd.linear.x>0){
@@ -67,7 +65,6 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
             last_speed_l=speed_l;
             last_speed_r=speed_r;
         }
-
 
     /*
         //ANFANG Alternative
@@ -103,8 +100,8 @@ int main( int argc, char* argv[] ){
     ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",10);
     ros::Publisher md49data_pub = n.advertise<base_controller::md49data>("md49data",10);
 
-    // Set nodes looprate 10Hz
-    // ***********************
+    // Init node
+    // *********
     ros::Rate loop_rate(10);
     ROS_INFO("base_controller running...");
     ROS_INFO("=============================");
@@ -184,6 +181,34 @@ void read_MD49_Data (void){
     EncoderR |= (reply[5] << 16);
     EncoderR |= (reply[6] << 8);
     EncoderR |= (reply[7]);
+
+    // Output MD49 data on screen
+    // **************************
+    printf("\033[2J");                                      /*  clear the screen  */
+    printf("\033[H");                                       /*  position cursor at top-left corner */
+    printf ("MD49-Data read from AVR-Master: \n");
+    printf("========================================\n");
+    printf("Encoder1 Byte1: %i ",reply[0]);
+    printf("Byte2: %i ",reply[1]);
+    printf("Byte3: % i ",reply[2]);
+    printf("Byte4: %i \n",reply[3]);
+    printf("Encoder2 Byte1: %i ",reply[4]);
+    printf("Byte2: %i ",reply[5]);
+    printf("Byte3: %i ",reply[6]);
+    printf("Byte4: %i \n",reply[7]);
+    printf("EncoderL: %i ",EncoderL);
+    printf("EncoderR: %i \n",EncoderR);
+    printf("========================================\n");
+    printf("Speed1: %i ",reply[8]);
+    printf("Speed2: %i \n",reply[9]);
+    printf("Volts: %i \n",reply[10]);
+    printf("Current1: %i ",reply[11]);
+    printf("Current2: %i \n",reply[12]);
+    printf("Error: %i \n",reply[13]);
+    printf("Acceleration: %i \n",reply[14]);
+    printf("Mode: %i \n",reply[15]);
+    printf("Regulator: %i \n",reply[16]);
+    printf("Timeout: %i \n",reply[17]);
 
 }
 
