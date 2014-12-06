@@ -28,7 +28,7 @@ double min_vr = 0.2;
 double min_vl = 0.2;
 double base_width = 0.4;                                    /* Base width in meters */
 
-unsigned char serialBuffer[18];                             /* Serial buffer to store uart data */
+//unsigned char serialBuffer[18];                             /* Serial buffer to store uart data */
 void read_MD49_Data (void);
 void set_MD49_speed (unsigned char speed_l, unsigned char speed_r);
 char* itoa(int value, char* result, int base);
@@ -108,6 +108,7 @@ int main( int argc, char* argv[] ){
     ROS_INFO("Subscribing to topic /cmd_vel");
     ROS_INFO("Publishing to topic /encoders");
     ROS_INFO("Publishing to topic /md49data");
+    sleep(2);
 
     // Open serial port
     // ****************
@@ -127,7 +128,6 @@ int main( int argc, char* argv[] ){
         //  and avaiable through md49_data.txt)
         // *****************************************
         read_MD49_Data();
-
 
         // Publish encoder values to topic /encoders (custom message)
         // **********************************************************       
@@ -182,10 +182,11 @@ void read_MD49_Data (void){
     EncoderR |= (reply[6] << 8);
     EncoderR |= (reply[7]);
 
+/*
     // Output MD49 data on screen
     // **************************
-    printf("\033[2J");                                      /*  clear the screen  */
-    printf("\033[H");                                       /*  position cursor at top-left corner */
+    printf("\033[2J");                                      //  clear the screen
+    printf("\033[H");                                       //  position cursor at top-left corner
     printf ("MD49-Data read from AVR-Master: \n");
     printf("========================================\n");
     printf("Encoder1 Byte1: %i ",reply[0]);
@@ -209,6 +210,7 @@ void read_MD49_Data (void){
     printf("Mode: %i \n",reply[15]);
     printf("Regulator: %i \n",reply[16]);
     printf("Timeout: %i \n",reply[17]);
+*/
 
 }
 
