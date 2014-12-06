@@ -29,10 +29,11 @@ double min_vr = 0.2;
 double min_vl = 0.2;
 double base_width = 0.4;                                    /* Base width in meters */
 
-//unsigned char serialBuffer[18];                             /* Serial buffer to store uart data */
+unsigned char serialBuffer[18];                             /* Serial buffer to store uart data */
 void read_MD49_Data (void);
 void set_MD49_speed (unsigned char speed_l, unsigned char speed_r);
 char* itoa(int value, char* result, int base);
+void writeBytes(int descriptor, int count);
 
 using namespace std;
 cereal::CerealPort device;
@@ -216,12 +217,19 @@ void read_MD49_Data (void){
 
 void set_MD49_speed (unsigned char speed_l, unsigned char speed_r){
 
-    const char* command;
-    device.write("Xs",2);
-    command=(const char*)speed_l;
-    device.write(command,1);
-    command=(const char*)speed_r;
-    device.write(command,1);
+    //serialBuffer[0] = 88;                                   // 88 =X Steuerbyte um Commands an MD49 zu senden
+    //serialBuffer[1] = 115;                                  // 115=s Steuerbyte setSpeed
+    //serialBuffer[2] = speed_l;                              // set speed1
+    //serialBuffer[3] = speed_r;                              // set speed2
+    //int fd = device.fd_;
+   // writeBytes(fd, 4);
+
+    //const char* command;
+    //device.write("Xs",2);
+    //command=(const char*)speed_l;
+    //device.write(command,1);
+    //command=(const char*)speed_r;
+    //device.write(command,1);
 
     //device.write(((const char *)speed_l[0]),1);
     //device.write((const char *)speed_r,1);
@@ -251,3 +259,12 @@ char* itoa(int value, char* result, int base) {
         }
         return result;
     }
+
+void writeBytes(int descriptor, int count) {
+    if ((write(descriptor, serialBuffer, count)) == -1) {   // Send data out
+        perror("Error writing");
+        close(descriptor);                                  // Close port if there is an error
+        exit(1);
+    }
+
+}
