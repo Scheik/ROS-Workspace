@@ -61,11 +61,11 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
             speed_l = 255;
             speed_r = 0;
         }
-        //if ((speed_l != last_speed_l) || (speed_r != last_speed_r)){
-            //set_MD49_speed(speed_l,speed_r);
-            //last_speed_l=speed_l;
-            //last_speed_r=speed_r;
-        //}
+        if ((speed_l != last_speed_l) || (speed_r != last_speed_r)){
+            set_MD49_speed(speed_l,speed_r);
+            last_speed_l=speed_l;
+            last_speed_r=speed_r;
+        }
 
     /*
         //ANFANG Alternative
@@ -214,7 +214,7 @@ void read_MD49_Data (void){
 
 }
 
-void set_MD49_speed (unsigned char speed_l[], unsigned char speed_r){
+void set_MD49_speed (unsigned char speed_l, unsigned char speed_r){
 
     const char* command;
     device.write("Xs",2);
