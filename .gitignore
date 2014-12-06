@@ -4,6 +4,7 @@ devel/
 
 # QtCreator files
 *.*.user
+*.*.autosave
 
 # Compiled Object files
 *.slo

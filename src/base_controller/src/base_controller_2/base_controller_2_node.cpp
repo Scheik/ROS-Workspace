@@ -33,6 +33,8 @@ void set_MD49_speed (unsigned char speed_l, unsigned char speed_r);
 char* itoa(int value, char* result, int base);
 
 using namespace std;
+cereal::CerealPort device;
+char reply[REPLY_SIZE];
 
 void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
 
@@ -57,7 +59,7 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
             speed_r = 0;
         }
         if ((speed_l != last_speed_l) || (speed_r != last_speed_r)){
-            set_MD49_speed(speed_l,speed_r);
+            //set_MD49_speed(speed_l,speed_r);
             last_speed_l=speed_l;
             last_speed_r=speed_r;
         }
@@ -97,7 +99,7 @@ int main( int argc, char* argv[] ){
     ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",10);
     ros::Publisher md49data_pub = n.advertise<base_controller::md49data>("md49data",10);
 
-    // Set nodes looprate 50Hz
+    // Set nodes looprate 10Hz
     // ***********************
     ros::Rate loop_rate(10);
     ROS_INFO("base_controller running...");
@@ -106,10 +108,8 @@ int main( int argc, char* argv[] ){
     ROS_INFO("Publishing to topic /encoders");
     ROS_INFO("Publishing to topic /md49data");
 
-    cereal::CerealPort device;
-    char reply[REPLY_SIZE];
-
-    // Change the next line according to your port name and baud rate
+    // Open serial port
+    // ****************
     try{ device.open("/dev/ttyAMA0", 38400); }
     catch(cereal::Exception& e)
     {
@@ -125,27 +125,8 @@ int main( int argc, char* argv[] ){
         // (data is read from serial_controller_node
         //  and avaiable through md49_data.txt)
         // *****************************************
-        //read_MD49_Data();
-        // Send 'R' over the serial port
-        device.write("R");
-        // Get the reply, the last value is the timeout in ms
-        try{ device.read(reply, REPLY_SIZE, TIMEOUT); }
-        catch(cereal::TimeoutException& e)
-        {
-          ROS_ERROR("Timeout!");
-        }
-        ROS_INFO("Got this reply: %s", reply);
+        read_MD49_Data();
 
-        // Put toghether new encodervalues
-        // *******************************
-        EncoderL = reply[0] << 24;                        // Put together first encoder value
-        EncoderL |= (reply[1] << 16);
-        EncoderL |= (reply[2] << 8);
-        EncoderL |= (reply[3]);
-        EncoderR = reply[4] << 24;                        // Put together second encoder value
-        EncoderR |= (reply[5] << 16);
-        EncoderR |= (reply[6] << 8);
-        EncoderR |= (reply[7]);
 
         // Publish encoder values to topic /encoders (custom message)
         // **********************************************************
@@ -180,41 +161,34 @@ int main( int argc, char* argv[] ){
 
 void read_MD49_Data (void){
 
-/*
-    // Read all MD49 data from md49_data.txt
-    // *************************************
-    string line;
-    ifstream myfile ("md49_data.txt");
-    if (myfile.is_open()){
-        int i=0;
-        while (getline (myfile,line)){
-            //cout << line << '\n';
-            char data[10];
-            std::copy(line.begin(), line.end(), data);
-            serialBuffer[i]=atoi(data);
-            i =i++;
-        }
-        myfile.close();
-
+    // Send 'R' over the serial port
+    device.write("R");
+    // Get the reply, the last value is the timeout in ms
+    try{ device.read(reply, REPLY_SIZE, TIMEOUT); }
+    catch(cereal::TimeoutException& e)
+    {
+      ROS_ERROR("Timeout on serialport! No data read");
     }
-    else ROS_ERROR("Unable to open file: md49_data.txt");
+    //ROS_INFO("Received MD49 data");
 
     // Put toghether new encodervalues
     // *******************************
-    EncoderL = serialBuffer[0] << 24;                        // Put together first encoder value
-    EncoderL |= (serialBuffer[1] << 16);
-    EncoderL |= (serialBuffer[2] << 8);
-    EncoderL |= (serialBuffer[3]);
-    EncoderR = serialBuffer[4] << 24;                        // Put together second encoder value
-    EncoderR |= (serialBuffer[5] << 16);
-    EncoderR |= (serialBuffer[6] << 8);
-    EncoderR |= (serialBuffer[7]);
-*/
+    EncoderL = reply[0] << 24;                        // Put together first encoder value
+    EncoderL |= (reply[1] << 16);
+    EncoderL |= (reply[2] << 8);
+    EncoderL |= (reply[3]);
+    EncoderR = reply[4] << 24;                        // Put together second encoder value
+    EncoderR |= (reply[5] << 16);
+    EncoderR |= (reply[6] << 8);
+    EncoderR |= (reply[7]);
 
 }
 
 void set_MD49_speed (unsigned char speed_l, unsigned char speed_r){
 
+
+
+/*
     char buffer[33];
     ofstream myfile;
     myfile.open ("md49_commands.txt");
@@ -257,6 +231,8 @@ void set_MD49_speed (unsigned char speed_l, unsigned char speed_r){
         myfile << "\n";
     }
     myfile.close();
+*/
+
 }
 
 char* itoa(int value, char* result, int base) {
