@@ -1,20 +1,12 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(base_controller)
+project(serialport)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  geometry_msgs
   roscpp
-  rospy
-  std_msgs
-  message_generation
-  tf
-  serialport
 )
-
-find_package(serialport REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -55,12 +47,6 @@ find_package(serialport REQUIRED)
 #   Message1.msg
 #   Message2.msg
 # )
-add_message_files(
-  FILES
-  encoders.msg
-  md49data.msg
-)
-
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -79,12 +65,8 @@ add_message_files(
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   geometry_msgs#   std_msgs
+#   std_msgs  # Or other packages containing msgs
 # )
-generate_messages(
-  DEPENDENCIES
-  std_msgs
-)
 
 ###################################
 ## catkin specific configuration ##
@@ -96,9 +78,9 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES base_controller
-  CATKIN_DEPENDS geometry_msgs roscpp rospy std_msgs message_runtime tf
+  INCLUDE_DIRS include
+  LIBRARIES serialport
+  CATKIN_DEPENDS roscpp
 #  DEPENDS system_lib
 )
 
@@ -109,24 +91,25 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 # include_directories(include)
-include_directories(
-  ${catkin_INCLUDE_DIRS}
-)
+include_directories(include ${catkin_INCLUDE_DIRS})
 
 ## Declare a cpp library
-# add_library(base_controller
-#   src/${PROJECT_NAME}/base_controller.cpp
+# add_library(serialport
+#   src/${PROJECT_NAME}/serialport.cpp
 # )
 
+add_library(serialport src/serialport.cpp)
+target_link_libraries(serialport ${catkin_LIBRARIES})
+
 ## Declare a cpp executable
-# add_executable(base_controller_node src/base_controller_node.cpp)
+# add_executable(serialport_node src/serialport_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(base_controller_node base_controller_generate_messages_cpp)
+# add_dependencies(serialport_node serialport_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(base_controller_node
+# target_link_libraries(serialport_node
 #   ${catkin_LIBRARIES}
 # )
 
@@ -145,7 +128,7 @@ include_directories(
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS base_controller base_controller_node
+# install(TARGETS serialport serialport_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -170,7 +153,7 @@ include_directories(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_base_controller.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_serialport.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
@@ -178,38 +161,11 @@ include_directories(
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-#add_executable(helloworld src/helloworld/helloworld_node.cpp)
-#target_link_libraries(helloworld ${catkin_LIBRARIES})
+#rosbuild_init()
 
-#add_executable(md49_console src/md49_console/md49_console_node.cpp)
-#target_link_libraries(md49_console ${catkin_LIBRARIES})
+#set the default path for built executables to the "bin" directory
+#set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
+#set the default path for built libraries to the "lib" directory
+#set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
-
-
-
-add_executable(base_controller src/base_controller/base_controller_node.cpp)
-add_dependencies(base_controller base_controller_gencpp)
-#add_dependencies(base_controller_2 base_controller_2_generate_messages_cpp)
-#add_dependencies(base_controller_2 base_controller_2_EXPORTED_TARGETS)
-target_link_libraries(base_controller ${catkin_LIBRARIES})
-
-add_executable(base_controller_2 src/base_controller_2/base_controller_2_node.cpp)
-add_dependencies(base_controller_2 base_controller_2_gencpp)
-#add_dependencies(base_controller base_controller_generate_messages_cpp)
-#add_dependencies(base_controller base_controller_EXPORTED_TARGETS)
-target_link_libraries(base_controller_2 ${catkin_LIBRARIES})
-
-add_executable(joystick_driver src/joystick_driver/joystick_driver_node.cpp)
-target_link_libraries(joystick_driver ${catkin_LIBRARIES})
-
-add_executable(serial_controller src/serial_controller/serial_controller_node.cpp)
-target_link_libraries(serial_controller ${catkin_LIBRARIES})
-#target_link_libraries(serial_controller ${SQLITE__LIBRARIES})
-
-add_executable(odometry src/odometry/odometry_node.cpp)
-add_dependencies(odometry base_controller_gencpp)
-#add_dependencies(odometry base_controller_generate_messages_cpp)
-#add_dependencies(base_controller base_controller_EXPORTED_TARGETS)
-target_link_libraries(odometry ${catkin_LIBRARIES})
-
-
+#rosbuild_add_library(serialport src/serialport.cpp)
