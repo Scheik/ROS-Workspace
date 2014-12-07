@@ -30,6 +30,9 @@ char* itoa(int value, char* result, int base);
 
 using namespace std;
 
+base_controller::encoders encoders;
+base_controller::md49data md49data;
+
 void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
 
         if (vel_cmd.linear.x>0){
@@ -52,11 +55,7 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
             speed_l = 255;
             speed_r = 0;
         }
-        if ((speed_l != last_speed_l) || (speed_r != last_speed_r)){
-            set_md49_speed(speed_l,speed_r);
-            last_speed_l=speed_l;
-            last_speed_r=speed_r;
-        }
+
 
 
     /*
@@ -110,16 +109,22 @@ int main( int argc, char* argv[] ){
         // *****************************************
         read_MD49_Data();
 
+        // Set MD49 speed_l and speed_r
+        // ****************************
+        if ((speed_l != last_speed_l) || (speed_r != last_speed_r)){
+            set_md49_speed(speed_l,speed_r);
+            last_speed_l=speed_l;
+            last_speed_r=speed_r;
+        }
+
         // Publish encoder values to topic /encoders (custom message)
         // **********************************************************
-        base_controller::encoders encoders;
         encoders.encoder_l=EncoderL;
         encoders.encoder_r=EncoderR;
         encoders_pub.publish(encoders);
 
         // Publish MD49 data to topic /md49data (custom message)
         // *****************************************************
-        base_controller::md49data md49data;
         md49data.speed_l = serialBuffer[8];
         md49data.speed_r = serialBuffer[9];
         md49data.volt = serialBuffer[10];

@@ -63,7 +63,7 @@ int main( int argc, char* argv[] ){
     usleep(10000);                                          // Sleep for UART to power up and set options
 
     ROS_DEBUG("Starting Mainloop...");
-    ROS_DEBUG("reading data from MD49 and pushing commands to MD49 @ 10Hz...");
+    ROS_DEBUG("reading data from MD49 and pushing commands to MD49 @ 5Hz...");
 
     while(  n.ok() ){
 
@@ -71,7 +71,7 @@ int main( int argc, char* argv[] ){
         // serial. Data ist stored in md49_data.txt
         // ****************************************
         read_MD49_Data_serial();
-        usleep(50000);
+        usleep(100000);
 
         // Read commands from md49_commands.txt:
         // *************************************
@@ -81,7 +81,7 @@ int main( int argc, char* argv[] ){
         // read from md49_commands.txt
         // *******************************
         set_MD49_speed(speed_l, speed_r);
-        usleep(50000);
+        usleep(100000);
 
     }// end.mainloop
     return 1;
