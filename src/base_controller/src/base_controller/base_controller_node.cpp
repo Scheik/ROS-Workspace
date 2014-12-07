@@ -25,7 +25,7 @@ double base_width = 0.4;                                    /* Base width in met
 
 unsigned char serialBuffer[18];                             /* Serial buffer to store uart data */
 void read_MD49_Data (void);
-void set_MD49_speed (unsigned char speed_l, unsigned char speed_r);
+void set_md49_speed (unsigned char speed_l, unsigned char speed_r);
 char* itoa(int value, char* result, int base);
 
 using namespace std;
@@ -53,7 +53,7 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
             speed_r = 0;
         }
         if ((speed_l != last_speed_l) || (speed_r != last_speed_r)){
-            set_MD49_speed(speed_l,speed_r);
+            set_md49_speed(speed_l,speed_r);
             last_speed_l=speed_l;
             last_speed_r=speed_r;
         }
@@ -174,7 +174,7 @@ void read_MD49_Data (void){
 
 }
 
-void set_MD49_speed (unsigned char speed_l, unsigned char speed_r){
+void set_md49_speed (unsigned char speed_l, unsigned char speed_r){
 
     char buffer[33];
     ofstream myfile;

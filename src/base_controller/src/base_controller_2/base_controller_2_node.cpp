@@ -18,9 +18,9 @@
 int32_t EncoderL;                                           /* stores encoder value left read from md49 */
 int32_t EncoderR;                                           /* stores encoder value right read from md49 */
 char reply[REPLY_SIZE];
-unsigned char speed_l=128;
-unsigned char speed_r=128;                                  /* speed to set for MD49 */
-unsigned char last_speed_l=128, last_speed_r=128;           /* speed to set for MD49 */
+char speed_l=128;
+char speed_r=128;                                  /* speed to set for MD49 */
+char last_speed_l=128, last_speed_r=128;           /* speed to set for MD49 */
 double vr = 0.0;
 double vl = 0.0;
 double max_vr = 0.2;
@@ -31,9 +31,9 @@ double base_width = 0.4;                                    /* Base width in met
 
 unsigned char serialBuffer[18];                             /* Serial buffer to store uart data */
 void read_MD49_Data (void);
-void set_MD49_speed (unsigned char speed_l, unsigned char speed_r);
+void write_MD49_speed (unsigned char speed_l, unsigned char speed_r);
+void set_MD49_speed (void);
 char* itoa(int value, char* result, int base);
-void writeBytes(int descriptor, int count);
 
 using namespace std;
 cereal::CerealPort device;
@@ -62,11 +62,7 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
             speed_l = 255;
             speed_r = 0;
         }
-        if ((speed_l != last_speed_l) || (speed_r != last_speed_r)){
-            set_MD49_speed(speed_l,speed_r);
-            last_speed_l=speed_l;
-            last_speed_r=speed_r;
-        }
+
 
     /*
         //ANFANG Alternative
@@ -129,6 +125,16 @@ int main( int argc, char* argv[] ){
         //  and avaiable through md49_data.txt)
         // *****************************************
         read_MD49_Data();
+
+        // set speed as in md49speed.txt
+        // *****************************
+        if ((speed_l != last_speed_l) || (speed_r != last_speed_r)){
+            // gewünschte werte in textfile
+            write_MD49_speed(speed_l,speed_r);
+            set_MD49_speed();
+            last_speed_l=speed_l;
+            last_speed_r=speed_r;
+        }
 
         // Publish encoder values to topic /encoders (custom message)
         // **********************************************************       
@@ -215,31 +221,81 @@ void read_MD49_Data (void){
 
 }
 
-void set_MD49_speed (unsigned char speed_l, unsigned char speed_r){
+void write_MD49_speed (unsigned char speed_l, unsigned char speed_r){
 
-    //serialBuffer[0] = 88;                                   // 88 =X Steuerbyte um Commands an MD49 zu senden
-    //serialBuffer[1] = 115;                                  // 115=s Steuerbyte setSpeed
-    //serialBuffer[2] = speed_l;                              // set speed1
-    //serialBuffer[3] = speed_r;                              // set speed2
-    //int fd = device.fd_;
-   // writeBytes(fd, 4);
+    char buffer[33];
+    ofstream myfile;
+    myfile.open ("md49speed.txt");
+    //myfile << "Writing this to a file.\n";
+    if (speed_l==0){
+        myfile << "000";
+        myfile << "\n";
+    }
+    else if (speed_l<10){
+        myfile << "00";
+        myfile << itoa(speed_l,buffer,10);
+        myfile << "\n";
+    }
+    else if (speed_l<100){
+        myfile << "0";
+        myfile << itoa(speed_l,buffer,10);
+        myfile << "\n";
+    }
+    else{
+        myfile << itoa(speed_l,buffer,10);
+        myfile << "\n";
+    }
 
-    //stringstream ss;
-   // string s;
-    //char c = 'a';
-    //ss << speed_l;
-    //ss >> s;
-    const char* command="Xs";
-    device.write(command,2);
-    command=reinterpret_cast<const char*>(speed_l);
-    device.write(command,1);
-    command=reinterpret_cast<const char*>(speed_r);
-    device.write(command,1);
-    //command=(const char*)speed_r;
-    //device.write(command,1);
+    if (speed_r==0){
+        myfile << "000";
+        myfile << "\n";
+    }
+    else if (speed_r<10){
+        myfile << "00";
+        myfile << itoa(speed_r,buffer,10);
+        myfile << "\n";
+    }
+    else if (speed_r<100){
+        myfile << "0";
+        myfile << itoa(speed_r,buffer,10);
+        myfile << "\n";
+    }
+    else{
+        myfile << itoa(speed_r,buffer,10);
+        myfile << "\n";
+    }
+    myfile.close();
 
-    //device.write(((const char *)speed_l[0]),1);
-    //device.write((const char *)speed_r,1);
+}
+
+void set_MD49_speed(void){
+    unsigned char md49_speed[2];                                /* keeps data from MD49, read from AVR-Master */
+    string line;
+    string arrayOfString[2];
+    ifstream myfile ("md49speed.txt");
+    if (myfile.is_open()){
+        int i=0;
+        while ( getline (myfile,line) )
+        {
+            //cout << line << '\n';
+            char data[10];
+            std::copy(line.begin(), line.end(), data);
+            md49_speed[i]=atoi(data);
+            arrayOfString[i]=atoi(data);
+            i =i++;
+        }
+        myfile.close();
+        speed_l=md49_speed[0];
+        speed_r=md49_speed[1];
+    }
+    else{
+        cout << "Unable to open file";
+    }
+    const char* pointerToSpeedL =  arrayOfString[0].c_str();
+    const char* pointerToSpeedR =  arrayOfString[1].c_str();
+    device.write("Xs",2);
+    device.write(pointerToSpeedL,1);
+    device.write(pointerToSpeedR,1);
 
 }
 
@@ -265,13 +321,4 @@ char* itoa(int value, char* result, int base) {
             *ptr1++ = tmp_char;
         }
         return result;
-    }
-
-void writeBytes(int descriptor, int count) {
-    if ((write(descriptor, serialBuffer, count)) == -1) {   // Send data out
-        perror("Error writing");
-        close(descriptor);                                  // Close port if there is an error
-        exit(1);
-    }
-
 }
