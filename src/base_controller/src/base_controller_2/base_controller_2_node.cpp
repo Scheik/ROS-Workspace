@@ -45,7 +45,7 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
         if (vel_cmd.linear.x>0){
             speed_l = 255;
             speed_r = 255;
-            device.write("Xsÿÿ",2);
+            device.write("Xsÿÿ",4);
         }
         if (vel_cmd.linear.x<0){
             speed_l = 0;
@@ -54,7 +54,7 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
         if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){
             speed_l = 128;
             speed_r = 128;
-            device.write("Xs€€",2);
+            device.write("Xs€€",4);
         }
         if (vel_cmd.angular.z>0){
             speed_l = 0;
