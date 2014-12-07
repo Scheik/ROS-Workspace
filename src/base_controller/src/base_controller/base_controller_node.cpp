@@ -94,7 +94,7 @@ int main( int argc, char* argv[] ){
 
     // Set nodes looprate 50Hz
     // ***********************
-    ros::Rate loop_rate(20);
+    ros::Rate loop_rate(10);
     ROS_INFO("base_controller running...");
     ROS_INFO("=============================");
     ROS_INFO("Subscribing to topic /cmd_vel");

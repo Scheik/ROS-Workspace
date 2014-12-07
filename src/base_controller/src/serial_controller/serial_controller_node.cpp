@@ -20,7 +20,7 @@
 #include <errno.h>                                          /* Error number definitions */
 #include <termios.h>                                        /* POSIX terminal control definitions */
 #include <ctype.h>                                          /* isxxx() */
-#include<ros/ros.h>
+//#include<ros/ros.h>
 
 // Global variables
 const char* serialport_name="/dev/ttyAMA0";                 /* defines used serialport */
@@ -52,8 +52,8 @@ int main( int argc, char* argv[] ){
 
     // Init as ROS node
     // ****************
-    ros::init(argc, argv, "serial_controller");
-    ros::NodeHandle n;
+    //ros::init(argc, argv, "serial_controller");
+    //ros::NodeHandle n;
 
     // Open serial port
     // ****************
@@ -62,11 +62,11 @@ int main( int argc, char* argv[] ){
     //ROS_INFO("Opend serial port at %s with %i Bps",serialport_name,serialport_bps);
     usleep(10000);                                          // Sleep for UART to power up and set options
 
-    ROS_DEBUG("Starting Mainloop...");
-    ROS_DEBUG("reading data from MD49 and pushing commands to MD49 @ 5Hz...");
+    //ROS_DEBUG("Starting Mainloop...");
+    //ROS_DEBUG("reading data from MD49 and pushing commands to MD49 @ 5Hz...");
 
-    while(  n.ok() ){
-
+    //while(  n.ok() ){
+    while( 1 ){
         // Read encoder and other data from MD49
         // serial. Data ist stored in md49_data.txt
         // ****************************************
