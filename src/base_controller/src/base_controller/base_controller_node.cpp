@@ -92,25 +92,29 @@ int main( int argc, char* argv[] ){
     ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",10);
     ros::Publisher md49data_pub = n.advertise<base_controller::md49data>("md49data",10);
 
-    // Set nodes looprate 50Hz
+    // Set nodes looprate 10Hz
     // ***********************
     ros::Rate loop_rate(10);
-    ROS_INFO("base_controller running...");
-    ROS_INFO("=============================");
-    ROS_INFO("Subscribing to topic /cmd_vel");
-    ROS_INFO("Publishing to topic /encoders");
-    ROS_INFO("Publishing to topic /md49data");
+    ROS_INFO("base_controller is running:");
+    ROS_INFO("reading md49data from md49_data.txt");
+    ROS_INFO("writing md49commands to md49_commands.txt");
+    ROS_INFO("============================================");
+    ROS_INFO("base_controller subscribes to topic /cmd_vel");
+    ROS_INFO("base_controller publises to topic /encoders");
+    ROS_INFO("base_controller publises to topic /md49data");
 
     while(n.ok())
     {
-        // Read encoder and other data from MD49
-        // (data is read from serial_controller_node
-        //  and avaiable through md49_data.txt)
-        // *****************************************
+        // Read encoder values and other data from MD49:
+        // serial_controller_node reads data from AVR-Master
+        // and provides that data in md49_data.txt
+        // *************************************************
         read_MD49_Data();
 
-        // Set MD49 speed_l and speed_r
-        // ****************************
+        // Set MD49 speed_l and speed_r:
+        // serial_controller_node reads commands from
+        // md49_commands.txt and writes commands to AVR-Master
+        // ***************************************************
         if ((speed_l != last_speed_l) || (speed_r != last_speed_r)){
             set_md49_speed(speed_l,speed_r);
             last_speed_l=speed_l;

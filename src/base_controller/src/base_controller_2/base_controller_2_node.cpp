@@ -130,13 +130,13 @@ int main( int argc, char* argv[] ){
 
         // set speed as in md49speed.txt
         // *****************************
-        if ((speed_l != last_speed_l) || (speed_r != last_speed_r)){
+        //if ((speed_l != last_speed_l) || (speed_r != last_speed_r)){
             // gewünschte werte in textfile
             //write_MD49_speed(speed_l,speed_r);
             //set_MD49_speed();
            // last_speed_l=speed_l;
            // last_speed_r=speed_r;
-        }
+        //}
 
         // Publish encoder values to topic /encoders (custom message)
         // **********************************************************       
