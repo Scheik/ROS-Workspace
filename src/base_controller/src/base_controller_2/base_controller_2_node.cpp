@@ -45,6 +45,7 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
         if (vel_cmd.linear.x>0){
             speed_l = 255;
             speed_r = 255;
+            device.write("Xsÿÿ",2);
         }
         if (vel_cmd.linear.x<0){
             speed_l = 0;
@@ -53,6 +54,7 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
         if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){
             speed_l = 128;
             speed_r = 128;
+            device.write("Xs€€",2);
         }
         if (vel_cmd.angular.z>0){
             speed_l = 0;
@@ -130,10 +132,10 @@ int main( int argc, char* argv[] ){
         // *****************************
         if ((speed_l != last_speed_l) || (speed_r != last_speed_r)){
             // gewünschte werte in textfile
-            write_MD49_speed(speed_l,speed_r);
-            set_MD49_speed();
-            last_speed_l=speed_l;
-            last_speed_r=speed_r;
+            //write_MD49_speed(speed_l,speed_r);
+            //set_MD49_speed();
+           // last_speed_l=speed_l;
+           // last_speed_r=speed_r;
         }
 
         // Publish encoder values to topic /encoders (custom message)
