@@ -14,7 +14,7 @@ ROS Distribution on RPi and Ubuntu-Workstation is Groovy.
 Install package base_controller on RPi and Ubuntu- Workstation.
 
 INSTALL INTO CATKIN_WORKSPACE:
-==
+---------------------------
 
 $ cd ~
 
@@ -39,7 +39,7 @@ rosrun base_controller serial_controller
 This node connects to AVR-Master via UART/RS232 and is working as an Interface to all settings & data of/from robots hardware.
 
 Run node base_controller: 
-=========================
+-----------------------------
 
 rosrun base_controller base_controller
 
