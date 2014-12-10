@@ -43,7 +43,7 @@ Run node base_controller:
 
 rosrun base_controller base_controller
 
-Publishes /md49data (custom Message with all settings and parameters from robots drive
+Publishes /md49data (custom Message with all settings and parameters from robots drive)
 
 Publishes /encoders (custom Message with encodervalues from left and right drive)
 
