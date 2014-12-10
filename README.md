@@ -32,7 +32,7 @@ cd ROS-Groovy-Workspace
 source devel/setup.bash
 
 Run node serial_controller: 
-=============================
+---------------------------
 
 rosrun base_controller serial_controller
 
