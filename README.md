@@ -28,6 +28,7 @@ On RPi
 =============
 
 cd ROS-Groovy-Workspace
+
 source devel/setup.bash
 
 Run node serial_controller: 
