@@ -53,3 +53,6 @@ On Ubuntu-Workstation
 =====================
 
 comming soon...
+
+Run node odometry:
+-----------------
