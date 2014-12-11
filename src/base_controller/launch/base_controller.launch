@@ -1,4 +1,11 @@
 <launch>
+  <machine
+    name="Pi-on-Robot"
+    address="Pi-on-Robot.local"
+    
+    user="pi"
+    password="raspberry"
+  />
   <!-- Load parameters for base_controller_node -->
   <rosparam
     command="load"
@@ -15,6 +22,6 @@
     pkg="base_controller"   
     type="base_controller"
     required="true"
-   
+    machine="Pi-on-Robot"
   />
 </launch>
