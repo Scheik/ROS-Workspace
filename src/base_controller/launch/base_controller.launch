@@ -9,6 +9,7 @@
   <!-- Load parameters for base_controller_node -->
   <rosparam
     command="load"
+    ns="/md49"
     file="$(find base_controller)/config/md49_defaults.yaml"
   />
   <rosparam
