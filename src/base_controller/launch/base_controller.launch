@@ -1,0 +1,11 @@
+<launch>
+  <rosparam
+    command="load"
+    file="$(find base_controller)/config/md49_defaults.yaml"
+  />
+  <rosparam
+    command="load"
+    file="$(find base_controller)/config/serialport_defaults.yaml"
+  />
+
+</launch>
