@@ -1,1 +1,1 @@
-{serialport/bps: 38400, serialport/name: dev/ttyS2}
+{serialport/bps: 38400, serialport/name: /dev/ttyS2}
