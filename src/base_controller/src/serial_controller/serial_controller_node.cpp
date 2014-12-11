@@ -23,7 +23,7 @@
 //#include<ros/ros.h>
 
 // Global variables
-const char* serialport_name="/dev/ttyAMA0";                 /* defines used serialport */
+const char* serialport_name="/dev/ttyS2";                 /* defines used serialport on BPi. Use "/dev/ttyAMA0" for RPi*/
 int serialport_bps=B38400;                                  /* defines used baudrate on serialport */
 //int filedesc;                                             /* File descriptor of serial port we will talk to*/
 int fd;                                                     /* serial port file descriptor */
@@ -58,7 +58,7 @@ int main( int argc, char* argv[] ){
     // Open serial port
     // ****************
     //fd = openSerialPort("/dev/ttyAMA0", serialport_bps);    // RPis UART from GPIO header
-    fd = openSerialPort("/dev/ttyS2", serialport_bps);    // RPis UART from GPIO header
+    fd = openSerialPort(serialport_name, serialport_bps);    // RPis UART from GPIO header
     if (fd == -1) exit(1);
     //ROS_INFO("Opend serial port at %s with %i Bps",serialport_name,serialport_bps);
     usleep(10000);                                          // Sleep for UART to power up and set options
