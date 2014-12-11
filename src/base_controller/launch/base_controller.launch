@@ -2,7 +2,7 @@
   <machine
     name="Pi-on-Robot"
     address="Pi-on-Robot.local"
-    
+    ros-package-path="/home/pi/ROS-Groovy-Workspace/src/base_controller"
     user="pi"
     password="raspberry"
   />
