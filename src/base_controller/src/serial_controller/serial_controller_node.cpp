@@ -57,7 +57,8 @@ int main( int argc, char* argv[] ){
 
     // Open serial port
     // ****************
-    fd = openSerialPort("/dev/ttyAMA0", serialport_bps);
+    //fd = openSerialPort("/dev/ttyAMA0", serialport_bps);    // RPis UART from GPIO header
+    fd = openSerialPort("/dev/ttyS2", serialport_bps);    // RPis UART from GPIO header
     if (fd == -1) exit(1);
     //ROS_INFO("Opend serial port at %s with %i Bps",serialport_name,serialport_bps);
     usleep(10000);                                          // Sleep for UART to power up and set options
