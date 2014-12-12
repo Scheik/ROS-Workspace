@@ -11,6 +11,7 @@
      pkg="joy"   
      type="joy_node"
      required="true"
+     output="screen"
    />
 
 </launch>
