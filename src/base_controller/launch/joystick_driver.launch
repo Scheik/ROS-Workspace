@@ -14,4 +14,12 @@
      output="screen"
    />
 
+   <node
+     name="joystick_driver"
+     pkg="base_controller"
+     type="joystick_driver"
+     required="true"
+     output="screen"
+   />
+
 </launch>
