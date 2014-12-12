@@ -2,7 +2,7 @@
   <machine
     name="Pi-on-Robot"
     address="Pi-on-Robot.local"
-    env-loader="opt/ros/groovy/env.sh"
+    env-loader="opt/ros/groovy/myenv.sh"
     user="pi"
     password="raspberry"
   />
