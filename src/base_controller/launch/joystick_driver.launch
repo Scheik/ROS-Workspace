@@ -1,3 +1,16 @@
 <launch>
+   
+   <rosparam
+     command="load"
+     ns="/joy_node"
+     file="$(find base_controller)/config/joystick_defaults.yaml"
+   />
+
+   <node 
+     name="joy_node" 
+     pkg="joy"   
+     type="joy_node"
+     required="true"
+   />
 
 </launch>
