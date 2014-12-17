@@ -40,20 +40,20 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
             speed_r = 255;
         }
         if (vel_cmd.linear.x<0){
-            speed_l = 0;
-            speed_r = 0;
+            speed_l = 1;
+            speed_r = 1;
         }
         if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){
             speed_l = 128;
             speed_r = 128;
         }
         if (vel_cmd.angular.z>0){
-            speed_l = 0;
+            speed_l = 1;
             speed_r = 255;
         }
         if (vel_cmd.angular.z<0){
             speed_l = 255;
-            speed_r = 0;
+            speed_r = 1;
         }
 
 
@@ -228,9 +228,10 @@ void set_md49_speed (unsigned char speed_l, unsigned char speed_r){
         myfile << "\n";
     }
     */
-    myfile << itoa(speed_l+100,buffer,10);
+    myfile << itoa(speed_l,buffer,10);
+
     myfile << "\n";
-    myfile << itoa(speed_r+100,buffer,10);
+    myfile << itoa(speed_r,buffer,10);
     myfile << "\n";
     myfile.close();
 }
