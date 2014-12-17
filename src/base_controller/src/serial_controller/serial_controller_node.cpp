@@ -187,8 +187,8 @@ void read_md49_commands_txt(void){
             i =i++;
         }
         myfile.close();
-        speed_l=md49_data[0];
-        speed_r=md49_data[1];
+        speed_l=md49_data[0]-100;
+        speed_r=md49_data[1]-100;
     }
     else cout << "Unable to open file";
 }

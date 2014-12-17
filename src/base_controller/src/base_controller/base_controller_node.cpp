@@ -228,9 +228,9 @@ void set_md49_speed (unsigned char speed_l, unsigned char speed_r){
         myfile << "\n";
     }
     */
-    myfile << itoa(speed_l,buffer,10);
+    myfile << itoa(speed_l+100,buffer,10);
     myfile << "\n";
-    myfile << itoa(speed_r,buffer,10);
+    myfile << itoa(speed_r+100,buffer,10);
     myfile << "\n";
     myfile.close();
 }
