@@ -184,8 +184,9 @@ include_directories(
 #add_executable(md49_console src/md49_console/md49_console_node.cpp)
 #target_link_libraries(md49_console ${catkin_LIBRARIES})
 
-
-
+ # enable pkg_check_modules macro
+ include(FindPkgConfig)
+ pkg_check_modules(SQLITE sqlite3)
 
 add_executable(base_controller src/base_controller/base_controller_node.cpp)
 add_dependencies(base_controller base_controller_gencpp)
@@ -204,6 +205,7 @@ target_link_libraries(joystick_driver ${catkin_LIBRARIES})
 
 add_executable(serial_controller src/serial_controller/serial_controller_node.cpp)
 target_link_libraries(serial_controller ${catkin_LIBRARIES})
+target_link_libraries(serial_controller sqlite3)
 #target_link_libraries(serial_controller ${SQLITE__LIBRARIES})
 
 add_executable(odometry src/odometry/odometry_node.cpp)

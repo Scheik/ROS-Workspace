@@ -21,6 +21,16 @@
 #include <termios.h>                                        /* POSIX terminal control definitions */
 #include <ctype.h>                                          /* isxxx() */
 //#include<ros/ros.h>
+#include <sqlite3.h>
+
+static int callback(void *NotUsed, int argc, char **argv, char **azColName){
+   int i;
+   for(i=0; i<argc; i++){
+      printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+   }
+   printf("\n");
+   return 0;
+}
 
 // Global variables
 const char* serialport_name="/dev/ttyS2";                 /* defines used serialport on BPi. Use "/dev/ttyAMA0" for RPi*/
@@ -50,6 +60,56 @@ char* itoa(int value, char* result, int base);
 
 int main( int argc, char* argv[] ){
 
+    //  Open database md49.db and
+    // **************************
+    sqlite3 *db;
+    char *zErrMsg = 0;
+    int  rc;
+    const char *sql;
+
+    rc = sqlite3_open("md49data.db", &db);
+    if( rc ){
+        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+        exit(0);
+    }else{
+        fprintf(stdout, "Opened database successfully\n");
+    }
+
+    // Create table md49data
+    // *********************
+    sql = "CREATE TABLE md49data("  \
+     "ID INT PRIMARY KEY     NOT NULL," \
+     "Encoderbyte1L  INT," \
+     "Encoderbyte2L  INT," \
+     "Encoderbyte3L  INT," \
+     "Encoderbyte4L  INT," \
+     "Encoderbyte1R  INT," \
+     "Encoderbyte2R  INT," \
+     "Encoderbyte3R  INT," \
+     "Encoderbyte4R  INT," \
+     "SpeedL         INT," \
+     "SpeedR         INT," \
+     "Volts          INT," \
+     "CurrentL       INT," \
+     "CurrentR       INT," \
+     "Error          INT," \
+     "Acceleration   INT," \
+     "Mode           INT," \
+     "Regulator      INT," \
+     "Timeout        INT );";
+
+    /* Execute SQL statement */
+    rc = sqlite3_exec(db, sql, callback, 0, &zErrMsg);
+    if( rc != SQLITE_OK ){
+        fprintf(stderr, "SQL error: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+    }else{
+        fprintf(stdout, "Table created successfully\n");
+    }
+    sqlite3_close(db);
+
+
+
     // Init as ROS node
     // ****************
     //ros::init(argc, argv, "serial_controller");
@@ -57,8 +117,7 @@ int main( int argc, char* argv[] ){
 
     // Open serial port
     // ****************
-    //fd = openSerialPort("/dev/ttyAMA0", serialport_bps);    // RPis UART from GPIO header
-    fd = openSerialPort(serialport_name, serialport_bps);    // RPis UART from GPIO header
+    fd = openSerialPort(serialport_name, serialport_bps);
     if (fd == -1) exit(1);
     //ROS_INFO("Opend serial port at %s with %i Bps",serialport_name,serialport_bps);
     usleep(10000);                                          // Sleep for UART to power up and set options
