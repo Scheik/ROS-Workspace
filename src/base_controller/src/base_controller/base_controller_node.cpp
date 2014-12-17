@@ -40,8 +40,8 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
             speed_r = 255;
         }
         if (vel_cmd.linear.x<0){
-            speed_l = 10;
-            speed_r = 10;
+            speed_l = 100;
+            speed_r = 100;
         }
         if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){
             speed_l = 128;
