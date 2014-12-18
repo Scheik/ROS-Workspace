@@ -17,7 +17,7 @@ sudo chown www-data.www-data ~/ROS-Groovy-Workspace/data
 
 restart nginx
 
-sudo /etc/init.d/nginx reload
+sudo /etc/init.d/nginx restart
 
 Current content:
 
