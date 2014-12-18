@@ -67,7 +67,7 @@ int main( int argc, char* argv[] ){
     int  rc;
     const char *sql;
 
-    rc = sqlite3_open("md49data.db", &db);
+    rc = sqlite3_open("/usr/share/nginx/www/md49data.db", &db);
     if( rc ){
         fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
         exit(0);
