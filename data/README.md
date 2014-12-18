@@ -5,7 +5,7 @@ Therefore edit nginx defaults with: sudo nano /etc/nginx/sites-available/default
 
 comment 
 
-#root /usr/share/nginx/www;
+root /usr/share/nginx/www;
 
 and add instead 
 
