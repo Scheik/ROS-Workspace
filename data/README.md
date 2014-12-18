@@ -3,12 +3,21 @@ and is woorking as root directory for nginx.
 
 Therefore edit nginx defaults with: sudo nano /etc/nginx/sites-available/default
 
-comment sudo nano /etc/nginx/sites-available/default
+comment 
+
+#root /usr/share/nginx/www;
 
 and add instead 
 
-root ~/ROS-Groovy-Workspace/data
+root ~/ROS-Groovy-Workspace/data;
 
+give rights for user www-data
+
+sudo chown www-data.www-data ~/ROS-Groovy-Workspace/data
+
+restart nginx
+
+sudo /etc/init.d/nginx reload
 
 Current content:
 
