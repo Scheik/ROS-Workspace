@@ -1,5 +1,5 @@
 This folder keeps data used from package base_controller 
-and is woorking as root directory for nginx.
+and is woorking as root directory for nginx (running on pi).
 
 Therefore edit nginx defaults with: sudo nano /etc/nginx/sites-available/default
 
@@ -9,7 +9,7 @@ root /usr/share/nginx/www;
 
 and add instead 
 
-root ~/ROS-Groovy-Workspace/data;
+root /home/pi/ROS-Groovy-Workspace/data;
 
 give rights for user www-data
 
