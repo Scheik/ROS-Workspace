@@ -79,24 +79,24 @@ int main( int argc, char* argv[] ){
     // *********************
     sql = "CREATE TABLE md49data("  \
      "ID INT PRIMARY KEY     NOT NULL," \
-     "Encoderbyte1L  INT," \
-     "Encoderbyte2L  INT," \
-     "Encoderbyte3L  INT," \
-     "Encoderbyte4L  INT," \
-     "Encoderbyte1R  INT," \
-     "Encoderbyte2R  INT," \
-     "Encoderbyte3R  INT," \
-     "Encoderbyte4R  INT," \
-     "SpeedL         INT," \
-     "SpeedR         INT," \
-     "Volts          INT," \
-     "CurrentL       INT," \
-     "CurrentR       INT," \
-     "Error          INT," \
-     "Acceleration   INT," \
-     "Mode           INT," \
-     "Regulator      INT," \
-     "Timeout        INT );";
+     "Encoderbyte1L  INT DEFAULT 0," \
+     "Encoderbyte2L  INT DEFAULT 0," \
+     "Encoderbyte3L  INT DEFAULT 0," \
+     "Encoderbyte4L  INT DEFAULT 0," \
+     "Encoderbyte1R  INT DEFAULT 0," \
+     "Encoderbyte2R  INT DEFAULT 0," \
+     "Encoderbyte3R  INT DEFAULT 0," \
+     "Encoderbyte4R  INT DEFAULT 0," \
+     "SpeedL         INT DEFAULT 128," \
+     "SpeedR         INT DEFAULT 128," \
+     "Volts          INT DEFAULT 0," \
+     "CurrentL       INT DEFAULT 0," \
+     "CurrentR       INT DEFAULT 0," \
+     "Error          INT DEFAULT 0," \
+     "Acceleration   INT DEFAULT 5," \
+     "Mode           INT DEFAULT 0," \
+     "Regulator      INT DEFAULT 1," \
+     "Timeout        INT DEFAULT 1 );";
 
     /* Execute SQL statement */
     rc = sqlite3_exec(db, sql, callback, 0, &zErrMsg);
