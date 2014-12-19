@@ -24,26 +24,35 @@
 #include <sqlite3.h>
 
 static int callback(void *NotUsed, int argc, char **argv, char **azColName){
+   /*
    int i;
    for(i=0; i<argc; i++){
       printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
    }
    printf("\n");
    return 0;
+   */
 }
 
 // Global variables
-const char* serialport_name="/dev/ttyS2";                 /* defines used serialport on BPi. Use "/dev/ttyAMA0" for RPi*/
+const char* serialport_name="/dev/ttyS2";                   /* defines used serialport on BPi. Use "/dev/ttyAMA0" for RPi*/
 int serialport_bps=B38400;                                  /* defines used baudrate on serialport */
 //int filedesc;                                             /* File descriptor of serial port we will talk to*/
 int fd;                                                     /* serial port file descriptor */
 int32_t EncoderL;                                           /* stores encoder value left read from md49 */
 int32_t EncoderR;                                           /* stores encoder value right read from md49 */
 unsigned char speed_l=128, speed_r=128;                     /* speed to set for MD49 */
-unsigned char last_speed_l=128, last_speed_r=128;                     /* speed to set for MD49 */
+unsigned char last_speed_l=128, last_speed_r=128;           /* speed to set for MD49 */
 unsigned char serialBuffer[16];                             /* Serial buffer to store uart data */
 unsigned char md49_data[18];                                /* keeps data from MD49, read from AVR-Master */
-struct termios orig;                                        // Port options
+struct termios orig;                                        // backuped port options
+
+// sqlite globals
+sqlite3 *db;
+char *zErrMsg = 0;
+int  rc;
+const char *sql;
+const char* data = "Callback function called";
 
 using namespace std;
 
@@ -62,11 +71,6 @@ int main( int argc, char* argv[] ){
 
     //  Open database md49.db and
     // **************************
-    sqlite3 *db;
-    char *zErrMsg = 0;
-    int  rc;
-    const char *sql;
-
     rc = sqlite3_open("data/md49data.db", &db);
     if( rc ){
         fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
@@ -87,16 +91,19 @@ int main( int argc, char* argv[] ){
      "Encoderbyte2R  INT DEFAULT 0," \
      "Encoderbyte3R  INT DEFAULT 0," \
      "Encoderbyte4R  INT DEFAULT 0," \
-     "SpeedL         INT DEFAULT 128," \
-     "SpeedR         INT DEFAULT 128," \
+     "EncoderL       INT DEFAULT 0," \
+     "EncoderR       INT DEFAULT 0," \
+     "SpeedL         INT DEFAULT 0," \
+     "SpeedR         INT DEFAULT 0," \
      "Volts          INT DEFAULT 0," \
      "CurrentL       INT DEFAULT 0," \
      "CurrentR       INT DEFAULT 0," \
      "Error          INT DEFAULT 0," \
-     "Acceleration   INT DEFAULT 5," \
+     "Acceleration   INT DEFAULT 0," \
      "Mode           INT DEFAULT 0," \
-     "Regulator      INT DEFAULT 1," \
-     "Timeout        INT DEFAULT 1 );";
+     "Regulator      INT DEFAULT 0," \
+     "Timeout        INT DEFAULT 0 );" \
+     "INSERT INTO md49data (ID) VALUES (1);";
 
     /* Execute SQL statement */
     rc = sqlite3_exec(db, sql, callback, 0, &zErrMsg);
@@ -106,8 +113,6 @@ int main( int argc, char* argv[] ){
     }else{
         fprintf(stdout, "Table created successfully\n");
     }
-    sqlite3_close(db);
-
 
 
     // Init as ROS node
@@ -127,7 +132,7 @@ int main( int argc, char* argv[] ){
 
     //while(  n.ok() ){
     while( 1 ){
-        // Read encoder and other data from MD49
+        // Read encodervalues and other data from MD49
         // serial. Data ist stored in md49_data.txt
         // ****************************************
         read_MD49_Data_serial();
@@ -144,6 +149,7 @@ int main( int argc, char* argv[] ){
         usleep(100000);
 
     }// end.mainloop
+    sqlite3_close(db);
     return 1;
 } // end.main
 
@@ -165,6 +171,20 @@ void read_MD49_Data_serial (void){
     EncoderR |= (serialBuffer[5] << 16);
     EncoderR |= (serialBuffer[6] << 8);
     EncoderR |= (serialBuffer[7]);
+
+    // Write data read from MD49 into
+    // sqlite3 database md49data.db
+    // ******************************
+    char* sql_buffer;
+    sql = ("UPDATE md49data SET EncoderL=%i, EncoderR=%i WHERE ID=1", itoa(EncoderL,sql_buffer,10), itoa(EncoderR,sql_buffer,10));
+    rc = sqlite3_exec(db, sql, callback, (void*)data, &zErrMsg);
+    if( rc != SQLITE_OK ){
+        //fprintf(stderr, "SQL error: %s\n", zErrMsg);
+     sqlite3_free(zErrMsg);
+    }else{
+        //fprintf(stdout, "Operation done successfully\n");
+    }
+
 
     // Write data from MD49 into md49_data.txt
     // ***************************************
