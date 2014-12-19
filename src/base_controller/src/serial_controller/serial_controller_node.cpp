@@ -177,6 +177,7 @@ void read_MD49_Data_serial (void){
     // ******************************
     char* sql_buffer;
     sql = ("UPDATE md49data SET EncoderL=%i, EncoderR=%i WHERE ID=1", itoa(EncoderL,sql_buffer,10), itoa(EncoderR,sql_buffer,10));
+    /*
     rc = sqlite3_exec(db, sql, callback, (void*)data, &zErrMsg);
     if( rc != SQLITE_OK ){
         //fprintf(stderr, "SQL error: %s\n", zErrMsg);
@@ -184,7 +185,7 @@ void read_MD49_Data_serial (void){
     }else{
         //fprintf(stdout, "Operation done successfully\n");
     }
-
+*/
 
     // Write data from MD49 into md49_data.txt
     // ***************************************
