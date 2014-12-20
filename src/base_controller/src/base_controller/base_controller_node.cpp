@@ -118,10 +118,12 @@ int main( int argc, char* argv[] ){
     // *********************************
     rc = sqlite3_open("data/md49data.db", &db);
     if( rc ){
-        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+        ROS_INFO("Can't open database: %s", sqlite3_errmsg(db));
+        //fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
         exit(0);
     }else{
-        fprintf(stdout, "Opened database successfully,\n");
+        ROS_INFO("Opened database successfully,");
+        //fprintf(stdout, "Opened database successfully,\n");
     }
 
     // Create table md49commands
@@ -133,10 +135,12 @@ int main( int argc, char* argv[] ){
      "INSERT INTO md49commands (ID,SpeedL,SpeedR) VALUES (1,128,128);";
     rc = sqlite3_exec(db, sql, NULL, 0, &zErrMsg);                      // Execute SQL statement
     if( rc != SQLITE_OK ){
-        fprintf(stderr, "%s\n", zErrMsg);
+        ROS_INFO("SQL error: %s", zErrMsg);
+        //fprintf(stderr, "%s\n", zErrMsg);
         sqlite3_free(zErrMsg);
     }else{
-        fprintf(stdout, "table created successfully\n");
+        ROS_INFO("table created successfully");
+        //fprintf(stdout, "table created successfully\n");
     }
 
     // Set SpeedL and SpeedR to
@@ -148,10 +152,12 @@ int main( int argc, char* argv[] ){
 
     rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
     if( rc != SQLITE_OK ){
-        fprintf(stderr, "SQL error: %s\n", zErrMsg);
+        ROS_INFO("SQL error: %s", zErrMsg);
+        //fprintf(stderr, "SQL error: %s\n", zErrMsg);
         sqlite3_free(zErrMsg);
     }else{
-        fprintf(stdout, "SpeedL & SpeedR set to defaults\n");
+        ROS_INFO("SpeedL & SpeedR set to defaults");
+        //fprintf(stdout, "SpeedL & SpeedR set to defaults\n");
     }
 
 
@@ -237,21 +243,19 @@ void read_MD49_Data (void){
 
 void set_md49_speed (unsigned char speed_l, unsigned char speed_r){
 
-    // Set SpeedL and SpeedR
-    // as speed_l and speed_r
-    // in Table md49commands
-    // **********************
+    // Set SpeedL=speed_l and
+    // SpeedR=speed_r in Table md49commands
+    // ************************************
     char sql_buffer[200];
     int cx;
     cx = snprintf (sql_buffer,200,"UPDATE md49commands SET SpeedL=%i, SpeedR=%i WHERE ID=1", speed_l,speed_r);
 
     rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
     if( rc != SQLITE_OK ){
-        fprintf(stderr, "SQL error: %s\n", zErrMsg);
+        ROS_WARN("SQL error: %s\n", zErrMsg);
         sqlite3_free(zErrMsg);
     }else{
-        ROS_INFO("Set SpeedL=%i and SpeedR=%i",speed_l, speed_r);
-        //fprintf(stdout, "SpeedL & SpeedR set");
+        ROS_INFO("Set SpeedL=%i and SpeedR=%i in Table md49commands(md49data.db)",speed_l, speed_r);
     }
 
     // OLD TXT_File based solution
