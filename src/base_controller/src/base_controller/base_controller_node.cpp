@@ -140,7 +140,7 @@ int main( int argc, char* argv[] ){
         fprintf(stdout, "Table created successfully\n");
     }
 
-    sql = "INSERT INTO md49commands (ID) VALUES (1);";
+    sql = "INSERT INTO md49commands (ID,SpeedL,SpeedR) VALUES (1,128,128);";
 
     /* Execute SQL statement */
     rc = sqlite3_exec(db, sql, NULL, 0, &zErrMsg);
