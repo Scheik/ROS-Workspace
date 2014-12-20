@@ -69,8 +69,9 @@ char* itoa(int value, char* result, int base);
 
 int main( int argc, char* argv[] ){
 
-    //  Open database md49.db and
-    // **************************
+    // Open database md49data.db and add
+    // tables md49data, md49commands
+    // *********************************
     rc = sqlite3_open("data/md49data.db", &db);
     if( rc ){
         fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
@@ -106,7 +107,7 @@ int main( int argc, char* argv[] ){
      "INSERT INTO md49data (ID) VALUES (1);";
 
     /* Execute SQL statement */
-    rc = sqlite3_exec(db, sql, callback, 0, &zErrMsg);
+    rc = sqlite3_exec(db, sql, NULL, 0, &zErrMsg);
     if( rc != SQLITE_OK ){
         fprintf(stderr, "SQL error: %s\n", zErrMsg);
         sqlite3_free(zErrMsg);
@@ -180,10 +181,10 @@ void read_MD49_Data_serial (void){
     int cx;
     cx = snprintf (sql_buffer,200,"UPDATE md49data SET EncoderL=%i, EncoderR=%i WHERE ID=1", EncoderL,EncoderR);
 
-    rc = sqlite3_exec(db, sql_buffer, callback, (void*)data, &zErrMsg);
+    rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
     if( rc != SQLITE_OK ){
         //fprintf(stderr, "SQL error: %s\n", zErrMsg);
-     sqlite3_free(zErrMsg);
+        sqlite3_free(zErrMsg);
     }else{
         //fprintf(stdout, "Operation done successfully\n");
     }
