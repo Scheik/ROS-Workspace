@@ -48,20 +48,20 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
             speed_r = 255;
         }
         if (vel_cmd.linear.x<0){
-            speed_l = 100;
-            speed_r = 100;
+            speed_l = 0;
+            speed_r = 0;
         }
         if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){
             speed_l = 128;
             speed_r = 128;
         }
         if (vel_cmd.angular.z>0){
-            speed_l = 100;
+            speed_l = 0;
             speed_r = 255;
         }
         if (vel_cmd.angular.z<0){
             speed_l = 255;
-            speed_r = 100;
+            speed_r = 0;
         }
 
 
@@ -139,16 +139,19 @@ int main( int argc, char* argv[] ){
         fprintf(stdout, "table created successfully\n");
     }
 
+    // Set SpeedL and SpeedR to
+    // defaults =128
+    // ************************
     char sql_buffer[200];
     int cx;
     cx = snprintf (sql_buffer,200,"UPDATE md49commands SET SpeedL=%i, SpeedR=%i WHERE ID=1", 128,128);
 
     rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
     if( rc != SQLITE_OK ){
-        //fprintf(stderr, "SQL error: %s\n", zErrMsg);
+        fprintf(stderr, "SQL error: %s\n", zErrMsg);
         sqlite3_free(zErrMsg);
     }else{
-        //fprintf(stdout, "table updated successfully\n");
+        fprintf(stdout, "SpeedL & SpeedR set to defaults\n");
     }
 
 
@@ -234,6 +237,25 @@ void read_MD49_Data (void){
 
 void set_md49_speed (unsigned char speed_l, unsigned char speed_r){
 
+    // Set SpeedL and SpeedR
+    // as speed_l and speed_r
+    // in Table md49commands
+    // **********************
+    char sql_buffer[200];
+    int cx;
+    cx = snprintf (sql_buffer,200,"UPDATE md49commands SET SpeedL=%i, SpeedR=%i WHERE ID=1", speed_l,speed_r);
+
+    rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
+    if( rc != SQLITE_OK ){
+        fprintf(stderr, "SQL error: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+    }else{
+        fprintf(stdout, "SpeedL & SpeedR set to defaults\n");
+    }
+
+    // OLD TXT_File based solution
+    // ***************************
+    /*
     char buffer[33];
     ofstream myfile;
     myfile.open ("md49_commands.txt");
@@ -277,12 +299,12 @@ void set_md49_speed (unsigned char speed_l, unsigned char speed_r){
         myfile << "\n";
     }
 
-    /*
-    myfile << itoa(speed_l,buffer,10);
 
-    myfile << "\n";
-    myfile << itoa(speed_r,buffer,10);
-    myfile << "\n";
+    //myfile << itoa(speed_l,buffer,10);
+
+    //myfile << "\n";
+    //myfile << itoa(speed_r,buffer,10);
+    //myfile << "\n";
     myfile.close();
     */
 }
