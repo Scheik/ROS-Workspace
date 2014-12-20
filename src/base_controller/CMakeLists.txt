@@ -193,6 +193,7 @@ add_dependencies(base_controller base_controller_gencpp)
 #add_dependencies(base_controller_2 base_controller_2_generate_messages_cpp)
 #add_dependencies(base_controller_2 base_controller_2_EXPORTED_TARGETS)
 target_link_libraries(base_controller ${catkin_LIBRARIES})
+target_link_libraries(base_controller sqlite3)
 
 add_executable(base_controller_2 src/base_controller_2/base_controller_2_node.cpp)
 add_dependencies(base_controller_2 base_controller_2_gencpp)

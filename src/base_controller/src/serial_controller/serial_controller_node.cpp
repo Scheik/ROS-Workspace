@@ -23,16 +23,6 @@
 //#include<ros/ros.h>
 #include <sqlite3.h>
 
-static int callback(void *NotUsed, int argc, char **argv, char **azColName){
-   /*
-   int i;
-   for(i=0; i<argc; i++){
-      printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
-   }
-   printf("\n");
-   return 0;
-   */
-}
 
 // Global variables
 const char* serialport_name="//dev/ttyAMA0";                   /* defines used serialport on BPi. Use "/dev/ttyAMA0" for RPi*/
@@ -70,7 +60,7 @@ char* itoa(int value, char* result, int base);
 int main( int argc, char* argv[] ){
 
     // Open database md49data.db and add
-    // tables md49data, md49commands
+    // table md49data
     // *********************************
     rc = sqlite3_open("data/md49data.db", &db);
     if( rc ){

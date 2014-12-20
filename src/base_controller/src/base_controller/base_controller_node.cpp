@@ -10,6 +10,7 @@
 #include <geometry_msgs/Twist.h>                            /* ROS Twist message */
 #include <base_controller/encoders.h>                       /* Custom message /encoders */
 #include <base_controller/md49data.h>                       /* Custom message /encoders */
+#include <sqlite3.h>
 
 int32_t EncoderL;                                           /* stores encoder value left read from md49 */
 int32_t EncoderR;                                           /* stores encoder value right read from md49 */
@@ -27,6 +28,13 @@ unsigned char serialBuffer[18];                             /* Serial buffer to 
 void read_MD49_Data (void);
 void set_md49_speed (unsigned char speed_l, unsigned char speed_r);
 char* itoa(int value, char* result, int base);
+
+// sqlite globals
+sqlite3 *db;
+char *zErrMsg = 0;
+int  rc;
+const char *sql;
+const char* data = "Callback function called";
 
 using namespace std;
 
@@ -86,6 +94,8 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
 
 int main( int argc, char* argv[] ){
 
+    // Setup as ROS node
+    // *****************
     ros::init(argc, argv, "base_controller" );
     ros::NodeHandle n;
     ros::Subscriber sub = n.subscribe("/cmd_vel", 10, cmd_vel_callback);
@@ -102,6 +112,35 @@ int main( int argc, char* argv[] ){
     ROS_INFO("base_controller subscribes to topic /cmd_vel");
     ROS_INFO("base_controller publises to topic /encoders");
     ROS_INFO("base_controller publises to topic /md49data");
+
+    // Open database md49data.db and add
+    // table md49commands
+    // *********************************
+    rc = sqlite3_open("data/md49data.db", &db);
+    if( rc ){
+        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+        exit(0);
+    }else{
+        fprintf(stdout, "Opened database successfully\n");
+    }
+
+    // Create table md49commands
+    // *************************
+    sql = "CREATE TABLE md49commands("  \
+     "ID INT PRIMARY KEY     NOT NULL," \
+     "SpeedL         INT DEFAULT 128," \
+     "SpeedR         INT DEFAULT 128 );" \
+     "INSERT INTO md49commands (ID) VALUES (1);";
+
+    /* Execute SQL statement */
+    rc = sqlite3_exec(db, sql, NULL, 0, &zErrMsg);
+    if( rc != SQLITE_OK ){
+        fprintf(stderr, "SQL error: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+    }else{
+        fprintf(stdout, "Table created successfully\n");
+    }
+
 
     while(n.ok())
     {
