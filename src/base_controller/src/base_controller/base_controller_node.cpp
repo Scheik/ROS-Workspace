@@ -189,7 +189,7 @@ void set_md49_speed (unsigned char speed_l, unsigned char speed_r){
     ofstream myfile;
     myfile.open ("md49_commands.txt");
     //myfile << "Writing this to a file.\n";
-    /*
+
     if (speed_l==0){
         myfile << "000";
         myfile << "\n";
@@ -227,13 +227,15 @@ void set_md49_speed (unsigned char speed_l, unsigned char speed_r){
         myfile << itoa(speed_r,buffer,10);
         myfile << "\n";
     }
-    */
+
+    /*
     myfile << itoa(speed_l,buffer,10);
 
     myfile << "\n";
     myfile << itoa(speed_r,buffer,10);
     myfile << "\n";
     myfile.close();
+    */
 }
 
 char* itoa(int value, char* result, int base) {
