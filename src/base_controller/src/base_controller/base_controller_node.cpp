@@ -250,7 +250,8 @@ void set_md49_speed (unsigned char speed_l, unsigned char speed_r){
         fprintf(stderr, "SQL error: %s\n", zErrMsg);
         sqlite3_free(zErrMsg);
     }else{
-        fprintf(stdout, "SpeedL & SpeedR set to defaults\n");
+        ROS_INFO("Set SpeedL=%i and SpeedR=%i",speed_l, speed_r);
+        //fprintf(stdout, "SpeedL & SpeedR set");
     }
 
     // OLD TXT_File based solution
