@@ -129,7 +129,8 @@ int main( int argc, char* argv[] ){
     sql = "CREATE TABLE md49commands("  \
      "ID INT PRIMARY KEY     NOT NULL," \
      "SpeedL         INT DEFAULT 128," \
-     "SpeedR         INT DEFAULT 128 );";
+     "SpeedR         INT DEFAULT 128 );" \
+     "INSERT INTO md49commands (ID,SpeedL,SpeedR) VALUES (1,128,128);";
 
     /* Execute SQL statement */
     rc = sqlite3_exec(db, sql, NULL, 0, &zErrMsg);
@@ -138,17 +139,6 @@ int main( int argc, char* argv[] ){
         sqlite3_free(zErrMsg);
     }else{
         fprintf(stdout, "table created successfully\n");
-    }
-
-    sql = "INSERT INTO md49commands (ID,SpeedL,SpeedR) VALUES (1,128,128);";
-
-    /* Execute SQL statement */
-    rc = sqlite3_exec(db, sql, NULL, 0, &zErrMsg);
-    if( rc != SQLITE_OK ){
-        fprintf(stderr, "%s\n", zErrMsg);
-        sqlite3_free(zErrMsg);
-    }else{
-        fprintf(stdout, "row created successfully\n");
     }
 
 
