@@ -129,17 +129,21 @@ int main( int argc, char* argv[] ){
     sql = "CREATE TABLE md49commands("  \
      "ID INT PRIMARY KEY     NOT NULL," \
      "SpeedL         INT DEFAULT 128," \
-     "SpeedR         INT DEFAULT 128 );" \
-     "INSERT INTO md49commands (ID) VALUES (1);";
+     "SpeedR         INT DEFAULT 128 );";
 
     /* Execute SQL statement */
     rc = sqlite3_exec(db, sql, NULL, 0, &zErrMsg);
     if( rc != SQLITE_OK ){
-        fprintf(stderr, "SQL error: %s\n", zErrMsg);
+        fprintf(stderr, "%s\n", zErrMsg);
         sqlite3_free(zErrMsg);
     }else{
         fprintf(stdout, "Table created successfully\n");
     }
+
+    sql = "INSERT INTO md49commands (ID) VALUES (1);";
+
+    /* Execute SQL statement */
+    rc = sqlite3_exec(db, sql, NULL, 0, &zErrMsg);
 
 
     while(n.ok())
