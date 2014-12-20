@@ -67,7 +67,7 @@ int main( int argc, char* argv[] ){
         fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
         exit(0);
     }else{
-        fprintf(stdout, "Opened database successfully\n");
+        fprintf(stdout, "Opened database successfully,\n");
     }
 
     // Create table md49data
@@ -102,7 +102,7 @@ int main( int argc, char* argv[] ){
         fprintf(stderr, "%s\n", zErrMsg);
         sqlite3_free(zErrMsg);
     }else{
-        fprintf(stdout, "Table created successfully\n");
+        fprintf(stdout, "table created successfully\n");
     }
 
 

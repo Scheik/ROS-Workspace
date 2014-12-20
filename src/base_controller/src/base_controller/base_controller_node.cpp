@@ -121,7 +121,7 @@ int main( int argc, char* argv[] ){
         fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
         exit(0);
     }else{
-        fprintf(stdout, "Opened database successfully\n");
+        fprintf(stdout, "Opened database successfully,\n");
     }
 
     // Create table md49commands
@@ -137,13 +137,19 @@ int main( int argc, char* argv[] ){
         fprintf(stderr, "%s\n", zErrMsg);
         sqlite3_free(zErrMsg);
     }else{
-        fprintf(stdout, "Table created successfully\n");
+        fprintf(stdout, "table created successfully\n");
     }
 
     sql = "INSERT INTO md49commands (ID,SpeedL,SpeedR) VALUES (1,128,128);";
 
     /* Execute SQL statement */
     rc = sqlite3_exec(db, sql, NULL, 0, &zErrMsg);
+    if( rc != SQLITE_OK ){
+        fprintf(stderr, "%s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+    }else{
+        fprintf(stdout, "row created successfully\n");
+    }
 
 
     while(n.ok())
