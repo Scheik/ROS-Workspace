@@ -102,16 +102,13 @@ int main( int argc, char* argv[] ){
     ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",10);
     ros::Publisher md49data_pub = n.advertise<base_controller::md49data>("md49data",10);
 
-    // Set nodes looprate 10Hz
-    // ***********************
     ros::Rate loop_rate(10);
-    ROS_INFO("base_controller is running:");
-    ROS_INFO("reading md49data from md49_data.txt");
-    ROS_INFO("writing md49commands to md49_commands.txt");
+    ROS_INFO("Starting base_controller node:");
     ROS_INFO("============================================");
-    ROS_INFO("base_controller subscribes to topic /cmd_vel");
-    ROS_INFO("base_controller publises to topic /encoders");
-    ROS_INFO("base_controller publises to topic /md49data");
+    ROS_INFO("subscribing to /cmd_vel");
+    ROS_INFO("publishing to /encoders");
+    ROS_INFO("publishing to /md49data");
+    ROS_INFO("============================================");
 
     // Open database md49data.db and add
     // table md49commands
@@ -119,11 +116,9 @@ int main( int argc, char* argv[] ){
     rc = sqlite3_open("data/md49data.db", &db);
     if( rc ){
         ROS_INFO("Can't open database: %s", sqlite3_errmsg(db));
-        //fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
         exit(0);
     }else{
         ROS_INFO("Opened database successfully,");
-        //fprintf(stdout, "Opened database successfully,\n");
     }
 
     // Create table md49commands
@@ -135,12 +130,10 @@ int main( int argc, char* argv[] ){
      "INSERT INTO md49commands (ID,SpeedL,SpeedR) VALUES (1,128,128);";
     rc = sqlite3_exec(db, sql, NULL, 0, &zErrMsg);                      // Execute SQL statement
     if( rc != SQLITE_OK ){
-        ROS_INFO("SQL error: %s", zErrMsg);
-        //fprintf(stderr, "%s\n", zErrMsg);
+        ROS_INFO("SQL message: %s", zErrMsg);
         sqlite3_free(zErrMsg);
     }else{
         ROS_INFO("table created successfully");
-        //fprintf(stdout, "table created successfully\n");
     }
 
     // Set SpeedL and SpeedR to
@@ -152,12 +145,10 @@ int main( int argc, char* argv[] ){
 
     rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
     if( rc != SQLITE_OK ){
-        ROS_INFO("SQL error: %s", zErrMsg);
-        //fprintf(stderr, "SQL error: %s\n", zErrMsg);
+        ROS_INFO("SQL message: %s", zErrMsg);
         sqlite3_free(zErrMsg);
     }else{
-        ROS_INFO("SpeedL & SpeedR set to defaults");
-        //fprintf(stdout, "SpeedL & SpeedR set to defaults\n");
+        ROS_INFO("SpeedL & SpeedR set to defaults in Table md49commands(md49data.db)");
     }
 
 
@@ -252,66 +243,11 @@ void set_md49_speed (unsigned char speed_l, unsigned char speed_r){
 
     rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
     if( rc != SQLITE_OK ){
-        ROS_WARN("SQL error: %s\n", zErrMsg);
+        ROS_WARN("SQL message: %s", zErrMsg);
         sqlite3_free(zErrMsg);
     }else{
         ROS_INFO("Set SpeedL=%i and SpeedR=%i in Table md49commands(md49data.db)",speed_l, speed_r);
     }
-
-    // OLD TXT_File based solution
-    // ***************************
-    /*
-    char buffer[33];
-    ofstream myfile;
-    myfile.open ("md49_commands.txt");
-    //myfile << "Writing this to a file.\n";
-
-    if (speed_l==0){
-        myfile << "000";
-        myfile << "\n";
-    }
-    else if (speed_l<10){
-        myfile << "00";
-        myfile << itoa(speed_l,buffer,10);
-        myfile << "\n";
-    }
-    else if (speed_l<100){
-        myfile << "0";
-        myfile << itoa(speed_l,buffer,10);
-        myfile << "\n";
-    }
-    else{
-        myfile << itoa(speed_l,buffer,10);
-        myfile << "\n";
-    }
-
-    if (speed_r==0){
-        myfile << "000";
-        myfile << "\n";
-    }
-    else if (speed_r<10){
-        myfile << "00";
-        myfile << itoa(speed_r,buffer,10);
-        myfile << "\n";
-    }
-    else if (speed_r<100){
-        myfile << "0";
-        myfile << itoa(speed_r,buffer,10);
-        myfile << "\n";
-    }
-    else{
-        myfile << itoa(speed_r,buffer,10);
-        myfile << "\n";
-    }
-
-
-    //myfile << itoa(speed_l,buffer,10);
-
-    //myfile << "\n";
-    //myfile << itoa(speed_r,buffer,10);
-    //myfile << "\n";
-    myfile.close();
-    */
 }
 
 char* itoa(int value, char* result, int base) {
