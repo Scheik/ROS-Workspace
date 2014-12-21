@@ -119,8 +119,8 @@ int main( int argc, char* argv[] ){
 
     // Open serial port
     // ****************
-//    fd = openSerialPort(serialport_name, serialport_bps);
-//    if (fd == -1) exit(1);
+    fd = openSerialPort(serialport_name, serialport_bps);
+    if (fd == -1) exit(1);
     //ROS_INFO("Opend serial port at %s with %i Bps",serialport_name,serialport_bps);
     usleep(10000);                                          // Sleep for UART to power up and set options
 
@@ -135,7 +135,7 @@ int main( int argc, char* argv[] ){
         // Read encodervalues and other data from MD49
         // serial. Data ist stored in md49_data.txt
         // ****************************************
-//        read_MD49_Data_serial();
+        read_MD49_Data_serial();
         usleep(100000);
 
         // Read commands from md49_commands.txt:
@@ -145,7 +145,7 @@ int main( int argc, char* argv[] ){
         // Set speed and other commands as
         // read from md49_commands.txt
         // *******************************
-//        set_MD49_speed(speed_l, speed_r);
+        set_MD49_speed(speed_l, speed_r);
         usleep(100000);
 
     }// end.mainloop
@@ -188,7 +188,7 @@ void read_MD49_Data_serial (void){
         //fprintf(stdout, "Operation done successfully\n");
     }
 
-
+/*
     // Write data from MD49 into md49_data.txt
     // ***************************************
     int i=0;
@@ -214,11 +214,11 @@ void read_MD49_Data_serial (void){
         myfile << "\n";
     }
     myfile.close();
-
+*/
     // Output MD49 data on screen
     // **************************
-    printf("\033[2J");                                      /*  clear the screen  */
-    printf("\033[H");                                       /*  position cursor at top-left corner */
+    printf("\033[2J");                                      //  clear the screen
+    printf("\033[H");                                       //  position cursor at top-left corner
     printf ("MD49-Data read from AVR-Master: \n");
     printf("========================================\n");
     printf("Encoder1 Byte1: %i ",serialBuffer[0]);

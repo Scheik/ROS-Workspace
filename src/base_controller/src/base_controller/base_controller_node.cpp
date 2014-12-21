@@ -156,7 +156,7 @@ int main( int argc, char* argv[] ){
         // serial_controller_node reads data from AVR-Master
         // and provides that data in md49_data.txt
         // *************************************************
-        read_MD49_Data();
+//        read_MD49_Data();
 
         // Set MD49 speed_l and speed_r:
         // serial_controller_node reads commands from
