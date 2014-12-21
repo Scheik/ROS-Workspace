@@ -64,8 +64,6 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
             speed_r = 0;
         }
 
-
-
     /*
         //ANFANG Alternative
         if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){vl=0;vr=0;}
