@@ -26,7 +26,7 @@
 
 // Global variables
 const char* serialport_name="//dev/ttyAMA0";                   /* defines used serialport on BPi. Use "/dev/ttyAMA0" for RPi*/
-int serialport_bps=B38400;                                  /* defines used baudrate on serialport */
+int serialport_bps=B9600;                                  /* defines used baudrate on serialport */
 //int filedesc;                                             /* File descriptor of serial port we will talk to*/
 int fd;                                                     /* serial port file descriptor */
 int32_t EncoderL;                                           /* stores encoder value left read from md49 */
