@@ -58,11 +58,18 @@ char* itoa(int value, char* result, int base);
 
 static int sql_callback(void *data, int argc, char **argv, char **azColName){
    int i;
-   fprintf(stderr, "%s: ", (const char*)data);
+   //fprintf(stderr, "%s: ", (const char*)data);
    for(i=0; i<argc; i++){
-      printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+
+        //printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+
+
    }
-   printf("\n");
+   speed_l= atoi(argv[1]);
+   speed_r= atoi(argv[2]);
+   printf("SpeedL=%i\n",speed_l);
+   printf("SpeedR=%i\n",speed_r);
+   //printf("\n");
    return 0;
 }
 
