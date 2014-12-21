@@ -56,55 +56,8 @@ static int sql_callback(void *data, int argc, char **argv, char **azColName);
 void read_MD49_Data_serial (void);
 void read_md49_commands(void);
 void set_MD49_speed (unsigned char speed_l, unsigned char speed_r);
-char* itoa(int value, char* result, int base);
 
-void open_sqlite_db_md49data(void){
-    // Open database md49data.db and add
-    // table md49data
-    // *********************************
-    rc = sqlite3_open("data/md49data.db", &db);
-    if( rc ){
-        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-        exit(0);
-    }else{
-        fprintf(stdout, "Opened database successfully,\n");
-    }
 
-    // Create table md49data
-    // *********************
-    sql = "CREATE TABLE md49data("  \
-     "ID INT PRIMARY KEY     NOT NULL," \
-     "Encoderbyte1L  INT DEFAULT 0," \
-     "Encoderbyte2L  INT DEFAULT 0," \
-     "Encoderbyte3L  INT DEFAULT 0," \
-     "Encoderbyte4L  INT DEFAULT 0," \
-     "Encoderbyte1R  INT DEFAULT 0," \
-     "Encoderbyte2R  INT DEFAULT 0," \
-     "Encoderbyte3R  INT DEFAULT 0," \
-     "Encoderbyte4R  INT DEFAULT 0," \
-     "EncoderL       INT DEFAULT 0," \
-     "EncoderR       INT DEFAULT 0," \
-     "SpeedL         INT DEFAULT 0," \
-     "SpeedR         INT DEFAULT 0," \
-     "Volts          INT DEFAULT 0," \
-     "CurrentL       INT DEFAULT 0," \
-     "CurrentR       INT DEFAULT 0," \
-     "Error          INT DEFAULT 0," \
-     "Acceleration   INT DEFAULT 0," \
-     "Mode           INT DEFAULT 0," \
-     "Regulator      INT DEFAULT 0," \
-     "Timeout        INT DEFAULT 0 );" \
-     "INSERT INTO md49data (ID) VALUES (1);";
-
-    /* Execute SQL statement */
-    rc = sqlite3_exec(db, sql, NULL, 0, &zErrMsg);
-    if( rc != SQLITE_OK ){
-        fprintf(stderr, "SQL message: %s\n", zErrMsg);
-        sqlite3_free(zErrMsg);
-    }else{
-        fprintf(stdout, "table created successfully\n");
-    }
-}
 
 int main( int argc, char* argv[] ){
 
@@ -145,7 +98,12 @@ int main( int argc, char* argv[] ){
         // Set speed and other commands as
         // read from md49_commands.txt
         // *******************************
-        set_MD49_speed(speed_l, speed_r);
+        if ((speed_l != last_speed_l) || (speed_r != last_speed_r)){
+            set_MD49_speed(speed_l, speed_r);
+            last_speed_l=speed_l;
+            last_speed_r=speed_r;
+        }
+
         usleep(100000);
 
     }// end.mainloop
@@ -311,34 +269,60 @@ void readBytes(int descriptor, int count) {
     }
 }
 
+void open_sqlite_db_md49data(void){
+    // Open database md49data.db and add
+    // table md49data
+    // *********************************
+    rc = sqlite3_open("data/md49data.db", &db);
+    if( rc ){
+        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+        exit(0);
+    }else{
+        fprintf(stdout, "Opened database successfully,\n");
+    }
+
+    // Create table md49data
+    // *********************
+    sql = "CREATE TABLE md49data("  \
+     "ID INT PRIMARY KEY     NOT NULL," \
+     "Encoderbyte1L  INT DEFAULT 0," \
+     "Encoderbyte2L  INT DEFAULT 0," \
+     "Encoderbyte3L  INT DEFAULT 0," \
+     "Encoderbyte4L  INT DEFAULT 0," \
+     "Encoderbyte1R  INT DEFAULT 0," \
+     "Encoderbyte2R  INT DEFAULT 0," \
+     "Encoderbyte3R  INT DEFAULT 0," \
+     "Encoderbyte4R  INT DEFAULT 0," \
+     "EncoderL       INT DEFAULT 0," \
+     "EncoderR       INT DEFAULT 0," \
+     "SpeedL         INT DEFAULT 0," \
+     "SpeedR         INT DEFAULT 0," \
+     "Volts          INT DEFAULT 0," \
+     "CurrentL       INT DEFAULT 0," \
+     "CurrentR       INT DEFAULT 0," \
+     "Error          INT DEFAULT 0," \
+     "Acceleration   INT DEFAULT 0," \
+     "Mode           INT DEFAULT 0," \
+     "Regulator      INT DEFAULT 0," \
+     "Timeout        INT DEFAULT 0 );" \
+     "INSERT INTO md49data (ID) VALUES (1);";
+
+    /* Execute SQL statement */
+    rc = sqlite3_exec(db, sql, NULL, 0, &zErrMsg);
+    if( rc != SQLITE_OK ){
+        fprintf(stderr, "SQL message: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+    }else{
+        fprintf(stdout, "table created successfully\n");
+    }
+}
+
 static int sql_callback(void *data, int argc, char **argv, char **azColName){
    speed_l= atoi(argv[1]);
    speed_r= atoi(argv[2]);
-   printf("SpeedL=%i\n",speed_l);
-   printf("SpeedR=%i\n",speed_r);
+   //printf("SpeedL=%i\n",speed_l);
+   //printf("SpeedR=%i\n",speed_r);
    return 0;
 }
 
-char* itoa(int value, char* result, int base) {
-        // check that the base if valid
-        if (base < 2 || base > 36) { *result = '\0'; return result; }
 
-        char* ptr = result, *ptr1 = result, tmp_char;
-        int tmp_value;
-
-        do {
-            tmp_value = value;
-            value /= base;
-            *ptr++ = "zyxwvutsrqponmlkjihgfedcba9876543210123456789abcdefghijklmnopqrstuvwxyz" [35 + (tmp_value - value * base)];
-        } while ( value );
-
-        // Apply negative sign
-        if (tmp_value < 0) *ptr++ = '-';
-        *ptr-- = '\0';
-        while(ptr1 < ptr) {
-            tmp_char = *ptr;
-            *ptr--= *ptr1;
-            *ptr1++ = tmp_char;
-        }
-        return result;
-    }
