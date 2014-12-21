@@ -27,7 +27,7 @@ double base_width = 0.4;                                    /* Base width in met
 unsigned char serialBuffer[18];                             /* Serial buffer to store uart data */
 void read_MD49_Data (void);
 void set_md49_speed (unsigned char speed_l, unsigned char speed_r);
-
+void open_sql_db_md49data(void);
 
 // sqlite globals
 sqlite3 *db;
@@ -48,20 +48,20 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
             speed_r = 255;
         }
         if (vel_cmd.linear.x<0){
-            speed_l = 1;
-            speed_r = 1;
+            speed_l = 0;
+            speed_r = 0;
         }
         if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){
             speed_l = 128;
             speed_r = 128;
         }
         if (vel_cmd.angular.z>0){
-            speed_l = 1;
+            speed_l = 0;
             speed_r = 255;
         }
         if (vel_cmd.angular.z<0){
             speed_l = 255;
-            speed_r = 1;
+            speed_r = 0;
         }
 
     /*
@@ -89,25 +89,7 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
     */
 }
 
-
-int main( int argc, char* argv[] ){
-
-    // Setup as ROS node
-    // *****************
-    ros::init(argc, argv, "base_controller" );
-    ros::NodeHandle n;
-    ros::Subscriber sub = n.subscribe("/cmd_vel", 10, cmd_vel_callback);
-    ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",10);
-    ros::Publisher md49data_pub = n.advertise<base_controller::md49data>("md49data",10);
-
-    ros::Rate loop_rate(10);
-    ROS_INFO("Starting base_controller node:");
-    ROS_INFO("============================================");
-    ROS_INFO("subscribing to /cmd_vel");
-    ROS_INFO("publishing to /encoders");
-    ROS_INFO("publishing to /md49data");
-    ROS_INFO("============================================");
-
+void open_sql_db_md49data(void){
     // Open database md49data.db and add
     // table md49commands
     // *********************************
@@ -149,6 +131,28 @@ int main( int argc, char* argv[] ){
         ROS_INFO("SpeedL & SpeedR set to defaults in Table md49commands(md49data.db)");
     }
 
+}
+
+
+int main( int argc, char* argv[] ){
+
+    // Setup as ROS node
+    // *****************
+    ros::init(argc, argv, "base_controller" );
+    ros::NodeHandle n;
+    ros::Subscriber sub = n.subscribe("/cmd_vel", 10, cmd_vel_callback);
+    ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",10);
+    ros::Publisher md49data_pub = n.advertise<base_controller::md49data>("md49data",10);
+
+    ros::Rate loop_rate(10);
+    ROS_INFO("Starting base_controller node:");
+    ROS_INFO("============================================");
+    ROS_INFO("subscribing to /cmd_vel");
+    ROS_INFO("publishing to /encoders");
+    ROS_INFO("publishing to /md49data");
+    ROS_INFO("============================================");
+
+    open_sql_db_md49data();
 
     while(n.ok())
     {
@@ -199,6 +203,11 @@ int main( int argc, char* argv[] ){
 
 void read_MD49_Data (void){
 
+    // Read MD49 data from md49data.db
+    // *******************************
+    // code here!
+
+
     // Read all MD49 data from md49_data.txt
     // *************************************
     string line;
@@ -244,7 +253,7 @@ void set_md49_speed (unsigned char speed_l, unsigned char speed_r){
         ROS_WARN("SQL message: %s", zErrMsg);
         sqlite3_free(zErrMsg);
     }else{
-        ROS_INFO("Set SpeedL=%i and SpeedR=%i in Table md49commands(md49data.db)",speed_l, speed_r);
+        ROS_INFO("Set SpeedL=%s and SpeedR=%s in Table md49commands(md49data.db)",speed_l, speed_r);
     }
 }
 
