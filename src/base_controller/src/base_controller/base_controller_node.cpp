@@ -89,51 +89,6 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
     */
 }
 
-void open_sql_db_md49data(void){
-    // Open database md49data.db and add
-    // table md49commands
-    // *********************************
-    rc = sqlite3_open("data/md49data.db", &db);
-    if( rc ){
-        ROS_INFO("Can't open database: %s", sqlite3_errmsg(db));
-        exit(0);
-    }else{
-        ROS_INFO("Opened database successfully,");
-    }
-
-    // Create table md49commands
-    // *************************
-    sql = "CREATE TABLE md49commands("  \
-     "ID INT PRIMARY KEY     NOT NULL," \
-     "SpeedL         INT DEFAULT 128," \
-     "SpeedR         INT DEFAULT 128 );" \
-     "INSERT INTO md49commands (ID,SpeedL,SpeedR) VALUES (1,128,128);";
-    rc = sqlite3_exec(db, sql, NULL, 0, &zErrMsg);                      // Execute SQL statement
-    if( rc != SQLITE_OK ){
-        ROS_INFO("SQL message: %s", zErrMsg);
-        sqlite3_free(zErrMsg);
-    }else{
-        ROS_INFO("table created successfully");
-    }
-
-    // Set SpeedL and SpeedR to
-    // defaults =128
-    // ************************
-    char sql_buffer[200];
-    int cx;
-    cx = snprintf (sql_buffer,200,"UPDATE md49commands SET SpeedL=%i, SpeedR=%i WHERE ID=1", 128,128);
-
-    rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
-    if( rc != SQLITE_OK ){
-        ROS_INFO("SQL message: %s", zErrMsg);
-        sqlite3_free(zErrMsg);
-    }else{
-        ROS_INFO("SpeedL & SpeedR set to defaults in Table md49commands(md49data.db)");
-    }
-
-}
-
-
 int main( int argc, char* argv[] ){
 
     // Setup as ROS node
@@ -143,7 +98,6 @@ int main( int argc, char* argv[] ){
     ros::Subscriber sub = n.subscribe("/cmd_vel", 10, cmd_vel_callback);
     ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",10);
     ros::Publisher md49data_pub = n.advertise<base_controller::md49data>("md49data",10);
-
     ros::Rate loop_rate(10);
     ROS_INFO("Starting base_controller node:");
     ROS_INFO("============================================");
@@ -152,34 +106,32 @@ int main( int argc, char* argv[] ){
     ROS_INFO("publishing to /md49data");
     ROS_INFO("============================================");
 
+    // Open sqlite db md49data.db
+    // **************************
     open_sql_db_md49data();
 
     while(n.ok())
     {
-        // Read encoder values and other data from MD49:
-        // serial_controller_node reads data from AVR-Master
-        // and provides that data in md49_data.txt
+        // Read encoder values and all other data from MD49:
         // *************************************************
-//        read_MD49_Data();
+        read_MD49_Data();
 
-        // Set MD49 speed_l and speed_r:
-        // serial_controller_node reads commands from
-        // md49_commands.txt and writes commands to AVR-Master
-        // ***************************************************
+        // Set MD49 speed_l and speed_r if changed since last spin:
+        // ********************************************************
         if ((speed_l != last_speed_l) || (speed_r != last_speed_r)){
             set_md49_speed(speed_l,speed_r);
             last_speed_l=speed_l;
             last_speed_r=speed_r;
         }
 
-        // Publish encoder values to topic /encoders (custom message)
-        // **********************************************************
+        // Publish MD49 encoder values to topic /encoders (custom message)
+        // ***************************************************************
         encoders.encoder_l=EncoderL;
         encoders.encoder_r=EncoderR;
         encoders_pub.publish(encoders);
 
-        // Publish MD49 data to topic /md49data (custom message)
-        // *****************************************************
+        // Publish all MD49 data to topic /md49data (custom message)
+        // *********************************************************
         md49data.speed_l = serialBuffer[8];
         md49data.speed_r = serialBuffer[9];
         md49data.volt = serialBuffer[10];
@@ -200,7 +152,9 @@ int main( int argc, char* argv[] ){
     return 1;
 } // end.main
 
-
+// Function is reading all MD49 data from
+// table md49data in md49data.db
+// **************************************
 void read_MD49_Data (void){
 
     // Read MD49 data from md49data.db
@@ -208,53 +162,34 @@ void read_MD49_Data (void){
     // code here!
 
 
-    // Read all MD49 data from md49_data.txt
-    // *************************************
-    string line;
-    ifstream myfile ("md49_data.txt");
-    if (myfile.is_open()){
-        int i=0;
-        while (getline (myfile,line)){
-            //cout << line << '\n';
-            char data[10];
-            std::copy(line.begin(), line.end(), data);
-            serialBuffer[i]=atoi(data);
-            i =i++;
-        }
-        myfile.close();
-
-    }
-    else ROS_ERROR("Unable to open file: md49_data.txt");
-
     // Put toghether new encodervalues
     // *******************************
-    EncoderL = serialBuffer[0] << 24;                        // Put together first encoder value
-    EncoderL |= (serialBuffer[1] << 16);
-    EncoderL |= (serialBuffer[2] << 8);
-    EncoderL |= (serialBuffer[3]);
-    EncoderR = serialBuffer[4] << 24;                        // Put together second encoder value
-    EncoderR |= (serialBuffer[5] << 16);
-    EncoderR |= (serialBuffer[6] << 8);
-    EncoderR |= (serialBuffer[7]);
+    //EncoderL = serialBuffer[0] << 24;                        // Put together first encoder value
+    //EncoderL |= (serialBuffer[1] << 16);
+    //EncoderL |= (serialBuffer[2] << 8);
+    //EncoderL |= (serialBuffer[3]);
+    //EncoderR = serialBuffer[4] << 24;                        // Put together second encoder value
+    //EncoderR |= (serialBuffer[5] << 16);
+    //EncoderR |= (serialBuffer[6] << 8);
+    //EncoderR |= (serialBuffer[7]);
 
 }
 
+// Function writes its parameters speed_l and speed_r
+// into columns SpeedL and SpeedR in table md49commands(md49data.db)
+// *****************************************************************
 void set_md49_speed (unsigned char speed_l, unsigned char speed_r){
 
     bool sql_updated=false;
-
     while(sql_updated==false){
 
-        // Set SpeedL=speed_l and
-        // SpeedR=speed_r in Table md49commands
-        // ************************************
         char sql_buffer[200];
         int cx;
         cx = snprintf (sql_buffer,200,"UPDATE md49commands SET SpeedL=%i, SpeedR=%i WHERE ID=1", speed_l,speed_r);
 
         rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
         if( rc != SQLITE_OK ){
-            ROS_WARN("SQL message: %s", zErrMsg);
+            ROS_WARN("SQL message: %s. Trying again...", zErrMsg);
             sqlite3_free(zErrMsg);
         }else{
             ROS_INFO("Set SpeedL=%i and SpeedR=%i in Table md49commands(md49data.db)",speed_l, speed_r);
@@ -263,4 +198,50 @@ void set_md49_speed (unsigned char speed_l, unsigned char speed_r){
     }//end.while
 }
 
+// Open sqlite db md49data.db, create
+// table md49commands if not existing
+// and set default SpeedL and SpeedR
+// **********************************
+void open_sql_db_md49data(void){
+    // Open database md49data.db
+    // *************************
+    rc = sqlite3_open("data/md49data.db", &db);
+    if( rc ){
+        ROS_WARN("Can't open database: %s", sqlite3_errmsg(db));
+        exit(0);
+    }else{
+        ROS_INFO("Opened database successfully,");
+    }
+
+    // Create table md49commands
+    // *************************
+    sql = "CREATE TABLE md49commands("  \
+     "ID INT PRIMARY KEY     NOT NULL," \
+     "SpeedL         INT DEFAULT 128," \
+     "SpeedR         INT DEFAULT 128 );" \
+     "INSERT INTO md49commands (ID,SpeedL,SpeedR) VALUES (1,128,128);";
+    rc = sqlite3_exec(db, sql, NULL, 0, &zErrMsg);                      // Execute SQL statement
+    if( rc != SQLITE_OK ){
+        ROS_INFO("SQL message: %s", zErrMsg);
+        sqlite3_free(zErrMsg);
+    }else{
+        ROS_INFO("table md49commands created successfully");
+    }
+
+    // Set SpeedL and SpeedR to
+    // defaults =128
+    // ************************
+    char sql_buffer[200];
+    int cx;
+    cx = snprintf (sql_buffer,200,"UPDATE md49commands SET SpeedL=%i, SpeedR=%i WHERE ID=1", 128,128);
+
+    rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
+    if( rc != SQLITE_OK ){
+        ROS_WARN("SQL message: %s", zErrMsg);
+        sqlite3_free(zErrMsg);
+    }else{
+        ROS_INFO("SpeedL & SpeedR set to defaults in Table md49commands(md49data.db)");
+    }
+
+}
 

@@ -293,8 +293,6 @@ void open_sqlite_db_md49data(void){
 static int sql_callback(void *data, int argc, char **argv, char **azColName){
    speed_l= atoi(argv[1]);
    speed_r= atoi(argv[2]);
-   //printf("SpeedL=%i\n",speed_l);
-   //printf("SpeedR=%i\n",speed_r);
    return 0;
 }
 
