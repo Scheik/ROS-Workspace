@@ -233,7 +233,7 @@ void open_sql_db_md49data(void){
     // ************************
     char sql_buffer[100];
     int cx;
-    cx = snprintf (sql_buffer,100,"UPDATE md49commands SET SpeedL=%i, SpeedR=%i WHERE ID=1", 128,128);
+    cx = snprintf (sql_buffer,100,"UPDATE md49commands SET SpeedL=%i, SpeedR=%i WHERE ID=1;", 128,128);
 
     rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
     if( rc != SQLITE_OK ){
