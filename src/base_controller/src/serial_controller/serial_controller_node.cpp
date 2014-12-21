@@ -134,10 +134,7 @@ void read_MD49_Data_serial (void){
     // ******************************
     char sql_buffer[400];
     int cx;
-    //cx = snprintf (sql_buffer,400,"UPDATE md49data SET Encoderbyte1L=%i, Encoderbyte2L=%i, Encoderbyte3L=%i, Encoderbyte4L=%i," \
-    //               "Encoderbyte1R=%i, Encoderbyte2R=%i, Encoderbyte3R=%i, Encoderbyte4R=%i, EncoderL=%i, EncoderR=%i, " \
-    //               "SpeedL=%i, SpeedR=%i, Volts=%i, CurrentL=%i, CurrentR=%i, Error=%i, Acceleration=%i, Mode=%i, Regulator=%i, Timeout=%i " \
-    //               "WHERE ID=1;", serialBuffer[0], serialBuffer[1], serialBuffer[2], serialBuffer[3], serialBuffer[4], serialBuffer[5], serialBuffer[6], serialBuffer[7], EncoderL, EncoderR, serialBuffer[8], serialBuffer[9], serialBuffer[10], serialBuffer[11], serialBuffer[12], serialBuffer[13], serialBuffer[14], serialBuffer[15], serialBuffer[16], serialBuffer[17]);
+    // EncoderL & EncoderR
     cx = snprintf (sql_buffer,400,"UPDATE md49data SET EncoderL=%i, EncoderR=%i WHERE ID=1;", EncoderL, EncoderR);
     rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
     if( rc != SQLITE_OK ){
@@ -146,8 +143,19 @@ void read_MD49_Data_serial (void){
     }else{
         //fprintf(stdout, "Operation done successfully\n");
     }
-
-    cx = snprintf (sql_buffer,400,"UPDATE md49data SET Encoderbyte1L=%i, Encoderbyte2L=%i, Encoderbyte3L=%i, Encoderbyte4L=%i WHERE ID=1;", serialBuffer[0], serialBuffer[1], serialBuffer[2], serialBuffer[3]);
+    // Encoderbytes 1-4 left
+    cx = snprintf (sql_buffer,400,"UPDATE md49data SET Encoderbyte1L=%i, Encoderbyte2L=%i, " \
+                   "Encoderbyte3L=%i, Encoderbyte4L=%i WHERE ID=1;", serialBuffer[0], serialBuffer[1], serialBuffer[2], serialBuffer[3]);
+    rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
+    if( rc != SQLITE_OK ){
+        fprintf(stderr, "SQL message: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+    }else{
+        //fprintf(stdout, "Operation done successfully\n");
+    }
+    // Encoderbytes 1-4 right
+    cx = snprintf (sql_buffer,400,"UPDATE md49data SET Encoderbyte1R=%i, Encoderbyte2R=%i, " \
+                   "Encoderbyte3R=%i, Encoderbyte4R%i WHERE ID=1;", serialBuffer[4], serialBuffer[5], serialBuffer[6], serialBuffer[7]);
     rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
     if( rc != SQLITE_OK ){
         fprintf(stderr, "SQL message: %s\n", zErrMsg);
