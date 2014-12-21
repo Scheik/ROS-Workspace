@@ -89,7 +89,7 @@ int main( int argc, char* argv[] ){
         // serial. Data ist stored in md49_data.txt
         // ****************************************
         read_MD49_Data_serial();
-        usleep(200000);
+        usleep(100000);
 
         // Read commands from md49_commands.txt:
         // *************************************
@@ -104,7 +104,7 @@ int main( int argc, char* argv[] ){
             last_speed_r=speed_r;
         }
 
-        usleep(200000);
+        usleep(100000);
 
     }// end.mainloop
     sqlite3_close(db);
@@ -146,33 +146,6 @@ void read_MD49_Data_serial (void){
         //fprintf(stdout, "Operation done successfully\n");
     }
 
-/*
-    // Write data from MD49 into md49_data.txt
-    // ***************************************
-    int i=0;
-    char buffer[33];
-    ofstream myfile;
-    myfile.open ("md49_data.txt");
-    //myfile << "Writing this to a file.\n";
-    for (i=0;i<18;i++){
-        if (serialBuffer[i]==0){
-            myfile << "000";
-        }
-        else if (serialBuffer[i]<10){
-            myfile << "00";
-            myfile << itoa(serialBuffer[i],buffer,10);
-        }
-        else if (serialBuffer[i]<100){
-            myfile << "0";
-            myfile << itoa(serialBuffer[i],buffer,10);
-        }
-        else{
-            myfile << itoa(serialBuffer[i],buffer,10);
-        }
-        myfile << "\n";
-    }
-    myfile.close();
-*/
     // Output MD49 data on screen
     // **************************
     printf("\033[2J");                                      //  clear the screen
@@ -190,11 +163,11 @@ void read_MD49_Data_serial (void){
     printf("EncoderL: %i ",EncoderL);
     printf("EncoderR: %i \n",EncoderR);
     printf("========================================\n");
-    printf("Speed1: %i ",serialBuffer[8]);
-    printf("Speed2: %i \n",serialBuffer[9]);
+    printf("SpeedL: %i ",serialBuffer[8]);
+    printf("SpeedR: %i \n",serialBuffer[9]);
     printf("Volts: %i \n",serialBuffer[10]);
-    printf("Current1: %i ",serialBuffer[11]);
-    printf("Current2: %i \n",serialBuffer[12]);
+    printf("CurrentL: %i ",serialBuffer[11]);
+    printf("CurrentR: %i \n",serialBuffer[12]);
     printf("Error: %i \n",serialBuffer[13]);
     printf("Acceleration: %i \n",serialBuffer[14]);
     printf("Mode: %i \n",serialBuffer[15]);
