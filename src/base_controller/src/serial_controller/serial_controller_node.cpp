@@ -137,10 +137,7 @@ void read_MD49_Data_serial (void){
     cx = snprintf (sql_buffer,300,"UPDATE md49data SET Encoderbyte1L, Encoderbyte2L, Encoderbyte3L, Encoderbyte4L," \
                    "Encoderbyte1R, Encoderbyte2R, Encoderbyte3R, Encoderbyte4R, EncoderL=%i, EncoderR=%i, " \
                    " SpeedL, SpeedR, Volts, CurrentL, CurrentR, Error, Acceleration, Mode, Regulator, Timeout" \
-                   "WHERE ID=1", serialBuffer[0], serialBuffer[1], serialBuffer[2], serialBuffer[3], \
-                    serialBuffer[4], serialBuffer[5], serialBuffer[6], serialBuffer[7], EncoderL, EncoderR, \
-                    serialBuffer[8], serialBuffer[9], serialBuffer[10], serialBuffer[11], serialBuffer[12], \
-                    serialBuffer[13], serialBuffer[14], serialBuffer[15], serialBuffer[16], serialBuffer[17]);
+                   "WHERE ID=1", serialBuffer[0], serialBuffer[1], serialBuffer[2], serialBuffer[3], serialBuffer[4], serialBuffer[5], serialBuffer[6], serialBuffer[7], EncoderL, EncoderR, serialBuffer[8], serialBuffer[9], serialBuffer[10], serialBuffer[11], serialBuffer[12], serialBuffer[13], serialBuffer[14], serialBuffer[15], serialBuffer[16], serialBuffer[17]);
 
     rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
     if( rc != SQLITE_OK ){
