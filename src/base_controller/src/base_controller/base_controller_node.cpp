@@ -253,7 +253,7 @@ void set_md49_speed (unsigned char speed_l, unsigned char speed_r){
         ROS_WARN("SQL message: %s", zErrMsg);
         sqlite3_free(zErrMsg);
     }else{
-        ROS_INFO("Set SpeedL=%s and SpeedR=%s in Table md49commands(md49data.db)",speed_l, speed_r);
+        ROS_INFO("Set SpeedL=%i and SpeedR=%i in Table md49commands(md49data.db)",speed_l, speed_r);
     }
 }
 
