@@ -113,11 +113,13 @@ int main( int argc, char* argv[] ){
 } // end.main
 
 void read_MD49_Data_serial (void){
-    // Read serial MD49 data from AVR-Master
-    // *************************************
-    serialBuffer[0] = 82;                                   // 82=R Steuerbyte um alle Daten vom MD49 zu lesen
-    writeBytes(fd, 1);
-    readBytes(fd, 18);    
+    // Read serial MD49 encoder data from AVR-Master
+    // *********************************************
+    serialBuffer[0] = 0;
+	serialBuffer[1] = 0x25;					// Command to return encoder values
+	writeBytes(fd, 2);
+	readBytes(fd, 8);
+   
 
     // Put toghether encoder values from their
     // corresponding bytes, read from MD49
@@ -165,6 +167,8 @@ void read_MD49_Data_serial (void){
     }else{
         //fprintf(stdout, "Operation done successfully\n");
     }
+    
+/*    
     // SpeedL, SpeedR, Volts, CurrentL, CurrentR, Error, Acceleration, Mode, Regulator, Timeout
     cx = snprintf (sql_buffer,400,"UPDATE md49data SET SpeedL=%i, SpeedR=%i, " \
                    "Volts=%i, CurrentL=%i, CurrentR=%i, Error=%i, Acceleration=%i, Mode=%i, " \
@@ -177,7 +181,7 @@ void read_MD49_Data_serial (void){
     }else{
         //fprintf(stdout, "Operation done successfully\n");
     }
-
+*/
     // Output MD49 data on screen
     // **************************
     printf("\033[2J");                                      //  clear the screen
@@ -195,16 +199,16 @@ void read_MD49_Data_serial (void){
     printf("EncoderL: %i ",EncoderL);
     printf("EncoderR: %i \n",EncoderR);
     printf("========================================\n");
-    printf("SpeedL: %i ",serialBuffer[8]);
-    printf("SpeedR: %i \n",serialBuffer[9]);
-    printf("Volts: %i \n",serialBuffer[10]);
-    printf("CurrentL: %i ",serialBuffer[11]);
-    printf("CurrentR: %i \n",serialBuffer[12]);
-    printf("Error: %i \n",serialBuffer[13]);
-    printf("Acceleration: %i \n",serialBuffer[14]);
-    printf("Mode: %i \n",serialBuffer[15]);
-    printf("Regulator: %i \n",serialBuffer[16]);
-    printf("Timeout: %i \n",serialBuffer[17]);
+    //printf("SpeedL: %i ",serialBuffer[8]);
+    //printf("SpeedR: %i \n",serialBuffer[9]);
+    //printf("Volts: %i \n",serialBuffer[10]);
+    //printf("CurrentL: %i ",serialBuffer[11]);
+    //printf("CurrentR: %i \n",serialBuffer[12]);
+    //printf("Error: %i \n",serialBuffer[13]);
+    //printf("Acceleration: %i \n",serialBuffer[14]);
+    //printf("Mode: %i \n",serialBuffer[15]);
+    //printf("Regulator: %i \n",serialBuffer[16]);
+    //printf("Timeout: %i \n",serialBuffer[17]);
 
 }
 
@@ -212,11 +216,15 @@ void read_MD49_Data_serial (void){
 // ***************************************************
 void set_MD49_speed (unsigned char speed_l, unsigned char speed_r){
 
-    serialBuffer[0] = 88;                                   // 88 =X Steuerbyte um Commands an MD49 zu senden
-    serialBuffer[1] = 115;                                  // 115=s Steuerbyte setSpeed
-    serialBuffer[2] = speed_l;                              // set speed1
-    serialBuffer[3] = speed_r;                              // set speed2
-    writeBytes(fd, 4);
+    serialBuffer[0] = 0;
+	serialBuffer[1] = 0x31;					// Command to set motor speed
+	serialBuffer[2] = speed_l;				// Speed to be set
+	
+	serialBuffer[3] = 0;
+	serialBuffer[4] = 0x32;
+	serialBuffer[5] = speed_r;
+	
+	writeBytes(fd, 6);
 }
 
 // Read SpeedL and SpeedR from
