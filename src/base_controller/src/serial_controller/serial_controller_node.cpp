@@ -51,30 +51,14 @@ using namespace std;
 int openSerialPort(const char * device, int bps);
 void writeBytes(int descriptor, int count);
 void readBytes(int descriptor, int count);
+void open_sqlite_db_md49data(void);
+static int sql_callback(void *data, int argc, char **argv, char **azColName);
 void read_MD49_Data_serial (void);
-void read_md49_commands_txt(void);
+void read_md49_commands(void);
 void set_MD49_speed (unsigned char speed_l, unsigned char speed_r);
 char* itoa(int value, char* result, int base);
 
-static int sql_callback(void *data, int argc, char **argv, char **azColName){
-   //int i;
-   //fprintf(stderr, "%s: ", (const char*)data);
-   //for(i=0; i<argc; i++){
-
-        //printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
-
-
-   //}
-   speed_l= atoi(argv[1]);
-   speed_r= atoi(argv[2]);
-   printf("SpeedL=%i\n",speed_l);
-   printf("SpeedR=%i\n",speed_r);
-   //printf("\n");
-   return 0;
-}
-
-int main( int argc, char* argv[] ){
-
+void open_sqlite_db_md49data(void){
     // Open database md49data.db and add
     // table md49data
     // *********************************
@@ -120,12 +104,18 @@ int main( int argc, char* argv[] ){
     }else{
         fprintf(stdout, "table created successfully\n");
     }
+}
 
+int main( int argc, char* argv[] ){
 
     // Init as ROS node
     // ****************
     //ros::init(argc, argv, "serial_controller");
     //ros::NodeHandle n;
+
+    // Open sqlite database md49data.db
+    // ********************************
+    open_sqlite_db_md49data();
 
     // Open serial port
     // ****************
@@ -137,6 +127,9 @@ int main( int argc, char* argv[] ){
     //ROS_DEBUG("Starting Mainloop...");
     //ROS_DEBUG("reading data from MD49 and pushing commands to MD49 @ 5Hz...");
 
+
+    // Mainloop
+    // ***********************************
     //while(  n.ok() ){
     while( 1 ){
         // Read encodervalues and other data from MD49
@@ -147,7 +140,7 @@ int main( int argc, char* argv[] ){
 
         // Read commands from md49_commands.txt:
         // *************************************
-        read_md49_commands_txt();
+        read_md49_commands();
 
         // Set speed and other commands as
         // read from md49_commands.txt
@@ -250,7 +243,6 @@ void read_MD49_Data_serial (void){
     printf("Regulator: %i \n",serialBuffer[16]);
     printf("Timeout: %i \n",serialBuffer[17]);
 
-
 }
 
 void set_MD49_speed (unsigned char speed_l, unsigned char speed_r){
@@ -261,8 +253,7 @@ void set_MD49_speed (unsigned char speed_l, unsigned char speed_r){
     writeBytes(fd, 4);
 }
 
-void read_md49_commands_txt(void){
-
+void read_md49_commands(void){
 
     /* Create SQL statement */
    sql = "SELECT * from md49commands WHERE ID=1";
@@ -275,30 +266,6 @@ void read_md49_commands_txt(void){
    }else{
       //fprintf(stdout, "Query done successfully\n");
    }
-
-
-    // old txt-file based version
-   /*
-    string line;
-    ifstream myfile ("md49_commands.txt");
-    if (myfile.is_open())
-    {
-        int i=0;
-        while ( getline (myfile,line) )
-        {
-            //cout << line << '\n';
-            char data[10];
-            std::copy(line.begin(), line.end(), data);
-            md49_data[i]=atoi(data);
-            i =i++;
-        }
-        myfile.close();
-        speed_l=md49_data[0];
-        speed_r=md49_data[1];
-    }
-    else cout << "Unable to open file";
-    */
-
 }
 
 int openSerialPort(const char * device, int bps){
@@ -342,6 +309,14 @@ void readBytes(int descriptor, int count) {
         close(descriptor);                                  // Close port if there is an error
         exit(1);
     }
+}
+
+static int sql_callback(void *data, int argc, char **argv, char **azColName){
+   speed_l= atoi(argv[1]);
+   speed_r= atoi(argv[2]);
+   printf("SpeedL=%i\n",speed_l);
+   printf("SpeedR=%i\n",speed_r);
+   return 0;
 }
 
 char* itoa(int value, char* result, int base) {
