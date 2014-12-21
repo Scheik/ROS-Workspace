@@ -246,14 +246,14 @@ void set_md49_speed (unsigned char speed_l, unsigned char speed_r){
     // ************************************
     char sql_buffer[200];
     int cx;
-    cx = snprintf (sql_buffer,200,"UPDATE md49commands SET SpeedL=%i, SpeedR=%i WHERE ID=1", speed_l,speed_r);
+    cx = snprintf (sql_buffer,200,"UPDATE md49commands SET SpeedL=%d, SpeedR=%d WHERE ID=1", speed_l,speed_r);
 
     rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
     if( rc != SQLITE_OK ){
         ROS_WARN("SQL message: %s", zErrMsg);
         sqlite3_free(zErrMsg);
     }else{
-        ROS_INFO("Set SpeedL=%d and SpeedR=%d in Table md49commands(md49data.db)",speed_l, speed_r);
+        ROS_INFO("Set SpeedL=%i and SpeedR=%i in Table md49commands(md49data.db)",speed_l, speed_r);
     }
 }
 
