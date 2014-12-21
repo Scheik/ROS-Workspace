@@ -132,11 +132,11 @@ void read_MD49_Data_serial (void){
     // Write data read from MD49 into
     // sqlite3 database md49data.db
     // ******************************
-    char sql_buffer[300];
+    char sql_buffer[400];
     int cx;
-    cx = snprintf (sql_buffer,300,"UPDATE md49data SET Encoderbyte1L, Encoderbyte2L, Encoderbyte3L, Encoderbyte4L," \
-                   "Encoderbyte1R, Encoderbyte2R, Encoderbyte3R, Encoderbyte4R, EncoderL=%i, EncoderR=%i, " \
-                   " SpeedL, SpeedR, Volts, CurrentL, CurrentR, Error, Acceleration, Mode, Regulator, Timeout" \
+    cx = snprintf (sql_buffer,400,"UPDATE md49data SET Encoderbyte1L=%i, Encoderbyte2L=%i, Encoderbyte3L=%i, Encoderbyte4L=%i," \
+                   "Encoderbyte1R=%i, Encoderbyte2R=%i, Encoderbyte3R=%i, Encoderbyte4R=%i, EncoderL=%i, EncoderR=%i, " \
+                   " SpeedL=%i, SpeedR=%i, Volts=%i, CurrentL=%i, CurrentR=%i, Error=%i, Acceleration=%i, Mode=%i, Regulator=%i, Timeout=%i" \
                    "WHERE ID=1", serialBuffer[0], serialBuffer[1], serialBuffer[2], serialBuffer[3], serialBuffer[4], serialBuffer[5], serialBuffer[6], serialBuffer[7], EncoderL, EncoderR, serialBuffer[8], serialBuffer[9], serialBuffer[10], serialBuffer[11], serialBuffer[12], serialBuffer[13], serialBuffer[14], serialBuffer[15], serialBuffer[16], serialBuffer[17]);
 
     rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
