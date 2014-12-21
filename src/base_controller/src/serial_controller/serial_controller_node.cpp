@@ -11,15 +11,15 @@
 // Includes
 // *********************************************************
 #include <iostream>                                         /* allows to perform standard input and output operations */
-#include <fstream>                                          /* Input/output stream class to operate on files. */
+//#include <fstream>                                          /* Input/output stream class to operate on files. */
 #include <stdio.h>                                          /* Standard input/output definitions */
 #include <stdint.h>                                         /* Standard input/output definitions */
 #include <stdlib.h>                                         /* defines several general purpose functions */
-#include <unistd.h>                                         /* UNIX standard function definitions */
+//#include <unistd.h>                                         /* UNIX standard function definitions */
 #include <fcntl.h>                                          /* File control definitions */
 #include <errno.h>                                          /* Error number definitions */
 #include <termios.h>                                        /* POSIX terminal control definitions */
-#include <ctype.h>                                          /* isxxx() */
+//#include <ctype.h>                                          /* isxxx() */
 //#include<ros/ros.h>
 #include <sqlite3.h>
 
@@ -34,7 +34,6 @@ int32_t EncoderR;                                           /* stores encoder va
 unsigned char speed_l=128, speed_r=128;                     /* speed to set for MD49 */
 unsigned char last_speed_l=128, last_speed_r=128;           /* speed to set for MD49 */
 unsigned char serialBuffer[16];                             /* Serial buffer to store uart data */
-unsigned char md49_data[18];                                /* keeps data from MD49, read from AVR-Master */
 struct termios orig;                                        // backuped port options
 
 // sqlite globals
@@ -133,10 +132,15 @@ void read_MD49_Data_serial (void){
     // Write data read from MD49 into
     // sqlite3 database md49data.db
     // ******************************
-    //char* sql_buffer;
-    char sql_buffer[200];
+    char sql_buffer[300];
     int cx;
-    cx = snprintf (sql_buffer,200,"UPDATE md49data SET EncoderL=%i, EncoderR=%i WHERE ID=1", EncoderL,EncoderR);
+    cx = snprintf (sql_buffer,300,"UPDATE md49data SET Encoderbyte1L, Encoderbyte2L, Encoderbyte3L, Encoderbyte4L," \
+                   "Encoderbyte1R, Encoderbyte2R, Encoderbyte3R, Encoderbyte4R, EncoderL=%i, EncoderR=%i, " \
+                   " SpeedL, SpeedR, Volts, CurrentL, CurrentR, Error, Acceleration, Mode, Regulator, Timeout" \
+                   "WHERE ID=1", serialBuffer[0], serialBuffer[1], serialBuffer[2], serialBuffer[3], \
+                    serialBuffer[4], serialBuffer[5], serialBuffer[6], serialBuffer[7], EncoderL, EncoderR, \
+                    serialBuffer[8], serialBuffer[9], serialBuffer[10], serialBuffer[11], serialBuffer[12], \
+                    serialBuffer[13], serialBuffer[14], serialBuffer[15], serialBuffer[16], serialBuffer[17]);
 
     rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
     if( rc != SQLITE_OK ){
@@ -176,7 +180,10 @@ void read_MD49_Data_serial (void){
 
 }
 
+// Write serial command to change left and right speed
+// ***************************************************
 void set_MD49_speed (unsigned char speed_l, unsigned char speed_r){
+
     serialBuffer[0] = 88;                                   // 88 =X Steuerbyte um Commands an MD49 zu senden
     serialBuffer[1] = 115;                                  // 115=s Steuerbyte setSpeed
     serialBuffer[2] = speed_l;                              // set speed1
@@ -184,39 +191,10 @@ void set_MD49_speed (unsigned char speed_l, unsigned char speed_r){
     writeBytes(fd, 4);
 }
 
+// Read SpeedL and SpeedR from
+// table md49commands(md49data.db)
+// *******************************
 void read_md49_commands(void){
-/*
-    sqlite3_stmt *stmt;
-    rc = sqlite3_prepare_v2(db, "SELECT SpeedL, SpeedR"
-                                    " FROM md49commands"
-                                    " WHERE Id = ?", -1, &stmt, NULL);
-    if (rc != SQLITE_OK)
-        throw string(sqlite3_errmsg(db));
-
-    rc = sqlite3_bind_int(stmt, 1, 1);    // Using parameters ("?") is not
-    if (rc != SQLITE_OK) {                 // really necessary, but recommended
-        string errmsg(sqlite3_errmsg(db)); // (especially for strings) to avoid
-        sqlite3_finalize(stmt);            // formatting problems and SQL
-        throw errmsg;                      // injection attacks.
-    }
-
-    rc = sqlite3_step(stmt);
-    if (rc != SQLITE_ROW && rc != SQLITE_DONE) {
-        string errmsg(sqlite3_errmsg(db));
-        sqlite3_finalize(stmt);
-        throw errmsg;
-    }
-    if (rc == SQLITE_DONE) {
-        sqlite3_finalize(stmt);
-        throw string("customer not found");
-    }
-
-
-    speed_l        =        sqlite3_column_int(stmt, 1);
-    speed_r        =        sqlite3_column_int(stmt, 1);
-
-    sqlite3_finalize(stmt);
- */
 
    // Create SQL statement
    sql = "SELECT * from md49commands WHERE ID=1";
@@ -231,7 +209,10 @@ void read_md49_commands(void){
    }
 }
 
+// Open serialport
+// ***************
 int openSerialPort(const char * device, int bps){
+
    struct termios neu;
    char buf[128];
 
@@ -257,6 +238,8 @@ int openSerialPort(const char * device, int bps){
    return fd;
 }
 
+// Write bytes serial to UART
+// **************************
 void writeBytes(int descriptor, int count) {
     if ((write(descriptor, serialBuffer, count)) == -1) {   // Send data out
         perror("Error writing");
@@ -266,6 +249,8 @@ void writeBytes(int descriptor, int count) {
 
 }
 
+// Read bytes serial from UART
+// ***************************
 void readBytes(int descriptor, int count) {
     if (read(descriptor, serialBuffer, count) == -1) {      // Read back data into buf[]
         perror("Error reading ");
@@ -274,10 +259,13 @@ void readBytes(int descriptor, int count) {
     }
 }
 
+// Open sqlite db md49data.db and create
+// table md49data if not existing
+// *************************************
 void open_sqlite_db_md49data(void){
-    // Open database md49data.db and add
-    // table md49data
-    // *********************************
+
+    // Open database md49data.db and add table md49data
+    // ************************************************
     rc = sqlite3_open("data/md49data.db", &db);
     if( rc ){
         fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
@@ -290,25 +278,16 @@ void open_sqlite_db_md49data(void){
     // *********************
     sql = "CREATE TABLE md49data("  \
      "ID INT PRIMARY KEY     NOT NULL," \
-     "Encoderbyte1L  INT DEFAULT 0," \
-     "Encoderbyte2L  INT DEFAULT 0," \
-     "Encoderbyte3L  INT DEFAULT 0," \
-     "Encoderbyte4L  INT DEFAULT 0," \
-     "Encoderbyte1R  INT DEFAULT 0," \
-     "Encoderbyte2R  INT DEFAULT 0," \
-     "Encoderbyte3R  INT DEFAULT 0," \
-     "Encoderbyte4R  INT DEFAULT 0," \
-     "EncoderL       INT DEFAULT 0," \
-     "EncoderR       INT DEFAULT 0," \
-     "SpeedL         INT DEFAULT 0," \
-     "SpeedR         INT DEFAULT 0," \
+     "Encoderbyte1L  INT DEFAULT 0, Encoderbyte2L  INT DEFAULT 0," \
+     "Encoderbyte3L  INT DEFAULT 0, Encoderbyte4L  INT DEFAULT 0," \
+     "Encoderbyte1R  INT DEFAULT 0, Encoderbyte2R  INT DEFAULT 0," \
+     "Encoderbyte3R  INT DEFAULT 0, Encoderbyte4R  INT DEFAULT 0," \
+     "EncoderL       INT DEFAULT 0, EncoderR       INT DEFAULT 0," \
+     "SpeedL         INT DEFAULT 0, SpeedR         INT DEFAULT 0," \
      "Volts          INT DEFAULT 0," \
-     "CurrentL       INT DEFAULT 0," \
-     "CurrentR       INT DEFAULT 0," \
-     "Error          INT DEFAULT 0," \
-     "Acceleration   INT DEFAULT 0," \
-     "Mode           INT DEFAULT 0," \
-     "Regulator      INT DEFAULT 0," \
+     "CurrentL       INT DEFAULT 0, CurrentR       INT DEFAULT 0," \
+     "Error          INT DEFAULT 0, Acceleration   INT DEFAULT 0," \
+     "Mode           INT DEFAULT 0, Regulator      INT DEFAULT 0," \
      "Timeout        INT DEFAULT 0 );" \
      "INSERT INTO md49data (ID) VALUES (1);";
 
@@ -322,6 +301,8 @@ void open_sqlite_db_md49data(void){
     }
 }
 
+// Callbackfunction executed if table md49commands in md49data.db is queried
+// *************************************************************************
 static int sql_callback(void *data, int argc, char **argv, char **azColName){
    speed_l= atoi(argv[1]);
    speed_r= atoi(argv[2]);

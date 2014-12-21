@@ -1,10 +1,10 @@
 #include <iostream>                                         /* allows to perform standard input and output operations */
-#include <fstream>
+//#include <fstream>
 #include <stdio.h>                                          /* Standard input/output definitions */
 #include <stdint.h>                                         /* Standard input/output definitions */
 #include <stdlib.h>                                         /* defines several general purpose functions */
-#include <unistd.h>                                         /* UNIX standard function definitions */
-#include <fcntl.h>                                          /* File control definitions */
+//#include <unistd.h>                                         /* UNIX standard function definitions */
+//#include <fcntl.h>                                          /* File control definitions */
 #include <ctype.h>                                          /* isxxx() */
 #include <ros/ros.h>                                        /* ROS */
 #include <geometry_msgs/Twist.h>                            /* ROS Twist message */
