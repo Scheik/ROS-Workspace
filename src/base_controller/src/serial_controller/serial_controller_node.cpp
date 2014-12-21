@@ -163,6 +163,18 @@ void read_MD49_Data_serial (void){
     }else{
         //fprintf(stdout, "Operation done successfully\n");
     }
+    // SpeedL, SpeedR, Volts, CurrentL, CurrentR, Error, Acceleration, Mode, Regulator, Timeout
+    cx = snprintf (sql_buffer,400,"UPDATE md49data SET SpeedL=%i, SpeedR=%i, " \
+                   "Volts=%i, CurrentL=%i, CurrentR=%i, Error=%i, Acceleration=%i, Mode=%i, " \
+                   "Regulator=%i, Timeout=%i " \
+                   "WHERE ID=1;", serialBuffer[8], serialBuffer[9], serialBuffer[10], serialBuffer[11], serialBuffer[12], serialBuffer[13], serialBuffer[14], serialBuffer[15], serialBuffer[16], serialBuffer[17]);
+    rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
+    if( rc != SQLITE_OK ){
+        fprintf(stderr, "SQL message: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+    }else{
+        //fprintf(stdout, "Operation done successfully\n");
+    }
 
     // Output MD49 data on screen
     // **************************
