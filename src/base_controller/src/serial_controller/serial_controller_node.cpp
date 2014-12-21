@@ -57,14 +57,14 @@ void set_MD49_speed (unsigned char speed_l, unsigned char speed_r);
 char* itoa(int value, char* result, int base);
 
 static int sql_callback(void *data, int argc, char **argv, char **azColName){
-   int i;
+   //int i;
    //fprintf(stderr, "%s: ", (const char*)data);
-   for(i=0; i<argc; i++){
+   //for(i=0; i<argc; i++){
 
         //printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
 
 
-   }
+   //}
    speed_l= atoi(argv[1]);
    speed_r= atoi(argv[2]);
    printf("SpeedL=%i\n",speed_l);
@@ -115,7 +115,7 @@ int main( int argc, char* argv[] ){
     /* Execute SQL statement */
     rc = sqlite3_exec(db, sql, NULL, 0, &zErrMsg);
     if( rc != SQLITE_OK ){
-        fprintf(stderr, "%s\n", zErrMsg);
+        fprintf(stderr, "SQL message: %s\n", zErrMsg);
         sqlite3_free(zErrMsg);
     }else{
         fprintf(stdout, "table created successfully\n");
@@ -189,7 +189,7 @@ void read_MD49_Data_serial (void){
 
     rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
     if( rc != SQLITE_OK ){
-        //fprintf(stderr, "SQL error: %s\n", zErrMsg);
+        fprintf(stderr, "SQL message: %s\n", zErrMsg);
         sqlite3_free(zErrMsg);
     }else{
         //fprintf(stdout, "Operation done successfully\n");
@@ -270,10 +270,10 @@ void read_md49_commands_txt(void){
    /* Execute SQL statement */
    rc = sqlite3_exec(db, sql, sql_callback, (void*)data, &zErrMsg);
    if( rc != SQLITE_OK ){
-      fprintf(stderr, "SQL error: %s\n", zErrMsg);
+      fprintf(stderr, "SQL message: %s\n", zErrMsg);
       sqlite3_free(zErrMsg);
    }else{
-      fprintf(stdout, "Query done successfully\n");
+      //fprintf(stdout, "Query done successfully\n");
    }
 
 
