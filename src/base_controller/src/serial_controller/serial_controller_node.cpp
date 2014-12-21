@@ -186,10 +186,41 @@ void set_MD49_speed (unsigned char speed_l, unsigned char speed_r){
 
 void read_md49_commands(void){
 
-    /* Create SQL statement */
+    sqlite3_stmt *stmt;
+        rc = sqlite3_prepare_v2(db, "SELECT SpeedL, SpeedR"
+                                        " FROM md49commands"
+                                        " WHERE Id = ?", -1, &stmt, NULL);
+        if (rc != SQLITE_OK)
+            throw string(sqlite3_errmsg(db));
+
+        rc = sqlite3_bind_int(stmt, 1, 1);    // Using parameters ("?") is not
+        if (rc != SQLITE_OK) {                 // really necessary, but recommended
+            string errmsg(sqlite3_errmsg(db)); // (especially for strings) to avoid
+            sqlite3_finalize(stmt);            // formatting problems and SQL
+            throw errmsg;                      // injection attacks.
+        }
+
+        rc = sqlite3_step(stmt);
+        if (rc != SQLITE_ROW && rc != SQLITE_DONE) {
+            string errmsg(sqlite3_errmsg(db));
+            sqlite3_finalize(stmt);
+            throw errmsg;
+        }
+        if (rc == SQLITE_DONE) {
+            sqlite3_finalize(stmt);
+            throw string("customer not found");
+        }
+
+
+        speed_l        =        sqlite3_column_int(stmt, 1);
+        speed_r        =        sqlite3_column_int(stmt, 1);
+
+        sqlite3_finalize(stmt);
+   /*
+   // Create SQL statement
    sql = "SELECT * from md49commands WHERE ID=1";
 
-   /* Execute SQL statement */
+   // Execute SQL statement
    rc = sqlite3_exec(db, sql, sql_callback, (void*)data, &zErrMsg);
    if( rc != SQLITE_OK ){
       fprintf(stderr, "SQL message: %s\n", zErrMsg);
@@ -197,6 +228,7 @@ void read_md49_commands(void){
    }else{
       //fprintf(stdout, "Query done successfully\n");
    }
+   */
 }
 
 int openSerialPort(const char * device, int bps){
@@ -291,11 +323,8 @@ void open_sqlite_db_md49data(void){
 }
 
 static int sql_callback(void *data, int argc, char **argv, char **azColName){
-   //speed_l= atoi(argv[1]);
-   //speed_r= atoi(argv[2]);
-   sqlite3_stmt *stmt;
-   speed_l=sqlite3_column_int(stmt, 1);
-   speed_r=sqlite3_column_int(stmt, 2);
+   speed_l= atoi(argv[1]);
+   speed_r= atoi(argv[2]);
    return 0;
 }
 
