@@ -44,24 +44,24 @@ base_controller::md49data md49data;
 void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
 
         if (vel_cmd.linear.x>0){
-            speed_l = 200;
-            speed_r = 200;
+            speed_l = 255;
+            speed_r = 255;
         }
         if (vel_cmd.linear.x<0){
-            speed_l = 100;
-            speed_r = 100;
+            speed_l = 1;
+            speed_r = 1;
         }
         if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){
             speed_l = 128;
             speed_r = 128;
         }
         if (vel_cmd.angular.z>0){
-            speed_l = 100;
-            speed_r = 200;
+            speed_l = 1;
+            speed_r = 255;
         }
         if (vel_cmd.angular.z<0){
-            speed_l = 200;
-            speed_r = 100;
+            speed_l = 255;
+            speed_r = 1;
         }
 
     /*
