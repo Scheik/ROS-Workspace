@@ -291,8 +291,11 @@ void open_sqlite_db_md49data(void){
 }
 
 static int sql_callback(void *data, int argc, char **argv, char **azColName){
-   speed_l= atoi(argv[1]);
-   speed_r= atoi(argv[2]);
+   //speed_l= atoi(argv[1]);
+   //speed_r= atoi(argv[2]);
+   sqlite3_stmt *stmt;
+   speed_l=sqlite3_column_int(stmt, 1);
+   speed_r=sqlite3_column_int(stmt, 2);
    return 0;
 }
 

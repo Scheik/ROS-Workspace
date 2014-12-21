@@ -48,8 +48,8 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
             speed_r = 255;
         }
         if (vel_cmd.linear.x<0){
-            speed_l = 55;
-            speed_r = 55;
+            speed_l = 0;
+            speed_r = 0;
         }
         if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){
             speed_l = 128;
@@ -231,9 +231,9 @@ void open_sql_db_md49data(void){
     // Set SpeedL and SpeedR to
     // defaults =128
     // ************************
-    char sql_buffer[200];
+    char sql_buffer[100];
     int cx;
-    cx = snprintf (sql_buffer,200,"UPDATE md49commands SET SpeedL=%i, SpeedR=%i WHERE ID=1", 128,128);
+    cx = snprintf (sql_buffer,100,"UPDATE md49commands SET SpeedL=%i, SpeedR=%i WHERE ID=1", 128,128);
 
     rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
     if( rc != SQLITE_OK ){
