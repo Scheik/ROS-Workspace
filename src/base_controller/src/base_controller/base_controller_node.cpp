@@ -110,7 +110,7 @@ void open_sql_db_md49data(void){
      "INSERT INTO md49commands (ID,SpeedL,SpeedR) VALUES (1,128,128);";
     rc = sqlite3_exec(db, sql, NULL, 0, &zErrMsg);                      // Execute SQL statement
     if( rc != SQLITE_OK ){
-        ROS_INFO("SQL message2: %s", zErrMsg);
+        ROS_INFO("SQL message: %s", zErrMsg);
         sqlite3_free(zErrMsg);
     }else{
         ROS_INFO("table created successfully");
@@ -241,20 +241,26 @@ void read_MD49_Data (void){
 
 void set_md49_speed (unsigned char speed_l, unsigned char speed_r){
 
-    // Set SpeedL=speed_l and
-    // SpeedR=speed_r in Table md49commands
-    // ************************************
-    char sql_buffer[200];
-    int cx;
-    cx = snprintf (sql_buffer,200,"UPDATE md49commands SET SpeedL=%i, SpeedR=%i WHERE ID=1", speed_l,speed_r);
+    bool sql_updated=false;
 
-    rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
-    if( rc != SQLITE_OK ){
-        ROS_WARN("SQL message1: %s", zErrMsg);
-        sqlite3_free(zErrMsg);
-    }else{
-        ROS_INFO("Set SpeedL=%i and SpeedR=%i in Table md49commands(md49data.db)",speed_l, speed_r);
-    }
+    while(sql_updated==false){
+
+        // Set SpeedL=speed_l and
+        // SpeedR=speed_r in Table md49commands
+        // ************************************
+        char sql_buffer[200];
+        int cx;
+        cx = snprintf (sql_buffer,200,"UPDATE md49commands SET SpeedL=%i, SpeedR=%i WHERE ID=1", speed_l,speed_r);
+
+        rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
+        if( rc != SQLITE_OK ){
+            ROS_WARN("SQL message: %s", zErrMsg);
+            sqlite3_free(zErrMsg);
+        }else{
+            ROS_INFO("Set SpeedL=%i and SpeedR=%i in Table md49commands(md49data.db)",speed_l, speed_r);
+            sql_updated=true;
+        }
+    }//end.while
 }
 
 
