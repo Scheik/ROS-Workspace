@@ -88,7 +88,7 @@ int main( int argc, char* argv[] ){
         // serial. Data ist stored in md49_data.txt
         // ****************************************
         read_MD49_Data_serial();
-        usleep(50000);
+        usleep(200000);
 
         // Read commands from md49_commands.txt:
         // *************************************
@@ -103,7 +103,7 @@ int main( int argc, char* argv[] ){
             last_speed_r=speed_r;
         }
 
-        usleep(50000);
+        usleep(200000);
 
     }// end.mainloop
     sqlite3_close(db);
