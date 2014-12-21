@@ -23,6 +23,8 @@
 //#include<ros/ros.h>
 #include <sqlite3.h>
 
+// switched to experimental, MD49 is now directly connected to RPi
+// All AVR- Boards discarded for the moment
 
 // Global variables
 const char* serialport_name="//dev/ttyS2";                   /* defines used serialport on BPi. Use "/dev/ttyAMA0" for RPi*/
