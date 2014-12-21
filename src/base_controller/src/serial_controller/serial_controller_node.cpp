@@ -56,6 +56,15 @@ void read_md49_commands_txt(void);
 void set_MD49_speed (unsigned char speed_l, unsigned char speed_r);
 char* itoa(int value, char* result, int base);
 
+static int sql_callback(void *data, int argc, char **argv, char **azColName){
+   int i;
+   fprintf(stderr, "%s: ", (const char*)data);
+   for(i=0; i<argc; i++){
+      printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+   }
+   printf("\n");
+   return 0;
+}
 
 int main( int argc, char* argv[] ){
 
@@ -113,8 +122,8 @@ int main( int argc, char* argv[] ){
 
     // Open serial port
     // ****************
-    fd = openSerialPort(serialport_name, serialport_bps);
-    if (fd == -1) exit(1);
+//    fd = openSerialPort(serialport_name, serialport_bps);
+//    if (fd == -1) exit(1);
     //ROS_INFO("Opend serial port at %s with %i Bps",serialport_name,serialport_bps);
     usleep(10000);                                          // Sleep for UART to power up and set options
 
@@ -126,7 +135,7 @@ int main( int argc, char* argv[] ){
         // Read encodervalues and other data from MD49
         // serial. Data ist stored in md49_data.txt
         // ****************************************
-        read_MD49_Data_serial();
+//        read_MD49_Data_serial();
         usleep(100000);
 
         // Read commands from md49_commands.txt:
@@ -136,7 +145,7 @@ int main( int argc, char* argv[] ){
         // Set speed and other commands as
         // read from md49_commands.txt
         // *******************************
-        set_MD49_speed(speed_l, speed_r);
+//        set_MD49_speed(speed_l, speed_r);
         usleep(100000);
 
     }// end.mainloop
@@ -246,6 +255,23 @@ void set_MD49_speed (unsigned char speed_l, unsigned char speed_r){
 }
 
 void read_md49_commands_txt(void){
+
+
+    /* Create SQL statement */
+   sql = "SELECT * from md49commands WHERE ID=1";
+
+   /* Execute SQL statement */
+   rc = sqlite3_exec(db, sql, sql_callback, (void*)data, &zErrMsg);
+   if( rc != SQLITE_OK ){
+      fprintf(stderr, "SQL error: %s\n", zErrMsg);
+      sqlite3_free(zErrMsg);
+   }else{
+      fprintf(stdout, "Query done successfully\n");
+   }
+
+
+    // old txt-file based version
+   /*
     string line;
     ifstream myfile ("md49_commands.txt");
     if (myfile.is_open())
@@ -264,6 +290,8 @@ void read_md49_commands_txt(void){
         speed_r=md49_data[1];
     }
     else cout << "Unable to open file";
+    */
+
 }
 
 int openSerialPort(const char * device, int bps){
