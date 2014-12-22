@@ -191,6 +191,7 @@ void set_md49_speed (unsigned char speed_l, unsigned char speed_r){
         if( rc != SQLITE_OK ){
             ROS_WARN("SQL message: %s. Trying again...", zErrMsg);
             sqlite3_free(zErrMsg);
+            usleep(20000);
         }else{
             ROS_INFO("Set SpeedL=%i and SpeedR=%i in Table md49commands(md49data.db)",speed_l, speed_r);
             sql_updated=true;
