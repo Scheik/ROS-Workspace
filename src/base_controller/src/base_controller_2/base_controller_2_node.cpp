@@ -138,7 +138,7 @@ int main( int argc, char* argv[] ){
         // (data is read from serial_controller_node
         //  and avaiable through md49_data.txt)
         // *****************************************
-//      read_MD49_Data();
+        read_MD49_Data();
 
         // set speed as in md49speed.txt
         // *****************************
