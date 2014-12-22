@@ -27,7 +27,7 @@
 // All AVR- Boards discarded for the moment
 
 // Global variables
-const char* serialport_name="//dev/ttyS2";                   /* defines used serialport on BPi. Use "/dev/ttyAMA0" for RPi*/
+const char* serialport_name="/dev/ttyS2";                   /* defines used serialport on BPi. Use "/dev/ttyAMA0" for RPi*/
 int serialport_bps=B9600;                                  /* defines used baudrate on serialport */
 //int filedesc;                                             /* File descriptor of serial port we will talk to*/
 int fd;                                                     /* serial port file descriptor */
@@ -115,6 +115,7 @@ int main( int argc, char* argv[] ){
 void read_MD49_Data_serial (void){
     // Read serial MD49 encoder data from AVR-Master
     // *********************************************
+    printf("read serial data");
     serialBuffer[0] = 0;
 	serialBuffer[1] = 0x25;					// Command to return encoder values
 	writeBytes(fd, 2);
