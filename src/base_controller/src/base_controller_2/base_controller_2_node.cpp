@@ -57,27 +57,22 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
         if (vel_cmd.linear.x>0){
             speed_l = 255;
             speed_r = 255;
-            //set_MD49_speed();
         }
         if (vel_cmd.linear.x<0){
             speed_l = 0;
             speed_r = 0;
-            //set_MD49_speed();
         }
         if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){
             speed_l = 128;
             speed_r = 128;
-            //set_MD49_speed();
         }
         if (vel_cmd.angular.z>0){
             speed_l = 0;
             speed_r = 255;
-            //set_MD49_speed();
         }
         if (vel_cmd.angular.z<0){
             speed_l = 255;
             speed_r = 0;
-            //set_MD49_speed();
         }
 
 
@@ -134,24 +129,17 @@ int main( int argc, char* argv[] ){
     // Open sqlite database md49data.db
     // ********************************
     open_sqlite_db_md49data();
+    ROS_INFO("Opend md49data.db database");
 
     while(n.ok())
     {
-        // Read encoder and other data from MD49
-        // (data is read from serial_controller_node
-        //  and avaiable through md49_data.txt)
-        // *****************************************
+        // Read encoder and other data from MD49 via UART
+        // **********************************************
         read_MD49_Data();
 
-        // set speed as in md49speed.txt
-        // *****************************
-        //if ((speed_l != last_speed_l) || (speed_r != last_speed_r)){
-            // gewünschte werte in textfile
-            //write_MD49_speed(speed_l,speed_r);
+        // set speed via UART
+        // ******************
         set_MD49_speed();
-        //    last_speed_l=speed_l;
-          //  last_speed_r=speed_r;
-        //}
 
         // Publish encoder values to topic /encoders (custom message)
         // **********************************************************       
@@ -173,12 +161,11 @@ int main( int argc, char* argv[] ){
         md49data.timeout = serialBuffer[17];
         md49data_pub.publish(md49data);
 
-        // ****
+        // ************
         ros::spinOnce();
         loop_rate.sleep();
 
     }// end.mainloop
-
     return 1;
 } // end.main
 
@@ -282,7 +269,6 @@ void read_MD49_Data (void){
 
 }
 
-
 void set_MD49_speed(void){
 
     serialBuffer[0] = 0;
@@ -323,30 +309,6 @@ int openSerialPort(const char * device, int bps){
       fcntl (fd, F_SETFL, O_RDWR);
    }
    return fd;
-}
-
-char* itoa(int value, char* result, int base) {
-        // check that the base if valid
-        if (base < 2 || base > 36) { *result = '\0'; return result; }
-
-        char* ptr = result, *ptr1 = result, tmp_char;
-        int tmp_value;
-
-        do {
-            tmp_value = value;
-            value /= base;
-            *ptr++ = "zyxwvutsrqponmlkjihgfedcba9876543210123456789abcdefghijklmnopqrstuvwxyz" [35 + (tmp_value - value * base)];
-        } while ( value );
-
-        // Apply negative sign
-        if (tmp_value < 0) *ptr++ = '-';
-        *ptr-- = '\0';
-        while(ptr1 < ptr) {
-            tmp_char = *ptr;
-            *ptr--= *ptr1;
-            *ptr1++ = tmp_char;
-        }
-        return result;
 }
 
 // Write bytes serial to UART
