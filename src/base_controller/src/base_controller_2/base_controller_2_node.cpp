@@ -39,6 +39,7 @@ char* itoa(int value, char* result, int base);
 int openSerialPort(const char * device, int bps);
 void writeBytes(int descriptor, int count);
 void readBytes(int descriptor, int count);
+void open_sqlite_db_md49data(void);
 
 // sqlite globals
 sqlite3 *db;
@@ -130,7 +131,9 @@ int main( int argc, char* argv[] ){
     ROS_INFO("Opend serial port at %s with %i Bps",serialport_name,serialport_bps);
     usleep(10000);                                          // Sleep for UART to power up and set options
 
-
+    // Open sqlite database md49data.db
+    // ********************************
+    open_sqlite_db_md49data();
 
     while(n.ok())
     {
@@ -364,5 +367,47 @@ void readBytes(int descriptor, int count) {
         perror("Error reading ");
         close(descriptor);                                  // Close port if there is an error
         exit(1);
+    }
+}
+
+// Open sqlite db md49data.db and create
+// table md49data if not existing
+// *************************************
+void open_sqlite_db_md49data(void){
+
+    // Open database md49data.db and add table md49data
+    // ************************************************
+    rc = sqlite3_open("data/md49data.db", &db);
+    if( rc ){
+        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+        exit(0);
+    }else{
+        fprintf(stdout, "Opened database successfully,\n");
+    }
+
+    // Create table md49data
+    // *********************
+    sql = "CREATE TABLE md49data("  \
+     "ID INT PRIMARY KEY     NOT NULL," \
+     "Encoderbyte1L  INT DEFAULT 0, Encoderbyte2L  INT DEFAULT 0," \
+     "Encoderbyte3L  INT DEFAULT 0, Encoderbyte4L  INT DEFAULT 0," \
+     "Encoderbyte1R  INT DEFAULT 0, Encoderbyte2R  INT DEFAULT 0," \
+     "Encoderbyte3R  INT DEFAULT 0, Encoderbyte4R  INT DEFAULT 0," \
+     "EncoderL       INT DEFAULT 0, EncoderR       INT DEFAULT 0," \
+     "SpeedL         INT DEFAULT 0, SpeedR         INT DEFAULT 0," \
+     "Volts          INT DEFAULT 0," \
+     "CurrentL       INT DEFAULT 0, CurrentR       INT DEFAULT 0," \
+     "Error          INT DEFAULT 0, Acceleration   INT DEFAULT 0," \
+     "Mode           INT DEFAULT 0, Regulator      INT DEFAULT 0," \
+     "Timeout        INT DEFAULT 0 );" \
+     "INSERT INTO md49data (ID) VALUES (1);";
+
+    /* Execute SQL statement */
+    rc = sqlite3_exec(db, sql, NULL, 0, &zErrMsg);
+    if( rc != SQLITE_OK ){
+        fprintf(stderr, "SQL message: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+    }else{
+        fprintf(stdout, "table created successfully\n");
     }
 }
