@@ -200,6 +200,7 @@ add_dependencies(base_controller_2 base_controller_2_gencpp)
 #add_dependencies(base_controller base_controller_generate_messages_cpp)
 #add_dependencies(base_controller base_controller_EXPORTED_TARGETS)
 target_link_libraries(base_controller_2 ${catkin_LIBRARIES})
+target_link_libraries(base_controller_2 sqlite3)
 
 add_executable(joystick_driver src/joystick_driver/joystick_driver_node.cpp)
 target_link_libraries(joystick_driver ${catkin_LIBRARIES})

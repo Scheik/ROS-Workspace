@@ -7,6 +7,7 @@
 #include <fcntl.h>                                          /* File control definitions */
 #include <ctype.h>                                          /* isxxx() */
 #include <termios.h>                                        /* POSIX terminal control definitions */
+#include <sqlite3.h>
 #include <ros/ros.h>                                        /* ROS */
 #include <geometry_msgs/Twist.h>                            /* ROS Twist message */
 #include <base_controller/encoders.h>                       /* Custom message /encoders */
@@ -38,6 +39,14 @@ char* itoa(int value, char* result, int base);
 int openSerialPort(const char * device, int bps);
 void writeBytes(int descriptor, int count);
 void readBytes(int descriptor, int count);
+
+// sqlite globals
+sqlite3 *db;
+char *zErrMsg = 0;
+int  rc;
+const char *sql;
+const char* data = "Callback function called";
+
 
 base_controller::encoders encoders;
 base_controller::md49data md49data;
@@ -173,35 +182,100 @@ int main( int argc, char* argv[] ){
 
 void read_MD49_Data (void){
 
+    // Read serial MD49 encoder data from MD49
+    // ***************************************
+    serialBuffer[0] = 0;
+    serialBuffer[1] = 0x25;					// Command to return encoder values
+    writeBytes(fd, 2);
+    readBytes(fd, 8);
+    // Put toghether encoder values from their
+    // corresponding bytes
+    // ***************************************
+    EncoderL = serialBuffer[0] << 24;                       // Put together first encoder value
+    EncoderL |= (serialBuffer[1] << 16);
+    EncoderL |= (serialBuffer[2] << 8);
+    EncoderL |= (serialBuffer[3]);
+    EncoderR = serialBuffer[4] << 24;                       // Put together second encoder value
+    EncoderR |= (serialBuffer[5] << 16);
+    EncoderR |= (serialBuffer[6] << 8);
+    EncoderR |= (serialBuffer[7]);
+
+    // Write data read from MD49 into
+    // sqlite3 database md49data.db
+    // ******************************
+    char sql_buffer[400];
+    int cx;
+    // EncoderL & EncoderR
+    cx = snprintf (sql_buffer,400,"UPDATE md49data SET EncoderL=%i, EncoderR=%i WHERE ID=1;", EncoderL, EncoderR);
+    rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
+    if( rc != SQLITE_OK ){
+        fprintf(stderr, "SQL message: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+    }else{
+        //fprintf(stdout, "Operation done successfully\n");
+    }
+    // Encoderbytes 1-4 left
+    cx = snprintf (sql_buffer,400,"UPDATE md49data SET Encoderbyte1L=%i, Encoderbyte2L=%i, " \
+                   "Encoderbyte3L=%i, Encoderbyte4L=%i WHERE ID=1;", serialBuffer[0], serialBuffer[1], serialBuffer[2], serialBuffer[3]);
+    rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
+    if( rc != SQLITE_OK ){
+        fprintf(stderr, "SQL message: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+    }else{
+        //fprintf(stdout, "Operation done successfully\n");
+    }
+    // Encoderbytes 1-4 right
+    cx = snprintf (sql_buffer,400,"UPDATE md49data SET Encoderbyte1R=%i, Encoderbyte2R=%i, " \
+                   "Encoderbyte3R=%i, Encoderbyte4R=%i WHERE ID=1;", serialBuffer[4], serialBuffer[5], serialBuffer[6], serialBuffer[7]);
+    rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
+    if( rc != SQLITE_OK ){
+        fprintf(stderr, "SQL message: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+    }else{
+        //fprintf(stdout, "Operation done successfully\n");
+    }
+
 /*
+    // SpeedL, SpeedR, Volts, CurrentL, CurrentR, Error, Acceleration, Mode, Regulator, Timeout
+    cx = snprintf (sql_buffer,400,"UPDATE md49data SET SpeedL=%i, SpeedR=%i, " \
+                   "Volts=%i, CurrentL=%i, CurrentR=%i, Error=%i, Acceleration=%i, Mode=%i, " \
+                   "Regulator=%i, Timeout=%i " \
+                   "WHERE ID=1;", serialBuffer[8], serialBuffer[9], serialBuffer[10], serialBuffer[11], serialBuffer[12], serialBuffer[13], serialBuffer[14], serialBuffer[15], serialBuffer[16], serialBuffer[17]);
+    rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
+    if( rc != SQLITE_OK ){
+        fprintf(stderr, "SQL message: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+    }else{
+        //fprintf(stdout, "Operation done successfully\n");
+    }
+*/
     // Output MD49 data on screen
     // **************************
     printf("\033[2J");                                      //  clear the screen
     printf("\033[H");                                       //  position cursor at top-left corner
     printf ("MD49-Data read from AVR-Master: \n");
     printf("========================================\n");
-    printf("Encoder1 Byte1: %i ",reply[0]);
-    printf("Byte2: %i ",reply[1]);
-    printf("Byte3: % i ",reply[2]);
-    printf("Byte4: %i \n",reply[3]);
-    printf("Encoder2 Byte1: %i ",reply[4]);
-    printf("Byte2: %i ",reply[5]);
-    printf("Byte3: %i ",reply[6]);
-    printf("Byte4: %i \n",reply[7]);
+    printf("Encoder1 Byte1: %i ",serialBuffer[0]);
+    printf("Byte2: %i ",serialBuffer[1]);
+    printf("Byte3: % i ",serialBuffer[2]);
+    printf("Byte4: %i \n",serialBuffer[3]);
+    printf("Encoder2 Byte1: %i ",serialBuffer[4]);
+    printf("Byte2: %i ",serialBuffer[5]);
+    printf("Byte3: %i ",serialBuffer[6]);
+    printf("Byte4: %i \n",serialBuffer[7]);
     printf("EncoderL: %i ",EncoderL);
     printf("EncoderR: %i \n",EncoderR);
     printf("========================================\n");
-    printf("Speed1: %i ",reply[8]);
-    printf("Speed2: %i \n",reply[9]);
-    printf("Volts: %i \n",reply[10]);
-    printf("Current1: %i ",reply[11]);
-    printf("Current2: %i \n",reply[12]);
-    printf("Error: %i \n",reply[13]);
-    printf("Acceleration: %i \n",reply[14]);
-    printf("Mode: %i \n",reply[15]);
-    printf("Regulator: %i \n",reply[16]);
-    printf("Timeout: %i \n",reply[17]);
-*/
+    //printf("SpeedL: %i ",serialBuffer[8]);
+    //printf("SpeedR: %i \n",serialBuffer[9]);
+    //printf("Volts: %i \n",serialBuffer[10]);
+    //printf("CurrentL: %i ",serialBuffer[11]);
+    //printf("CurrentR: %i \n",serialBuffer[12]);
+    //printf("Error: %i \n",serialBuffer[13]);
+    //printf("Acceleration: %i \n",serialBuffer[14]);
+    //printf("Mode: %i \n",serialBuffer[15]);
+    //printf("Regulator: %i \n",serialBuffer[16]);
+    //printf("Timeout: %i \n",serialBuffer[17]);
 
 }
 
