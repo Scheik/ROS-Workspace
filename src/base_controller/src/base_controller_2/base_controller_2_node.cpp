@@ -15,7 +15,7 @@
 
 
 const char* serialport_name="/dev/ttyS2";                   /* defines used serialport on BPi. Use "/dev/ttyAMA0" for RPi*/
-int serialport_bps=B9600;                                  /* defines used baudrate on serialport */
+int serialport_bps=B38400;                                  /* defines used baudrate on serialport */
 int fd;                                                     /* serial port file descriptor */
 struct termios orig;                                        // backuped port options
 int32_t EncoderL;                                           /* stores encoder value left read from md49 */
