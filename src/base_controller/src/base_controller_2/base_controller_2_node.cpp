@@ -6,18 +6,19 @@
 #include <unistd.h>                                         /* UNIX standard function definitions */
 #include <fcntl.h>                                          /* File control definitions */
 #include <ctype.h>                                          /* isxxx() */
+#include <termios.h>                                        /* POSIX terminal control definitions */
 #include <ros/ros.h>                                        /* ROS */
 #include <geometry_msgs/Twist.h>                            /* ROS Twist message */
 #include <base_controller/encoders.h>                       /* Custom message /encoders */
 #include <base_controller/md49data.h>                       /* Custom message /encoders */
 
-#include <serialport/serialport.h>
-#define REPLY_SIZE 18
-#define TIMEOUT 1000
 
+const char* serialport_name="/dev/ttyS2";                   /* defines used serialport on BPi. Use "/dev/ttyAMA0" for RPi*/
+int serialport_bps=B9600;                                  /* defines used baudrate on serialport */
+int fd;                                                     /* serial port file descriptor */
+struct termios orig;                                        // backuped port options
 int32_t EncoderL;                                           /* stores encoder value left read from md49 */
 int32_t EncoderR;                                           /* stores encoder value right read from md49 */
-char reply[REPLY_SIZE];
 char speed_l=128;
 char speed_r=128;                                  /* speed to set for MD49 */
 char last_speed_l=128, last_speed_r=128;           /* speed to set for MD49 */
@@ -31,12 +32,13 @@ double base_width = 0.4;                                    /* Base width in met
 
 unsigned char serialBuffer[18];                             /* Serial buffer to store uart data */
 void read_MD49_Data (void);
-void write_MD49_speed (unsigned char speed_l, unsigned char speed_r);
 void set_MD49_speed (void);
 char* itoa(int value, char* result, int base);
 
-using namespace std;
-cereal::CerealPort device;
+int openSerialPort(const char * device, int bps);
+void writeBytes(int descriptor, int count);
+void readBytes(int descriptor, int count);
+
 base_controller::encoders encoders;
 base_controller::md49data md49data;
 
@@ -45,24 +47,27 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
         if (vel_cmd.linear.x>0){
             speed_l = 255;
             speed_r = 255;
-            device.write("Xsÿÿ",4);
+            //set_MD49_speed();
         }
         if (vel_cmd.linear.x<0){
             speed_l = 0;
             speed_r = 0;
+            //set_MD49_speed();
         }
         if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){
             speed_l = 128;
             speed_r = 128;
-            device.write("Xs€€",4);
+            //set_MD49_speed();
         }
         if (vel_cmd.angular.z>0){
             speed_l = 0;
             speed_r = 255;
+            //set_MD49_speed();
         }
         if (vel_cmd.angular.z<0){
             speed_l = 255;
             speed_r = 0;
+            //set_MD49_speed();
         }
 
 
@@ -111,13 +116,11 @@ int main( int argc, char* argv[] ){
 
     // Open serial port
     // ****************
-    try{ device.open("/dev/ttyAMA0", 38400); }
-    catch(cereal::Exception& e)
-    {
-      ROS_FATAL("Failed to open the serial port!!!");
-      ROS_BREAK();
-    }
-    ROS_INFO("The serial port is opened.");
+    fd = openSerialPort(serialport_name, serialport_bps);
+    if (fd == -1) exit(1);
+    ROS_INFO("Opend serial port at %s with %i Bps",serialport_name,serialport_bps);
+    usleep(10000);                                          // Sleep for UART to power up and set options
+
 
 
     while(n.ok())
@@ -126,17 +129,17 @@ int main( int argc, char* argv[] ){
         // (data is read from serial_controller_node
         //  and avaiable through md49_data.txt)
         // *****************************************
-        read_MD49_Data();
+//      read_MD49_Data();
 
         // set speed as in md49speed.txt
         // *****************************
-        //if ((speed_l != last_speed_l) || (speed_r != last_speed_r)){
+        if ((speed_l != last_speed_l) || (speed_r != last_speed_r)){
             // gewünschte werte in textfile
             //write_MD49_speed(speed_l,speed_r);
-            //set_MD49_speed();
-           // last_speed_l=speed_l;
-           // last_speed_r=speed_r;
-        //}
+            set_MD49_speed();
+            last_speed_l=speed_l;
+            last_speed_r=speed_r;
+        }
 
         // Publish encoder values to topic /encoders (custom message)
         // **********************************************************       
@@ -146,16 +149,16 @@ int main( int argc, char* argv[] ){
 
         // Publish MD49 data to topic /md49data (custom message)
         // *****************************************************        
-        md49data.speed_l = reply[8];
-        md49data.speed_r = reply[9];
-        md49data.volt = reply[10];
-        md49data.current_l = reply[11];
-        md49data.current_r = reply[12];
-        md49data.error = reply[13];
-        md49data.acceleration = reply[14];
-        md49data.mode = reply[15];
-        md49data.regulator = reply[16];
-        md49data.timeout = reply[17];
+        md49data.speed_l = serialBuffer[8];
+        md49data.speed_r = serialBuffer[9];
+        md49data.volt = serialBuffer[10];
+        md49data.current_l = serialBuffer[11];
+        md49data.current_r = serialBuffer[12];
+        md49data.error = serialBuffer[13];
+        md49data.acceleration = serialBuffer[14];
+        md49data.mode = serialBuffer[15];
+        md49data.regulator = serialBuffer[16];
+        md49data.timeout = serialBuffer[17];
         md49data_pub.publish(md49data);
 
         // ****
@@ -169,27 +172,6 @@ int main( int argc, char* argv[] ){
 
 
 void read_MD49_Data (void){
-
-    // Send 'R' over the serial port
-    device.write("R");
-    // Get the reply, the last value is the timeout in ms
-    try{ device.read(reply, REPLY_SIZE, TIMEOUT); }
-    catch(cereal::TimeoutException& e)
-    {
-      ROS_ERROR("Timeout on serialport! No data read");
-    }
-    //ROS_INFO("Received MD49 data");
-
-    // Put toghether new encodervalues
-    // *******************************
-    EncoderL = reply[0] << 24;                        // Put together first encoder value
-    EncoderL |= (reply[1] << 16);
-    EncoderL |= (reply[2] << 8);
-    EncoderL |= (reply[3]);
-    EncoderR = reply[4] << 24;                        // Put together second encoder value
-    EncoderR |= (reply[5] << 16);
-    EncoderR |= (reply[6] << 8);
-    EncoderR |= (reply[7]);
 
 /*
     // Output MD49 data on screen
@@ -223,82 +205,47 @@ void read_MD49_Data (void){
 
 }
 
-void write_MD49_speed (unsigned char speed_l, unsigned char speed_r){
-
-    char buffer[33];
-    ofstream myfile;
-    myfile.open ("md49speed.txt");
-    //myfile << "Writing this to a file.\n";
-    if (speed_l==0){
-        myfile << "000";
-        myfile << "\n";
-    }
-    else if (speed_l<10){
-        myfile << "00";
-        myfile << itoa(speed_l,buffer,10);
-        myfile << "\n";
-    }
-    else if (speed_l<100){
-        myfile << "0";
-        myfile << itoa(speed_l,buffer,10);
-        myfile << "\n";
-    }
-    else{
-        myfile << itoa(speed_l,buffer,10);
-        myfile << "\n";
-    }
-
-    if (speed_r==0){
-        myfile << "000";
-        myfile << "\n";
-    }
-    else if (speed_r<10){
-        myfile << "00";
-        myfile << itoa(speed_r,buffer,10);
-        myfile << "\n";
-    }
-    else if (speed_r<100){
-        myfile << "0";
-        myfile << itoa(speed_r,buffer,10);
-        myfile << "\n";
-    }
-    else{
-        myfile << itoa(speed_r,buffer,10);
-        myfile << "\n";
-    }
-    myfile.close();
-
-}
 
 void set_MD49_speed(void){
-    unsigned char md49_speed[2];                                /* keeps data from MD49, read from AVR-Master */
-    string line;
-    string arrayOfString[2];
-    ifstream myfile ("md49speed.txt");
-    if (myfile.is_open()){
-        int i=0;
-        while ( getline (myfile,line) )
-        {
-            //cout << line << '\n';
-            char data[10];
-            std::copy(line.begin(), line.end(), data);
-            md49_speed[i]=atoi(data);
-            arrayOfString[i]=atoi(data);
-            i =i++;
-        }
-        myfile.close();
-        speed_l=md49_speed[0];
-        speed_r=md49_speed[1];
-    }
-    else{
-        cout << "Unable to open file";
-    }
-    const char* pointerToSpeedL =  arrayOfString[0].c_str();
-    const char* pointerToSpeedR =  arrayOfString[1].c_str();
-    device.write("Xs",2);
-    device.write(pointerToSpeedL,1);
-    device.write(pointerToSpeedR,1);
 
+    serialBuffer[0] = 0;
+    serialBuffer[1] = 0x31;					// Command to set motor speed
+    serialBuffer[2] = speed_l;				// Speed to be set
+
+    serialBuffer[3] = 0;
+    serialBuffer[4] = 0x32;
+    serialBuffer[5] = speed_r;
+
+    writeBytes(fd, 6);
+}
+
+// Open serialport
+// ***************
+int openSerialPort(const char * device, int bps){
+
+   struct termios neu;
+   char buf[128];
+
+   //fd = open(device, O_RDWR | O_NOCTTY | O_NDELAY | O_NONBLOCK);
+   fd = open(device, O_RDWR | O_NOCTTY);
+
+   if (fd == -1)
+   {
+      sprintf(buf, "openSerialPort %s error", device);
+      perror(buf);
+   }
+   else
+   {
+      tcgetattr(fd, &orig);                                 /* save current serial settings */
+      tcgetattr(fd, &neu);
+      cfmakeraw(&neu);
+      cfsetispeed(&neu, bps);
+      cfsetospeed(&neu, bps);
+      tcflush(fd, TCIFLUSH);
+      tcsetattr(fd, TCSANOW, &neu);                         /* set new serial settings */
+      fcntl (fd, F_SETFL, O_RDWR);
+   }
+   return fd;
 }
 
 char* itoa(int value, char* result, int base) {
@@ -323,4 +270,25 @@ char* itoa(int value, char* result, int base) {
             *ptr1++ = tmp_char;
         }
         return result;
+}
+
+// Write bytes serial to UART
+// **************************
+void writeBytes(int descriptor, int count) {
+    if ((write(descriptor, serialBuffer, count)) == -1) {   // Send data out
+        perror("Error writing");
+        close(descriptor);                                  // Close port if there is an error
+        exit(1);
+    }
+
+}
+
+// Read bytes serial from UART
+// ***************************
+void readBytes(int descriptor, int count) {
+    if (read(descriptor, serialBuffer, count) == -1) {      // Read back data into buf[]
+        perror("Error reading ");
+        close(descriptor);                                  // Close port if there is an error
+        exit(1);
+    }
 }

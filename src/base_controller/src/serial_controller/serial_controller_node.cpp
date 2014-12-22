@@ -31,12 +31,23 @@ const char* serialport_name="/dev/ttyS2";                   /* defines used seri
 int serialport_bps=B9600;                                  /* defines used baudrate on serialport */
 //int filedesc;                                             /* File descriptor of serial port we will talk to*/
 int fd;                                                     /* serial port file descriptor */
-int32_t EncoderL;                                           /* stores encoder value left read from md49 */
-int32_t EncoderR;                                           /* stores encoder value right read from md49 */
 unsigned char speed_l=128, speed_r=128;                     /* speed to set for MD49 */
 unsigned char last_speed_l=128, last_speed_r=128;           /* speed to set for MD49 */
 unsigned char serialBuffer[18];                             /* Serial buffer to store uart data */
 struct termios orig;                                        // backuped port options
+
+unsigned char Encoderbyte1L=0;
+unsigned char Encoderbyte2L=0;
+unsigned char Encoderbyte3L=0;
+unsigned char Encoderbyte4L=0;
+unsigned char Encoderbyte1R=0;
+unsigned char Encoderbyte2R=0;
+unsigned char Encoderbyte3R=0;
+unsigned char Encoderbyte4R=0;
+int32_t EncoderL;                                           /* stores encoder value left read from md49 */
+int32_t EncoderR;                                           /* stores encoder value right read from md49 */
+unsigned char SpeedL;
+unsigned char SpeedR;
 
 // sqlite globals
 sqlite3 *db;
@@ -109,16 +120,15 @@ int main( int argc, char* argv[] ){
 } // end.main
 
 void read_MD49_Data_serial (void){
-    // Read serial MD49 encoder data from AVR-Master
-    // *********************************************
+
+    // Read serial MD49 encoder data from MD49
+    // ***************************************
     serialBuffer[0] = 0;
 	serialBuffer[1] = 0x25;					// Command to return encoder values
 	writeBytes(fd, 2);
 	readBytes(fd, 8);
-   
-
     // Put toghether encoder values from their
-    // corresponding bytes, read from MD49
+    // corresponding bytes
     // ***************************************
     EncoderL = serialBuffer[0] << 24;                       // Put together first encoder value
     EncoderL |= (serialBuffer[1] << 16);
