@@ -112,7 +112,7 @@ int main( int argc, char* argv[] ){
 
     // Init node
     // *********
-    ros::Rate loop_rate(10);
+    ros::Rate loop_rate(25);
     ROS_INFO("base_controller running...");
     ROS_INFO("=============================");
     ROS_INFO("Subscribing to topic /cmd_vel");
