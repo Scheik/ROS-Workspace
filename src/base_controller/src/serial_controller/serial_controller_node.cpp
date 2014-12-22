@@ -20,7 +20,7 @@
 #include <errno.h>                                          /* Error number definitions */
 #include <termios.h>                                        /* POSIX terminal control definitions */
 //#include <ctype.h>                                          /* isxxx() */
-//#include<ros/ros.h>
+#include<ros/ros.h>
 #include <sqlite3.h>
 
 // switched to experimental, MD49 is now directly connected to RPi
@@ -35,7 +35,7 @@ int32_t EncoderL;                                           /* stores encoder va
 int32_t EncoderR;                                           /* stores encoder value right read from md49 */
 unsigned char speed_l=128, speed_r=128;                     /* speed to set for MD49 */
 unsigned char last_speed_l=128, last_speed_r=128;           /* speed to set for MD49 */
-unsigned char serialBuffer[16];                             /* Serial buffer to store uart data */
+unsigned char serialBuffer[18];                             /* Serial buffer to store uart data */
 struct termios orig;                                        // backuped port options
 
 // sqlite globals
@@ -64,8 +64,8 @@ int main( int argc, char* argv[] ){
 
     // Init as ROS node
     // ****************
-    //ros::init(argc, argv, "serial_controller");
-    //ros::NodeHandle n;
+    ros::init(argc, argv, "serial_controller");
+    ros::NodeHandle n;
 
     // Open sqlite database md49data.db
     // ********************************
@@ -75,22 +75,18 @@ int main( int argc, char* argv[] ){
     // ****************
     fd = openSerialPort(serialport_name, serialport_bps);
     if (fd == -1) exit(1);
-    //ROS_INFO("Opend serial port at %s with %i Bps",serialport_name,serialport_bps);
+    ROS_INFO("Opend serial port at %s with %i Bps",serialport_name,serialport_bps);
     usleep(10000);                                          // Sleep for UART to power up and set options
-
-    //ROS_DEBUG("Starting Mainloop...");
-    //ROS_DEBUG("reading data from MD49 and pushing commands to MD49 @ 5Hz...");
-
 
     // Mainloop
     // ***********************************
-    //while(  n.ok() ){
-    while( 1 ){
+    while(  n.ok() ){
+    //while( 1 ){
         // Read encodervalues and other data from MD49
         // serial. Data ist stored in md49_data.txt
         // ****************************************
         read_MD49_Data_serial();
-        usleep(200000);
+        usleep(100000);
 
         // Read commands from md49_commands.txt:
         // *************************************
@@ -105,7 +101,7 @@ int main( int argc, char* argv[] ){
             last_speed_r=speed_r;
         }
 
-        usleep(200000);
+        usleep(100000);
 
     }// end.mainloop
     sqlite3_close(db);
@@ -115,7 +111,6 @@ int main( int argc, char* argv[] ){
 void read_MD49_Data_serial (void){
     // Read serial MD49 encoder data from AVR-Master
     // *********************************************
-    printf("read serial data");
     serialBuffer[0] = 0;
 	serialBuffer[1] = 0x25;					// Command to return encoder values
 	writeBytes(fd, 2);
