@@ -180,6 +180,14 @@ void read_MD49_Data (void){
     encoders.encoder_r |= (serialBuffer[5] << 16);
     encoders.encoder_r |= (serialBuffer[6] << 8);
     encoders.encoder_r |= (serialBuffer[7]);
+    encoders.encoderbyte1l=serialBuffer[0];
+    encoders.encoderbyte1l=serialBuffer[1];
+    encoders.encoderbyte1l=serialBuffer[2];
+    encoders.encoderbyte1l=serialBuffer[3];
+    encoders.encoderbyte1r=serialBuffer[4];
+    encoders.encoderbyte1r=serialBuffer[5];
+    encoders.encoderbyte1r=serialBuffer[6];
+    encoders.encoderbyte1r=serialBuffer[7];
 /*
     // Write data read from MD49 into
     // sqlite3 database md49data.db

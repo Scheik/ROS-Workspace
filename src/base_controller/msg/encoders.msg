@@ -1,3 +1,11 @@
 Header header
 int32 encoder_l
 int32 encoder_r
+int8 encoderbyte1l
+int8 encoderbyte2l
+int8 encoderbyte3l
+int8 encoderbyte4l
+int8 encoderbyte1r
+int8 encoderbyte2r
+int8 encoderbyte3r
+int8 encoderbyte4r
