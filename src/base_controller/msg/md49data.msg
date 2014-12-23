@@ -1,7 +1,7 @@
 Header header
 int8 speed_l
 int8 speed_r
-int8 volt
+int8 volts
 int8 current_l
 int8 current_r
 int8 error

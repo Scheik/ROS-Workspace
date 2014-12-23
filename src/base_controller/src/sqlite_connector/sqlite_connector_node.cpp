@@ -26,10 +26,38 @@ void execute_update_sqlite(void);
 
 void encoders_callback(const base_controller::encoders& encoders){
 
+    // Write data read from MD49 into
+    // sqlite3 database md49data.db
+    // ******************************
+    // EncoderL & EncoderR
+    cx = snprintf (sql_buffer,400,"UPDATE md49data SET EncoderL=%i, EncoderR=%i WHERE ID=1;", encoders.encoder_l, encoders.encoder_r);
+    execute_update_sqlite();
+    // Encoderbytes 1-4 left
+    cx = snprintf (sql_buffer,400,"UPDATE md49data SET Encoderbyte1L=%i, Encoderbyte2L=%i, " \
+     "Encoderbyte3L=%i, Encoderbyte4L=%i WHERE ID=1;", encoders.encoderbyte1l, encoders.encoderbyte2l, encoders.encoderbyte3l, encoders.encoderbyte4l);
+    execute_update_sqlite();
+    // Encoderbytes 1-4 right
+    cx = snprintf (sql_buffer,400,"UPDATE md49data SET Encoderbyte1R=%i, Encoderbyte2R=%i, " \
+     "Encoderbyte3R=%i, Encoderbyte4R=%i WHERE ID=1;", encoders.encoderbyte1r, encoders.encoderbyte2r, encoders.encoderbyte3r, encoders.encoderbyte4r);
+    execute_update_sqlite();
 }
 
 void md49data_callback(const base_controller::md49data& md49data){
 
+    /*
+        // SpeedL, SpeedR, Volts, CurrentL, CurrentR, Error, Acceleration, Mode, Regulator, Timeout
+        cx = snprintf (sql_buffer,400,"UPDATE md49data SET SpeedL=%i, SpeedR=%i, " \
+                       "Volts=%i, CurrentL=%i, CurrentR=%i, Error=%i, Acceleration=%i, Mode=%i, " \
+                       "Regulator=%i, Timeout=%i " \
+                       "WHERE ID=1;", serialBuffer[8], serialBuffer[9], serialBuffer[10], serialBuffer[11], serialBuffer[12], serialBuffer[13], serialBuffer[14], serialBuffer[15], serialBuffer[16], serialBuffer[17]);
+        rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
+        if( rc != SQLITE_OK ){
+            fprintf(stderr, "SQL message: %s\n", zErrMsg);
+            sqlite3_free(zErrMsg);
+        }else{
+            //fprintf(stdout, "Operation done successfully\n");
+        }
+    */
 }
 
 int main( int argc, char* argv[] ){

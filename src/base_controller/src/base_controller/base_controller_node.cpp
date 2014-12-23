@@ -123,25 +123,21 @@ int main( int argc, char* argv[] ){
     // ********
     while(n.ok())
     {
-        // Read encoder and other data from MD49 via UART
-        // **********************************************
-        read_MD49_Data();
 
-        // set speed on MD49 via UART
-        // **************************
+        // set speed as set through /cmd_vel on MD49 via UART
+        // **************************************************
         set_MD49_speed();
-
-        // Publish encoder values to topic /encoders (custom message)
-        // **********************************************************       
-        //encoders.encoder_l=EncoderL;
-        //encoders.encoder_r=EncoderR;
+        // Read encoder- and other data from MD49 via UART
+        // ***********************************************
+        read_MD49_Data();
+        // Publish encoder values as read to topic /encoders
+        // *************************************************
         encoders_pub.publish(encoders);
-
-        // Publish MD49 data to topic /md49data (custom message)
-        // *****************************************************        
+        // Publish MD49 data as read to topic /md49data
+        // ********************************************
         md49data.speed_l = serialBuffer[8];
         md49data.speed_r = serialBuffer[9];
-        md49data.volt = serialBuffer[10];
+        md49data.volts = serialBuffer[10];
         md49data.current_l = serialBuffer[11];
         md49data.current_r = serialBuffer[12];
         md49data.error = serialBuffer[13];
@@ -163,15 +159,14 @@ int main( int argc, char* argv[] ){
 
 void read_MD49_Data (void){
 
-    // Read serial MD49 encoder data from MD49
-    // ***************************************
+    // Read encoder values as serial data from MD49
+    // ********************************************
     serialBuffer[0] = 0;
     serialBuffer[1] = 0x25;					// Command to return encoder values
     writeBytes(fd, 2);
     readBytes(fd, 8);
-    // Put toghether encoder values from their
-    // corresponding bytes
-    // ***************************************
+    // Set all values of custom message /encoders,
+    // *******************************************
     encoders.encoder_l = serialBuffer[0] << 24;                       // Put together first encoder value
     encoders.encoder_l |= (serialBuffer[1] << 16);
     encoders.encoder_l |= (serialBuffer[2] << 8);
@@ -181,43 +176,24 @@ void read_MD49_Data (void){
     encoders.encoder_r |= (serialBuffer[6] << 8);
     encoders.encoder_r |= (serialBuffer[7]);
     encoders.encoderbyte1l=serialBuffer[0];
-    encoders.encoderbyte1l=serialBuffer[1];
-    encoders.encoderbyte1l=serialBuffer[2];
-    encoders.encoderbyte1l=serialBuffer[3];
+    encoders.encoderbyte2l=serialBuffer[1];
+    encoders.encoderbyte3l=serialBuffer[2];
+    encoders.encoderbyte4l=serialBuffer[3];
     encoders.encoderbyte1r=serialBuffer[4];
-    encoders.encoderbyte1r=serialBuffer[5];
-    encoders.encoderbyte1r=serialBuffer[6];
-    encoders.encoderbyte1r=serialBuffer[7];
-/*
-    // Write data read from MD49 into
-    // sqlite3 database md49data.db
-    // ******************************
-    // EncoderL & EncoderR
-    cx = snprintf (sql_buffer,400,"UPDATE md49data SET EncoderL=%i, EncoderR=%i WHERE ID=1;", EncoderL, EncoderR);
-    execute_update_sqlite();
-    // Encoderbytes 1-4 left
-    cx = snprintf (sql_buffer,400,"UPDATE md49data SET Encoderbyte1L=%i, Encoderbyte2L=%i, " \
-     "Encoderbyte3L=%i, Encoderbyte4L=%i WHERE ID=1;", serialBuffer[0], serialBuffer[1], serialBuffer[2], serialBuffer[3]);
-    execute_update_sqlite();
-    // Encoderbytes 1-4 right
-    cx = snprintf (sql_buffer,400,"UPDATE md49data SET Encoderbyte1R=%i, Encoderbyte2R=%i, " \
-     "Encoderbyte3R=%i, Encoderbyte4R=%i WHERE ID=1;", serialBuffer[4], serialBuffer[5], serialBuffer[6], serialBuffer[7]);
-    execute_update_sqlite();
-*/
-/*
-    // SpeedL, SpeedR, Volts, CurrentL, CurrentR, Error, Acceleration, Mode, Regulator, Timeout
-    cx = snprintf (sql_buffer,400,"UPDATE md49data SET SpeedL=%i, SpeedR=%i, " \
-                   "Volts=%i, CurrentL=%i, CurrentR=%i, Error=%i, Acceleration=%i, Mode=%i, " \
-                   "Regulator=%i, Timeout=%i " \
-                   "WHERE ID=1;", serialBuffer[8], serialBuffer[9], serialBuffer[10], serialBuffer[11], serialBuffer[12], serialBuffer[13], serialBuffer[14], serialBuffer[15], serialBuffer[16], serialBuffer[17]);
-    rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
-    if( rc != SQLITE_OK ){
-        fprintf(stderr, "SQL message: %s\n", zErrMsg);
-        sqlite3_free(zErrMsg);
-    }else{
-        //fprintf(stdout, "Operation done successfully\n");
-    }
-*/
+    encoders.encoderbyte2r=serialBuffer[5];
+    encoders.encoderbyte3r=serialBuffer[6];
+    encoders.encoderbyte4r=serialBuffer[7];
+    // Read actual speed_l and speed_r
+    // as serial data from MD49
+    // *******************************
+    // code...
+
+    // Set values at custom message /md49data
+    // **************************************
+    // code...
+
+
+
     // Output MD49 data on screen
     // **************************
     printf("\033[2J");                                      //  clear the screen
