@@ -195,20 +195,9 @@ add_dependencies(base_controller base_controller_gencpp)
 target_link_libraries(base_controller ${catkin_LIBRARIES})
 target_link_libraries(base_controller sqlite3)
 
-add_executable(base_controller_2 src/base_controller_2/base_controller_2_node.cpp)
-add_dependencies(base_controller_2 base_controller_2_gencpp)
-#add_dependencies(base_controller base_controller_generate_messages_cpp)
-#add_dependencies(base_controller base_controller_EXPORTED_TARGETS)
-target_link_libraries(base_controller_2 ${catkin_LIBRARIES})
-target_link_libraries(base_controller_2 sqlite3)
-
 add_executable(joystick_driver src/joystick_driver/joystick_driver_node.cpp)
 target_link_libraries(joystick_driver ${catkin_LIBRARIES})
 
-add_executable(serial_controller src/serial_controller/serial_controller_node.cpp)
-target_link_libraries(serial_controller ${catkin_LIBRARIES})
-target_link_libraries(serial_controller sqlite3)
-#target_link_libraries(serial_controller ${SQLITE__LIBRARIES})
 
 add_executable(odometry src/odometry/odometry_node.cpp)
 add_dependencies(odometry base_controller_gencpp)

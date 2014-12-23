@@ -1,12 +1,13 @@
 #include <iostream>                                         /* allows to perform standard input and output operations */
-#include <fstream>
+//#include <fstream>
 #include <stdio.h>                                          /* Standard input/output definitions */
 #include <stdint.h>                                         /* Standard input/output definitions */
 #include <stdlib.h>                                         /* defines several general purpose functions */
-#include <unistd.h>                                         /* UNIX standard function definitions */
+//#include <unistd.h>                                         /* UNIX standard function definitions */
 #include <fcntl.h>                                          /* File control definitions */
 #include <ctype.h>                                          /* isxxx() */
 #include <termios.h>                                        /* POSIX terminal control definitions */
+#include <errno.h>                                          /* Error number definitions */
 #include <sqlite3.h>
 #include <ros/ros.h>                                        /* ROS */
 #include <geometry_msgs/Twist.h>                            /* ROS Twist message */
@@ -122,9 +123,12 @@ int main( int argc, char* argv[] ){
     // Open serial port
     // ****************
     fd = openSerialPort(serialport_name, serialport_bps);
-    if (fd == -1) exit(1);
+    if (fd == -1){
+        ROS_FATAL("Could not open serialport at %s with %i",serialport_name,serialport_bps);
+        exit(1);
+    }
     ROS_INFO("Opend serial port at %s with %i Bps",serialport_name,serialport_bps);
-    usleep(10000);                                          // Sleep for UART to power up and set options
+    usleep(10000); // Sleep for UART to power up and set options
 
     // Open sqlite database md49data.db
     // ********************************
@@ -137,8 +141,8 @@ int main( int argc, char* argv[] ){
         // **********************************************
         read_MD49_Data();
 
-        // set speed via UART
-        // ******************
+        // set speed on MD49 via UART
+        // **************************
         set_MD49_speed();
 
         // Publish encoder values to topic /encoders (custom message)
