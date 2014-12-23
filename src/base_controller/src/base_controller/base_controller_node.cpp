@@ -1,13 +1,12 @@
-#include <iostream>                                         /* allows to perform standard input and output operations */
-#include <stdio.h>                                          /* Standard input/output definitions */
-#include <stdint.h>                                         /* Standard input/output definitions */
-#include <stdlib.h>                                         /* defines several general purpose functions */
+//#include <iostream>                                         /* allows to perform standard input and output operations */
+//#include <stdio.h>                                          /* Standard input/output definitions */
+//#include <stdint.h>                                         /* Standard input/output definitions */
+//#include <stdlib.h>                                         /* defines several general purpose functions */
 //#include <unistd.h>                                         /* UNIX standard function definitions */
 #include <fcntl.h>                                          /* File control definitions */
-#include <ctype.h>                                          /* isxxx() */
+//#include <ctype.h>                                          /* isxxx() */
 #include <termios.h>                                        /* POSIX terminal control definitions */
 #include <errno.h>                                          /* Error number definitions */
-//#include <sqlite3.h>
 #include <ros/ros.h>                                        /* ROS */
 #include <geometry_msgs/Twist.h>                            /* ROS Twist message */
 #include <base_controller/encoders.h>                       /* Custom message /encoders */
@@ -18,11 +17,8 @@ const char* serialport_name="/dev/ttyS2";                   /* defines used seri
 int serialport_bps=B38400;                                  /* defines used baudrate on serialport */
 int fd;                                                     /* serial port file descriptor */
 struct termios orig;                                        // backuped port options
-int32_t EncoderL;                                           /* stores encoder value left read from md49 */
-int32_t EncoderR;                                           /* stores encoder value right read from md49 */
-char speed_l=128;
-char speed_r=128;                                  /* speed to set for MD49 */
-char last_speed_l=128, last_speed_r=128;           /* speed to set for MD49 */
+unsigned char speed_l=128, speed_r=128;                     // speed to set for MD49
+unsigned char last_speed_l=128, last_speed_r=128;           // speed to set for MD49
 double vr = 0.0;
 double vl = 0.0;
 double max_vr = 0.2;
@@ -30,12 +26,10 @@ double max_vl = 0.2;
 double min_vr = 0.2;
 double min_vl = 0.2;
 double base_width = 0.4;                                    /* Base width in meters */
-
 unsigned char serialBuffer[18];                             /* Serial buffer to store uart data */
+
 void read_MD49_Data (void);
 void set_MD49_speed (void);
-
-
 int openSerialPort(const char * device, int bps);
 void writeBytes(int descriptor, int count);
 void readBytes(int descriptor, int count);

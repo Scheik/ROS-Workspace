@@ -1,12 +1,12 @@
 Header header
-int8 speed_l
-int8 speed_r
-int8 volts
-int8 current_l
-int8 current_r
-int8 error
-int8 acceleration
-int8 mode
-int8 regulator
-int8 timeout
+int16 speed_l
+int16 speed_r
+int16 volts
+int16 current_l
+int16 current_r
+int16 error
+int16 acceleration
+int16 mode
+int16 regulator
+int16 timeout
 
