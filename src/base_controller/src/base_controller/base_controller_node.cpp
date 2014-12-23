@@ -103,14 +103,14 @@ int main( int argc, char* argv[] ){
     ROS_INFO("Publishing to topic /encoders");
     ROS_INFO("Publishing to topic /md49data");
 
-    // Open serial port
-    // ****************
+    // Open serialport
+    // ***************
     fd = openSerialPort(serialport_name, serialport_bps);
     if (fd == -1){
         ROS_FATAL("Could not open serialport at %s with %i",serialport_name,serialport_bps);
         exit(1);
     }
-    ROS_INFO("Opend serial port at %s with %i Bps",serialport_name,serialport_bps);
+    ROS_INFO("Opend serialport %s with %i Bps",serialport_name,serialport_bps);
     usleep(10000); // Sleep for UART to power up and set options
 
     // Init MD49 defaults
@@ -130,7 +130,6 @@ int main( int argc, char* argv[] ){
     // ********
     while(n.ok())
     {
-
         // set speed as set through /cmd_vel on MD49 via UART
         // **************************************************
         set_MD49_speed();
@@ -143,11 +142,9 @@ int main( int argc, char* argv[] ){
         // Publish MD49 data as read to topic /md49data
         // ********************************************
         md49data_pub.publish(md49data);
-
-        // ************
+        // ********************************************
         ros::spinOnce();
         loop_rate.sleep();
-
     }// end.mainloop
     return 1;
 } // end.main
@@ -155,7 +152,6 @@ int main( int argc, char* argv[] ){
 
 
 void read_MD49_Data (void){
-
     // Read encoder values as serial data from MD49
     // ********************************************
     serialBuffer[0] = 0;
@@ -238,8 +234,6 @@ void read_MD49_Data (void){
     writeBytes(fd, 2);
     readBytes(fd, 1);
     md49data.mode=serialBuffer[0];
-
-
     // Output MD49 data on screen
     // **************************
     printf("\033[2J");                                      //  clear the screen
@@ -271,15 +265,18 @@ void read_MD49_Data (void){
 }
 
 void set_MD49_speed(void){
-
+    // set serial command for speed_l
+    // *******************************
     serialBuffer[0] = 0;
     serialBuffer[1] = 0x31;					// Command to set motor speed
     serialBuffer[2] = speed_l;				// Speed to be set
-
+    // set serial command for speed_r
+    // ********************************
     serialBuffer[3] = 0;
     serialBuffer[4] = 0x32;
     serialBuffer[5] = speed_r;
-
+    // send serialBuffer via UART
+    // **************************
     writeBytes(fd, 6);
 }
 

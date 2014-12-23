@@ -43,21 +43,13 @@ void encoders_callback(const base_controller::encoders& encoders){
 }
 
 void md49data_callback(const base_controller::md49data& md49data){
-
-    /*
         // SpeedL, SpeedR, Volts, CurrentL, CurrentR, Error, Acceleration, Mode, Regulator, Timeout
         cx = snprintf (sql_buffer,400,"UPDATE md49data SET SpeedL=%i, SpeedR=%i, " \
                        "Volts=%i, CurrentL=%i, CurrentR=%i, Error=%i, Acceleration=%i, Mode=%i, " \
                        "Regulator=%i, Timeout=%i " \
-                       "WHERE ID=1;", serialBuffer[8], serialBuffer[9], serialBuffer[10], serialBuffer[11], serialBuffer[12], serialBuffer[13], serialBuffer[14], serialBuffer[15], serialBuffer[16], serialBuffer[17]);
-        rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
-        if( rc != SQLITE_OK ){
-            fprintf(stderr, "SQL message: %s\n", zErrMsg);
-            sqlite3_free(zErrMsg);
-        }else{
-            //fprintf(stdout, "Operation done successfully\n");
-        }
-    */
+                       "WHERE ID=1;",md49data.speed_l,md49data.speed_r,md49data.volts,md49data.current_l,md49data.current_r,md49data.error,md49data.acceleration,md49data.mode,md49data.regulator,md49data.timeout);
+        execute_update_sqlite();
+
 }
 
 int main( int argc, char* argv[] ){
@@ -68,7 +60,7 @@ int main( int argc, char* argv[] ){
     ros::NodeHandle n;
     ros::Subscriber encoders_sub = n.subscribe("/encoders", 10, encoders_callback);
     ros::Subscriber md49data_sub = n.subscribe("/md49data", 10, md49data_callback);
-    ros::Rate loop_rate(5);
+    ros::Rate loop_rate(2);
     ROS_INFO("sqlite_connector running...");
     ROS_INFO("=============================");
     ROS_INFO("Subscribing to topic /encoders");
