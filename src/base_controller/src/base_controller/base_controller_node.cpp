@@ -224,8 +224,8 @@ void read_MD49_Data (void){
     printf("Byte2: %i ",serialBuffer[5]);
     printf("Byte3: %i ",serialBuffer[6]);
     printf("Byte4: %i \n",serialBuffer[7]);
-    printf("EncoderL: %i ",EncoderL);
-    printf("EncoderR: %i \n",EncoderR);
+    printf("EncoderL: %i ",encoders.encoder_l);
+    printf("EncoderR: %i \n",encoders.encoder_r);
     printf("========================================\n");
     //printf("SpeedL: %i ",serialBuffer[8]);
     //printf("SpeedR: %i \n",serialBuffer[9]);
