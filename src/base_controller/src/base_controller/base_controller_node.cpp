@@ -38,28 +38,27 @@ base_controller::encoders encoders;
 base_controller::md49data md49data;
 
 void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
-
-        if (vel_cmd.linear.x>0){
-            speed_l = 255;
-            speed_r = 255;
-        }
-        if (vel_cmd.linear.x<0){
-            speed_l = 0;
-            speed_r = 0;
-        }
-        if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){
-            speed_l = 128;
-            speed_r = 128;
-        }
-        if (vel_cmd.angular.z>0){
-            speed_l = 0;
-            speed_r = 255;
-        }
-        if (vel_cmd.angular.z<0){
-            speed_l = 255;
-            speed_r = 0;
-        }
-
+    if (vel_cmd.linear.x>0){
+        speed_l = 255;
+        speed_r = 255;
+    }
+    if (vel_cmd.linear.x<0){
+        speed_l = 0;
+        speed_r = 0;
+    }
+    if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){
+        speed_l = 128;
+        speed_r = 128;
+    }
+    if (vel_cmd.angular.z>0){
+        speed_l = 0;
+        speed_r = 255;
+    }
+    if (vel_cmd.angular.z<0){
+        speed_l = 255;
+        speed_r = 0;
+    }
+    ROS_INFO("base_controller: Received /cmd_vel message; requested speed_l=%i, speed_r=%i",speed_l,speed_r);
 
     /*
         //ANFANG Alternative
@@ -115,6 +114,7 @@ int main( int argc, char* argv[] ){
 
     // Init MD49 defaults
     // ******************
+    ROS_INFO("base_controller: Init MD49:");
     serialBuffer[0] = 0;
     serialBuffer[1] = 0x37;					// Command to enable rmd49 regulator
     writeBytes(fd, 2);
@@ -130,9 +130,14 @@ int main( int argc, char* argv[] ){
     // ********
     while(n.ok())
     {
-        // set speed as set through /cmd_vel on MD49 via UART
+        // set speed on MD49 via UART as set through /cmd_vel
+        // if speed_l or speed_r changed since last cycle
         // **************************************************
-        set_MD49_speed();
+        if ((speed_l!=last_speed_l) || (speed_r!=last_speed_r)){
+            set_MD49_speed();
+            last_speed_l=speed_l;
+            last_speed_r=speed_r;
+        }
         // Read encoder- and other data from MD49 via UART
         // ***********************************************
         read_MD49_Data();
