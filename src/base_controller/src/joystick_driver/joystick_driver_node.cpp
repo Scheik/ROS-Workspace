@@ -85,11 +85,11 @@ int main(int argc, char **argv){
       if ((cmd_vel_msg.linear.x != linear_x) || (cmd_vel_msg.angular.z != angular_z)){
           cmd_vel_msg.linear.x=linear_x;
           cmd_vel_msg.angular.z=angular_z;
-
+          cmd_vel_pub.publish(cmd_vel_msg);
           ROS_INFO("linear.x = %f angular.z = %f",cmd_vel_msg.linear.x,cmd_vel_msg.angular.z);
       }
 
-    cmd_vel_pub.publish(cmd_vel_msg);
+
     ros::spinOnce();
     loop_rate.sleep();
   }//end.mainloop

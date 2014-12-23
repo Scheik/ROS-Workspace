@@ -234,7 +234,7 @@ void read_MD49_Data (void){
     writeBytes(fd, 2);
     readBytes(fd, 1);
     md49data.mode=serialBuffer[0];
-    // Output MD49 data on screen
+/*    // Output MD49 data on screen
     // **************************
     printf("\033[2J");                                      //  clear the screen
     printf("\033[H");                                       //  position cursor at top-left corner
@@ -261,7 +261,7 @@ void read_MD49_Data (void){
     printf("Mode: %i \n",md49data.mode);
     printf("Regulator: %i \n",md49data.regulator);
     printf("Timeout: %i \n",md49data.timeout);
-
+*/
 }
 
 void set_MD49_speed(void){
