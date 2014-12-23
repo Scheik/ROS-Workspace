@@ -148,16 +148,6 @@ int main( int argc, char* argv[] ){
         encoders_pub.publish(encoders);
         // Publish MD49 data as read to topic /md49data
         // ********************************************
-        md49data.speed_l = serialBuffer[8];
-        md49data.speed_r = serialBuffer[9];
-        md49data.volts = serialBuffer[10];
-        md49data.current_l = serialBuffer[11];
-        md49data.current_r = serialBuffer[12];
-        md49data.error = serialBuffer[13];
-        md49data.acceleration = serialBuffer[14];
-        md49data.mode = serialBuffer[15];
-        md49data.regulator = serialBuffer[16];
-        md49data.timeout = serialBuffer[17];
         md49data_pub.publish(md49data);
 
         // ************
