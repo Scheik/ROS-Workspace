@@ -116,15 +116,31 @@ int main( int argc, char* argv[] ){
     // ******************
     ROS_INFO("base_controller: Init MD49:");
     serialBuffer[0] = 0;
-    serialBuffer[1] = 0x37;					// Command to enable rmd49 regulator
+    serialBuffer[1] = 0x37;					// Command to enable md49 regulator
     writeBytes(fd, 2);
     md49data.regulator=1;
     ROS_INFO("Set MD49 Regulator=Enabled");
     serialBuffer[0] = 0;
-    serialBuffer[1] = 0x39;					// Command to enable rmd49 regulator
+    serialBuffer[1] = 0x39;					// Command to enable md49 timeout
     writeBytes(fd, 2);
     md49data.timeout=1;
     ROS_INFO("Set MD49 Timeout=Enabled");
+    // Read actual acceleration
+    // as serial data from MD49
+    // ************************
+    serialBuffer[0] = 0;
+    serialBuffer[1] = 0x2A;					// Command to return acceleration
+    writeBytes(fd, 2);
+    readBytes(fd, 1);
+    md49data.acceleration=serialBuffer[0];
+    // Read actual mode
+    // as serial data from MD49
+    // ************************
+    serialBuffer[0] = 0;
+    serialBuffer[1] = 0x2B;					// Command to return mode
+    writeBytes(fd, 2);
+    readBytes(fd, 1);
+    md49data.mode=serialBuffer[0];
 
     // Mainloop
     // ********
@@ -181,19 +197,7 @@ void read_MD49_Data (void){
     encoders.encoderbyte2r=serialBuffer[5];
     encoders.encoderbyte3r=serialBuffer[6];
     encoders.encoderbyte4r=serialBuffer[7];
-    // Read actual speed_l and speed_r
-    // as serial data from MD49
-    // *******************************
-    serialBuffer[0] = 0;
-    serialBuffer[1] = 0x21;					// Command to return volts value
-    writeBytes(fd, 2);
-    readBytes(fd, 1);
-    md49data.speed_l=serialBuffer[0];
-    serialBuffer[0] = 0;
-    serialBuffer[1] = 0x22;					// Command to return volts value
-    writeBytes(fd, 2);
-    readBytes(fd, 1);
-    md49data.speed_r=serialBuffer[0];
+
     // Read actual volts
     // as serial data from MD49
     // ************************
@@ -223,22 +227,7 @@ void read_MD49_Data (void){
     writeBytes(fd, 2);
     readBytes(fd, 1);
     md49data.error=serialBuffer[0];
-    // Read actual acceleration
-    // as serial data from MD49
-    // ************************
-    serialBuffer[0] = 0;
-    serialBuffer[1] = 0x2A;					// Command to return volts value
-    writeBytes(fd, 2);
-    readBytes(fd, 1);
-    md49data.acceleration=serialBuffer[0];
-    // Read actual mode
-    // as serial data from MD49
-    // ************************
-    serialBuffer[0] = 0;
-    serialBuffer[1] = 0x2B;					// Command to return volts value
-    writeBytes(fd, 2);
-    readBytes(fd, 1);
-    md49data.mode=serialBuffer[0];
+
 /*    // Output MD49 data on screen
     // **************************
     printf("\033[2J");                                      //  clear the screen
@@ -283,6 +272,8 @@ void set_MD49_speed(void){
     // send serialBuffer via UART
     // **************************
     writeBytes(fd, 6);
+    md49data.speed_l=speed_l;
+    md49data.speed_r=speed_r;
 }
 
 // Open serialport
