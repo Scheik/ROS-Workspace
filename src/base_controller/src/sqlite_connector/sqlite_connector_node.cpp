@@ -64,7 +64,7 @@ int main( int argc, char* argv[] ){
 
     // Init node
     // *********
-    ros::init(argc, argv, "base_controller" );
+    ros::init(argc, argv, "sqlite_controller" );
     ros::NodeHandle n;
     ros::Subscriber encoders_sub = n.subscribe("/encoders", 10, encoders_callback);
     ros::Subscriber md49data_sub = n.subscribe("/md49data", 10, md49data_callback);
