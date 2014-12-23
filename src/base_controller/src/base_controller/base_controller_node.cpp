@@ -96,7 +96,7 @@ int main( int argc, char* argv[] ){
     ros::Subscriber sub = n.subscribe("/cmd_vel", 10, cmd_vel_callback);
     ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",10);
     ros::Publisher md49data_pub = n.advertise<base_controller::md49data>("md49data",10);
-    ros::Rate loop_rate(20);
+    ros::Rate loop_rate(5);
     ROS_INFO("base_controller running...");
     ROS_INFO("=============================");
     ROS_INFO("Subscribing to topic /cmd_vel");
