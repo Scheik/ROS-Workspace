@@ -133,8 +133,8 @@ int main( int argc, char* argv[] ){
 
         // Publish encoder values to topic /encoders (custom message)
         // **********************************************************       
-        encoders.encoder_l=EncoderL;
-        encoders.encoder_r=EncoderR;
+        //encoders.encoder_l=EncoderL;
+        //encoders.encoder_r=EncoderR;
         encoders_pub.publish(encoders);
 
         // Publish MD49 data to topic /md49data (custom message)
@@ -172,14 +172,14 @@ void read_MD49_Data (void){
     // Put toghether encoder values from their
     // corresponding bytes
     // ***************************************
-    EncoderL = serialBuffer[0] << 24;                       // Put together first encoder value
-    EncoderL |= (serialBuffer[1] << 16);
-    EncoderL |= (serialBuffer[2] << 8);
-    EncoderL |= (serialBuffer[3]);
-    EncoderR = serialBuffer[4] << 24;                       // Put together second encoder value
-    EncoderR |= (serialBuffer[5] << 16);
-    EncoderR |= (serialBuffer[6] << 8);
-    EncoderR |= (serialBuffer[7]);
+    encoders.encoder_l = serialBuffer[0] << 24;                       // Put together first encoder value
+    encoders.encoder_l |= (serialBuffer[1] << 16);
+    encoders.encoder_l |= (serialBuffer[2] << 8);
+    encoders.encoder_l |= (serialBuffer[3]);
+    encoders.encoder_r = serialBuffer[4] << 24;                       // Put together second encoder value
+    encoders.encoder_r |= (serialBuffer[5] << 16);
+    encoders.encoder_r |= (serialBuffer[6] << 8);
+    encoders.encoder_r |= (serialBuffer[7]);
 /*
     // Write data read from MD49 into
     // sqlite3 database md49data.db
