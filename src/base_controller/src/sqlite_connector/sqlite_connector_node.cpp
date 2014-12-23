@@ -87,6 +87,7 @@ int main( int argc, char* argv[] ){
         loop_rate.sleep();
 
     }// end.mainloop
+    sqlite3_close(db);
     return 1;
 }// end.main
 

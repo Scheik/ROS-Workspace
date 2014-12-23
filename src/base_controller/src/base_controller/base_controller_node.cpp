@@ -102,7 +102,7 @@ int main( int argc, char* argv[] ){
     ros::Subscriber sub = n.subscribe("/cmd_vel", 10, cmd_vel_callback);
     ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",10);
     ros::Publisher md49data_pub = n.advertise<base_controller::md49data>("md49data",10);
-    ros::Rate loop_rate(25);
+    ros::Rate loop_rate(20);
     ROS_INFO("base_controller running...");
     ROS_INFO("=============================");
     ROS_INFO("Subscribing to topic /cmd_vel");
@@ -118,6 +118,19 @@ int main( int argc, char* argv[] ){
     }
     ROS_INFO("Opend serial port at %s with %i Bps",serialport_name,serialport_bps);
     usleep(10000); // Sleep for UART to power up and set options
+
+    // Init MD49 defaults
+    // ******************
+    serialBuffer[0] = 0;
+    serialBuffer[1] = 0x37;					// Command to enable rmd49 regulator
+    writeBytes(fd, 2);
+    md49data.regulator=1;
+    ROS_INFO("Set MD49 Regulator=Enabled");
+    serialBuffer[0] = 0;
+    serialBuffer[1] = 0x39;					// Command to enable rmd49 regulator
+    writeBytes(fd, 2);
+    md49data.timeout=1;
+    ROS_INFO("Set MD49 Timeout=Enabled");
 
     // Mainloop
     // ********
@@ -186,12 +199,61 @@ void read_MD49_Data (void){
     // Read actual speed_l and speed_r
     // as serial data from MD49
     // *******************************
-    // code...
-
-    // Set values at custom message /md49data
-    // **************************************
-    // code...
-
+    serialBuffer[0] = 0;
+    serialBuffer[1] = 0x21;					// Command to return volts value
+    writeBytes(fd, 2);
+    readBytes(fd, 1);
+    md49data.speed_l=serialBuffer[0];
+    serialBuffer[0] = 0;
+    serialBuffer[1] = 0x22;					// Command to return volts value
+    writeBytes(fd, 2);
+    readBytes(fd, 1);
+    md49data.speed_r=serialBuffer[0];
+    // Read actual volts
+    // as serial data from MD49
+    // ************************
+    serialBuffer[0] = 0;
+    serialBuffer[1] = 0x26;					// Command to return volts value
+    writeBytes(fd, 2);
+    readBytes(fd, 1);
+    md49data.volts=serialBuffer[0];
+    // Read actual current_l and current_r
+    // as serial data from MD49
+    // ***********************************
+    serialBuffer[0] = 0;
+    serialBuffer[1] = 0x27;					// Command to return volts value
+    writeBytes(fd, 2);
+    readBytes(fd, 1);
+    md49data.current_l =serialBuffer[0];
+    serialBuffer[0] = 0;
+    serialBuffer[1] = 0x28;					// Command to return volts value
+    writeBytes(fd, 2);
+    readBytes(fd, 1);
+    md49data.current_r =serialBuffer[0];
+    // Read actual error
+    // as serial data from MD49
+    // ************************
+    serialBuffer[0] = 0;
+    serialBuffer[1] = 0x2D;					// Command to return volts value
+    writeBytes(fd, 2);
+    readBytes(fd, 1);
+    md49data.error=serialBuffer[0];
+    // Read actual acceleration
+    // as serial data from MD49
+    // ************************
+    serialBuffer[0] = 0;
+    serialBuffer[1] = 0x2A;					// Command to return volts value
+    writeBytes(fd, 2);
+    readBytes(fd, 1);
+    md49data.acceleration=serialBuffer[0];
+    // Read actual mode
+    // as serial data from MD49
+    // ************************
+    serialBuffer[0] = 0;
+    serialBuffer[1] = 0x2B;					// Command to return volts value
+    writeBytes(fd, 2);
+    readBytes(fd, 1);
+    md49data.mode=serialBuffer[0];
 
 
     // Output MD49 data on screen
@@ -200,27 +262,27 @@ void read_MD49_Data (void){
     printf("\033[H");                                       //  position cursor at top-left corner
     printf ("MD49-Data read from AVR-Master: \n");
     printf("========================================\n");
-    printf("Encoder1 Byte1: %i ",serialBuffer[0]);
-    printf("Byte2: %i ",serialBuffer[1]);
-    printf("Byte3: % i ",serialBuffer[2]);
-    printf("Byte4: %i \n",serialBuffer[3]);
-    printf("Encoder2 Byte1: %i ",serialBuffer[4]);
-    printf("Byte2: %i ",serialBuffer[5]);
-    printf("Byte3: %i ",serialBuffer[6]);
-    printf("Byte4: %i \n",serialBuffer[7]);
+    printf("Encoder1 Byte1: %i ",encoders.encoderbyte1l);
+    printf("Byte2: %i ",encoders.encoderbyte2l);
+    printf("Byte3: % i ",encoders.encoderbyte3l);
+    printf("Byte4: %i \n",encoders.encoderbyte4l);
+    printf("Encoder2 Byte1: %i ",encoders.encoderbyte1r);
+    printf("Byte2: %i ",encoders.encoderbyte2r);
+    printf("Byte3: %i ",encoders.encoderbyte3r);
+    printf("Byte4: %i \n",encoders.encoderbyte4r);
     printf("EncoderL: %i ",encoders.encoder_l);
     printf("EncoderR: %i \n",encoders.encoder_r);
     printf("========================================\n");
-    //printf("SpeedL: %i ",serialBuffer[8]);
-    //printf("SpeedR: %i \n",serialBuffer[9]);
-    //printf("Volts: %i \n",serialBuffer[10]);
-    //printf("CurrentL: %i ",serialBuffer[11]);
-    //printf("CurrentR: %i \n",serialBuffer[12]);
-    //printf("Error: %i \n",serialBuffer[13]);
-    //printf("Acceleration: %i \n",serialBuffer[14]);
-    //printf("Mode: %i \n",serialBuffer[15]);
-    //printf("Regulator: %i \n",serialBuffer[16]);
-    //printf("Timeout: %i \n",serialBuffer[17]);
+    printf("SpeedL: %i ",md49data.speed_l);
+    printf("SpeedR: %i \n",md49data.speed_r);
+    printf("Volts: %i \n",md49data.volts);
+    printf("CurrentL: %i ",md49data.current_l);
+    printf("CurrentR: %i \n",md49data.current_r);
+    printf("Error: %i \n",md49data.error);
+    printf("Acceleration: %i \n",md49data.acceleration);
+    printf("Mode: %i \n",md49data.mode);
+    printf("Regulator: %i \n",md49data.regulator);
+    printf("Timeout: %i \n",md49data.timeout);
 
 }
 
