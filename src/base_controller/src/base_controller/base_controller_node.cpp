@@ -1,5 +1,4 @@
 #include <iostream>                                         /* allows to perform standard input and output operations */
-//#include <fstream>
 #include <stdio.h>                                          /* Standard input/output definitions */
 #include <stdint.h>                                         /* Standard input/output definitions */
 #include <stdlib.h>                                         /* defines several general purpose functions */
@@ -8,7 +7,7 @@
 #include <ctype.h>                                          /* isxxx() */
 #include <termios.h>                                        /* POSIX terminal control definitions */
 #include <errno.h>                                          /* Error number definitions */
-#include <sqlite3.h>
+//#include <sqlite3.h>
 #include <ros/ros.h>                                        /* ROS */
 #include <geometry_msgs/Twist.h>                            /* ROS Twist message */
 #include <base_controller/encoders.h>                       /* Custom message /encoders */
@@ -35,21 +34,11 @@ double base_width = 0.4;                                    /* Base width in met
 unsigned char serialBuffer[18];                             /* Serial buffer to store uart data */
 void read_MD49_Data (void);
 void set_MD49_speed (void);
-char* itoa(int value, char* result, int base);
+
 
 int openSerialPort(const char * device, int bps);
 void writeBytes(int descriptor, int count);
 void readBytes(int descriptor, int count);
-void open_sqlite_db_md49data(void);
-void execute_update_sqlite(void);
-
-// sqlite globals
-sqlite3 *db;
-char *zErrMsg = 0;
-int  rc;
-int cx;
-const char *sql;
-char sql_buffer[400];
 
 base_controller::encoders encoders;
 base_controller::md49data md49data;
@@ -106,14 +95,13 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
 
 int main( int argc, char* argv[] ){
 
+    // Init node
+    // *********
     ros::init(argc, argv, "base_controller" );
     ros::NodeHandle n;
     ros::Subscriber sub = n.subscribe("/cmd_vel", 10, cmd_vel_callback);
     ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",10);
     ros::Publisher md49data_pub = n.advertise<base_controller::md49data>("md49data",10);
-
-    // Init node
-    // *********
     ros::Rate loop_rate(25);
     ROS_INFO("base_controller running...");
     ROS_INFO("=============================");
@@ -131,11 +119,8 @@ int main( int argc, char* argv[] ){
     ROS_INFO("Opend serial port at %s with %i Bps",serialport_name,serialport_bps);
     usleep(10000); // Sleep for UART to power up and set options
 
-    // Open sqlite database md49data.db
-    // ********************************
-    open_sqlite_db_md49data();
-    ROS_INFO("Opend md49data.db database");
-
+    // Mainloop
+    // ********
     while(n.ok())
     {
         // Read encoder and other data from MD49 via UART
@@ -195,7 +180,7 @@ void read_MD49_Data (void){
     EncoderR |= (serialBuffer[5] << 16);
     EncoderR |= (serialBuffer[6] << 8);
     EncoderR |= (serialBuffer[7]);
-
+/*
     // Write data read from MD49 into
     // sqlite3 database md49data.db
     // ******************************
@@ -210,7 +195,7 @@ void read_MD49_Data (void){
     cx = snprintf (sql_buffer,400,"UPDATE md49data SET Encoderbyte1R=%i, Encoderbyte2R=%i, " \
      "Encoderbyte3R=%i, Encoderbyte4R=%i WHERE ID=1;", serialBuffer[4], serialBuffer[5], serialBuffer[6], serialBuffer[7]);
     execute_update_sqlite();
-
+*/
 /*
     // SpeedL, SpeedR, Volts, CurrentL, CurrentR, Error, Acceleration, Mode, Regulator, Timeout
     cx = snprintf (sql_buffer,400,"UPDATE md49data SET SpeedL=%i, SpeedR=%i, " \
@@ -321,59 +306,4 @@ void readBytes(int descriptor, int count) {
     }
 }
 
-// Open sqlite db md49data.db and create
-// table md49data if not existing
-// *************************************
-void open_sqlite_db_md49data(void){
 
-    // Open database md49data.db and add table md49data
-    // ************************************************
-    rc = sqlite3_open("data/md49data.db", &db);
-    if( rc ){
-        ROS_WARN("Can't open database md49data.db: %s,", sqlite3_errmsg(db));
-        //fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-        exit(0);
-    }else{
-        ROS_INFO("Opened database md49data.db successfully,");
-        //fprintf(stdout, "Opened database successfully,\n");
-    }
-
-    // Create table md49data
-    // *********************
-    sql = "CREATE TABLE md49data("  \
-     "ID INT PRIMARY KEY     NOT NULL," \
-     "Encoderbyte1L  INT DEFAULT 0, Encoderbyte2L  INT DEFAULT 0," \
-     "Encoderbyte3L  INT DEFAULT 0, Encoderbyte4L  INT DEFAULT 0," \
-     "Encoderbyte1R  INT DEFAULT 0, Encoderbyte2R  INT DEFAULT 0," \
-     "Encoderbyte3R  INT DEFAULT 0, Encoderbyte4R  INT DEFAULT 0," \
-     "EncoderL       INT DEFAULT 0, EncoderR       INT DEFAULT 0," \
-     "SpeedL         INT DEFAULT 0, SpeedR         INT DEFAULT 0," \
-     "Volts          INT DEFAULT 0," \
-     "CurrentL       INT DEFAULT 0, CurrentR       INT DEFAULT 0," \
-     "Error          INT DEFAULT 0, Acceleration   INT DEFAULT 0," \
-     "Mode           INT DEFAULT 0, Regulator      INT DEFAULT 0," \
-     "Timeout        INT DEFAULT 0 );" \
-     "INSERT INTO md49data (ID) VALUES (1);";
-
-    /* Execute SQL statement */
-    rc = sqlite3_exec(db, sql, NULL, 0, &zErrMsg);
-    if( rc != SQLITE_OK ){
-        ROS_WARN("SQL message: %s", zErrMsg);
-        //fprintf(stderr, "SQL message: %s\n", zErrMsg);
-        sqlite3_free(zErrMsg);
-    }else{
-        ROS_INFO("table md49data created successfully");
-        //fprintf(stdout, "table created successfully\n");
-    }
-}
-
-void execute_update_sqlite(void){
-    rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
-    if( rc != SQLITE_OK ){
-        ROS_WARN("SQL message: %s", zErrMsg);
-        //fprintf(stderr, "SQL message: %s\n", zErrMsg);
-        sqlite3_free(zErrMsg);
-    }else{
-        //fprintf(stdout, "Operation done successfully\n");
-    }
-}
