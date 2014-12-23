@@ -41,14 +41,15 @@ int openSerialPort(const char * device, int bps);
 void writeBytes(int descriptor, int count);
 void readBytes(int descriptor, int count);
 void open_sqlite_db_md49data(void);
+void execute_update_sqlite(void);
 
 // sqlite globals
 sqlite3 *db;
 char *zErrMsg = 0;
 int  rc;
+int cx;
 const char *sql;
-const char* data = "Callback function called";
-
+char sql_buffer[400];
 
 base_controller::encoders encoders;
 base_controller::md49data md49data;
@@ -174,6 +175,7 @@ int main( int argc, char* argv[] ){
 } // end.main
 
 
+
 void read_MD49_Data (void){
 
     // Read serial MD49 encoder data from MD49
@@ -197,37 +199,17 @@ void read_MD49_Data (void){
     // Write data read from MD49 into
     // sqlite3 database md49data.db
     // ******************************
-    char sql_buffer[400];
-    int cx;
     // EncoderL & EncoderR
     cx = snprintf (sql_buffer,400,"UPDATE md49data SET EncoderL=%i, EncoderR=%i WHERE ID=1;", EncoderL, EncoderR);
-    rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
-    if( rc != SQLITE_OK ){
-        fprintf(stderr, "SQL message: %s\n", zErrMsg);
-        sqlite3_free(zErrMsg);
-    }else{
-        //fprintf(stdout, "Operation done successfully\n");
-    }
+    execute_update_sqlite();
     // Encoderbytes 1-4 left
     cx = snprintf (sql_buffer,400,"UPDATE md49data SET Encoderbyte1L=%i, Encoderbyte2L=%i, " \
-                   "Encoderbyte3L=%i, Encoderbyte4L=%i WHERE ID=1;", serialBuffer[0], serialBuffer[1], serialBuffer[2], serialBuffer[3]);
-    rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
-    if( rc != SQLITE_OK ){
-        fprintf(stderr, "SQL message: %s\n", zErrMsg);
-        sqlite3_free(zErrMsg);
-    }else{
-        //fprintf(stdout, "Operation done successfully\n");
-    }
+     "Encoderbyte3L=%i, Encoderbyte4L=%i WHERE ID=1;", serialBuffer[0], serialBuffer[1], serialBuffer[2], serialBuffer[3]);
+    execute_update_sqlite();
     // Encoderbytes 1-4 right
     cx = snprintf (sql_buffer,400,"UPDATE md49data SET Encoderbyte1R=%i, Encoderbyte2R=%i, " \
-                   "Encoderbyte3R=%i, Encoderbyte4R=%i WHERE ID=1;", serialBuffer[4], serialBuffer[5], serialBuffer[6], serialBuffer[7]);
-    rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
-    if( rc != SQLITE_OK ){
-        fprintf(stderr, "SQL message: %s\n", zErrMsg);
-        sqlite3_free(zErrMsg);
-    }else{
-        //fprintf(stdout, "Operation done successfully\n");
-    }
+     "Encoderbyte3R=%i, Encoderbyte4R=%i WHERE ID=1;", serialBuffer[4], serialBuffer[5], serialBuffer[6], serialBuffer[7]);
+    execute_update_sqlite();
 
 /*
     // SpeedL, SpeedR, Volts, CurrentL, CurrentR, Error, Acceleration, Mode, Regulator, Timeout
@@ -291,15 +273,16 @@ void set_MD49_speed(void){
 int openSerialPort(const char * device, int bps){
 
    struct termios neu;
-   char buf[128];
+   //char buf[128];
 
    //fd = open(device, O_RDWR | O_NOCTTY | O_NDELAY | O_NONBLOCK);
    fd = open(device, O_RDWR | O_NOCTTY);
 
    if (fd == -1)
    {
-      sprintf(buf, "openSerialPort %s error", device);
-      perror(buf);
+      ROS_WARN("openSerialPort %s error", device);
+      //sprintf(buf, "openSerialPort %s error", device);
+      //perror(buf);
    }
    else
    {
@@ -319,7 +302,8 @@ int openSerialPort(const char * device, int bps){
 // **************************
 void writeBytes(int descriptor, int count) {
     if ((write(descriptor, serialBuffer, count)) == -1) {   // Send data out
-        perror("Error writing");
+        ROS_WARN("Error: writing at serialport");
+        //perror("Error writing");
         close(descriptor);                                  // Close port if there is an error
         exit(1);
     }
@@ -330,7 +314,8 @@ void writeBytes(int descriptor, int count) {
 // ***************************
 void readBytes(int descriptor, int count) {
     if (read(descriptor, serialBuffer, count) == -1) {      // Read back data into buf[]
-        perror("Error reading ");
+        ROS_WARN("Error: reading from serialport");
+        //perror("Error reading ");
         close(descriptor);                                  // Close port if there is an error
         exit(1);
     }
@@ -345,10 +330,12 @@ void open_sqlite_db_md49data(void){
     // ************************************************
     rc = sqlite3_open("data/md49data.db", &db);
     if( rc ){
-        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+        ROS_WARN("Can't open database md49data.db: %s,", sqlite3_errmsg(db));
+        //fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
         exit(0);
     }else{
-        fprintf(stdout, "Opened database successfully,\n");
+        ROS_INFO("Opened database md49data.db successfully,");
+        //fprintf(stdout, "Opened database successfully,\n");
     }
 
     // Create table md49data
@@ -371,9 +358,22 @@ void open_sqlite_db_md49data(void){
     /* Execute SQL statement */
     rc = sqlite3_exec(db, sql, NULL, 0, &zErrMsg);
     if( rc != SQLITE_OK ){
-        fprintf(stderr, "SQL message: %s\n", zErrMsg);
+        ROS_WARN("SQL message: %s", zErrMsg);
+        //fprintf(stderr, "SQL message: %s\n", zErrMsg);
         sqlite3_free(zErrMsg);
     }else{
-        fprintf(stdout, "table created successfully\n");
+        ROS_INFO("table md49data created successfully");
+        //fprintf(stdout, "table created successfully\n");
+    }
+}
+
+void execute_update_sqlite(void){
+    rc = sqlite3_exec(db, sql_buffer, NULL, 0, &zErrMsg);
+    if( rc != SQLITE_OK ){
+        ROS_WARN("SQL message: %s", zErrMsg);
+        //fprintf(stderr, "SQL message: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+    }else{
+        //fprintf(stdout, "Operation done successfully\n");
     }
 }
