@@ -31,11 +31,10 @@ int main(int argc, char** argv)
     while(ros::ok())
     {
         // Send 'R' over the serial port
-        const char s[] = "\x00\x25";
-
-        device.write(s,2);
-
-
+        //const char send[] = "\x00\x25";
+        //or
+        const char send[] = {0x00,0x25};
+        device.write(send,2);
         // Get the reply, the last value is the timeout in ms
         try{ device.read(reply, REPLY_SIZE, TIMEOUT); }
         catch(cereal::TimeoutException& e)
@@ -43,6 +42,9 @@ int main(int argc, char** argv)
             ROS_ERROR("Timeout!");
         }
         ROS_INFO("Got this reply: %i,%i,%i,%i,%i,%i,%i,%i", reply[0], reply[1], reply[2],reply[3], reply[4], reply[5], reply[6], reply[7]);
+
+        const char send1[]={0x00,0x31,255};
+        device.write(send1,3);
 
         ros::spinOnce();
         r.sleep();
