@@ -11,7 +11,7 @@
 #include <geometry_msgs/Twist.h>                            /* ROS Twist message */
 #include <base_controller/encoders.h>                       /* Custom message /encoders */
 #include <base_controller/md49data.h>                       /* Custom message /encoders */
-
+#include <serialport/serialport.h>
 
 const char* serialport_name="/dev/ttyAMA0";                   /* defines used serialport on BPi. Use "/dev/ttyAMA0" for RPi*/
 int serialport_bps=B38400;                                  /* defines used baudrate on serialport */
@@ -36,6 +36,9 @@ void readBytes(int descriptor, int count);
 
 base_controller::encoders encoders;
 base_controller::md49data md49data;
+cereal::CerealPort device;
+char reply[8];
+#define TIMEOUT 1000
 
 void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
     if (vel_cmd.linear.x>0){
@@ -102,6 +105,7 @@ int main( int argc, char* argv[] ){
     ROS_INFO("Publishing to topic /encoders");
     ROS_INFO("Publishing to topic /md49data");
 
+/*
     // Open serialport
     // ***************
     fd = openSerialPort(serialport_name, serialport_bps);
@@ -111,36 +115,71 @@ int main( int argc, char* argv[] ){
     }
     ROS_INFO("Opend serialport %s with %i Bps",serialport_name,serialport_bps);
     usleep(10000); // Sleep for UART to power up and set options
+*/
+    // Open serialport
+    // ***************
+    try{ device.open(serialport_name, 38400); }
+    catch(cereal::Exception& e)
+    {
+        ROS_FATAL("Failed to open the serial port!!!");
+        ROS_BREAK();
+    }
+    ROS_INFO("The serial port is opened.");
+
 
     // Init MD49 defaults
     // ******************
     ROS_INFO("base_controller: Init MD49:");
-    serialBuffer[0] = 0;
+/*  serialBuffer[0] = 0;
     serialBuffer[1] = 0x37;					// Command to enable md49 regulator
     writeBytes(fd, 2);
+*/
+    const char md49_enable_regulator[] = {0x00,0x37};        // Command to enable md49 regulator
+    device.write(md49_enable_regulator,2);
     md49data.regulator=1;
     ROS_INFO("Set MD49 Regulator=Enabled");
-    serialBuffer[0] = 0;
+/*  serialBuffer[0] = 0;
     serialBuffer[1] = 0x39;					// Command to enable md49 timeout
     writeBytes(fd, 2);
+*/
+    const char md49_enable_timeout[] = {0x00,0x39};        // Command to enable md49 timeout
+    device.write(md49_enable_timeout,2);
     md49data.timeout=1;
     ROS_INFO("Set MD49 Timeout=Enabled");
     // Read actual acceleration
     // as serial data from MD49
     // ************************
-    serialBuffer[0] = 0;
+/*  serialBuffer[0] = 0;
     serialBuffer[1] = 0x2A;					// Command to return acceleration
     writeBytes(fd, 2);
     readBytes(fd, 1);
-    md49data.acceleration=serialBuffer[0];
+*/
+    const char md49_read_acceleration[] = {0x00,0x2A};        // Command to read md49 set acceleration
+    device.write(md49_read_acceleration,2);
+    try{ device.read(reply, 1, TIMEOUT); }                             // get answer, acceleration
+    catch(cereal::TimeoutException& e)
+    {
+        ROS_ERROR("Timeout!");
+    }
+    ROS_INFO("Got this reply (Acc.): %i", reply[0]);
+    md49data.acceleration=reply[0];
     // Read actual mode
     // as serial data from MD49
     // ************************
-    serialBuffer[0] = 0;
+/*  serialBuffer[0] = 0;
     serialBuffer[1] = 0x2B;					// Command to return mode
     writeBytes(fd, 2);
     readBytes(fd, 1);
-    md49data.mode=serialBuffer[0];
+*/
+    const char md49_read_mode[] = {0x00,0x2B};        // Command to read md49 set acceleration
+    device.write(md49_read_mode,2);
+    try{ device.read(reply, 1, TIMEOUT); }                             // get answer, acceleration
+    catch(cereal::TimeoutException& e)
+    {
+        ROS_ERROR("Timeout!");
+    }
+    ROS_INFO("Got this reply (Mode): %i", reply[0]);
+    md49data.mode=reply[0];
 
     // Mainloop
     // ********
@@ -175,58 +214,105 @@ int main( int argc, char* argv[] ){
 void read_MD49_Data (void){
     // Read encoder values as serial data from MD49
     // ********************************************
-    serialBuffer[0] = 0;
+/*    serialBuffer[0] = 0;
     serialBuffer[1] = 0x25;					// Command to return encoder values
     writeBytes(fd, 2);
     readBytes(fd, 8);
+*/
+    const char md49_read_encoders[] = {0x00,0x25};
+    device.write(md49_read_encoders,2);
+    // Get the reply, the last value is the timeout in ms
+    try{ device.read(reply, 8, TIMEOUT); }
+    catch(cereal::TimeoutException& e)
+    {
+        ROS_ERROR("Timeout!");
+    }
+    //ROS_INFO("Got this reply: %i,%i,%i,%i,%i,%i,%i,%i", reply[0], reply[1], reply[2],reply[3], reply[4], reply[5], reply[6], reply[7]);
+
     // Set all values of custom message /encoders,
     // *******************************************
-    encoders.encoder_l = serialBuffer[0] << 24;                       // Put together first encoder value
-    encoders.encoder_l |= (serialBuffer[1] << 16);
-    encoders.encoder_l |= (serialBuffer[2] << 8);
-    encoders.encoder_l |= (serialBuffer[3]);
-    encoders.encoder_r = serialBuffer[4] << 24;                       // Put together second encoder value
-    encoders.encoder_r |= (serialBuffer[5] << 16);
-    encoders.encoder_r |= (serialBuffer[6] << 8);
-    encoders.encoder_r |= (serialBuffer[7]);
-    encoders.encoderbyte1l=serialBuffer[0];
-    encoders.encoderbyte2l=serialBuffer[1];
-    encoders.encoderbyte3l=serialBuffer[2];
-    encoders.encoderbyte4l=serialBuffer[3];
-    encoders.encoderbyte1r=serialBuffer[4];
-    encoders.encoderbyte2r=serialBuffer[5];
-    encoders.encoderbyte3r=serialBuffer[6];
-    encoders.encoderbyte4r=serialBuffer[7];
+    encoders.encoder_l = reply[0] << 24;                       // Put together first encoder value
+    encoders.encoder_l |= (reply[1] << 16);
+    encoders.encoder_l |= (reply[2] << 8);
+    encoders.encoder_l |= (reply[3]);
+    encoders.encoder_r = reply[4] << 24;                       // Put together second encoder value
+    encoders.encoder_r |= (reply[5] << 16);
+    encoders.encoder_r |= (reply[6] << 8);
+    encoders.encoder_r |= (reply[7]);
+    encoders.encoderbyte1l=reply[0];
+    encoders.encoderbyte2l=reply[1];
+    encoders.encoderbyte3l=reply[2];
+    encoders.encoderbyte4l=reply[3];
+    encoders.encoderbyte1r=reply[4];
+    encoders.encoderbyte2r=reply[5];
+    encoders.encoderbyte3r=reply[6];
+    encoders.encoderbyte4r=reply[7];
 
     // Read actual volts
     // as serial data from MD49
     // ************************
-    serialBuffer[0] = 0;
+/*  serialBuffer[0] = 0;
     serialBuffer[1] = 0x26;					// Command to return volts value
     writeBytes(fd, 2);
     readBytes(fd, 1);
-    md49data.volts=serialBuffer[0];
+*/
+    const char md49_read_volts[] = {0x00,0x26};        // Command to read md49 set acceleration
+    device.write(md49_read_volts,2);
+    try{ device.read(reply, 1, TIMEOUT); }                             // get answer, acceleration
+    catch(cereal::TimeoutException& e)
+    {
+        ROS_ERROR("Timeout!");
+    }
+    //ROS_INFO("Got this reply (volts): %i", reply[0]);
+    md49data.volts=reply[0];
     // Read actual current_l and current_r
     // as serial data from MD49
     // ***********************************
-    serialBuffer[0] = 0;
-    serialBuffer[1] = 0x27;					// Command to return volts value
+/*  serialBuffer[0] = 0;
+    serialBuffer[1] = 0x27;					// Command to return current_l value
     writeBytes(fd, 2);
     readBytes(fd, 1);
-    md49data.current_l =serialBuffer[0];
-    serialBuffer[0] = 0;
+*/
+    const char md49_read_current_l[] = {0x00,0x27};        // Command to read md49 set acceleration
+    device.write(md49_read_current_l,2);
+    try{ device.read(reply, 1, TIMEOUT); }                             // get answer, acceleration
+    catch(cereal::TimeoutException& e)
+    {
+        ROS_ERROR("Timeout!");
+    }
+    //ROS_INFO("Got this reply (current_l): %i", reply[0]);
+    md49data.current_l =reply[0];
+/*  serialBuffer[0] = 0;
     serialBuffer[1] = 0x28;					// Command to return volts value
     writeBytes(fd, 2);
     readBytes(fd, 1);
-    md49data.current_r =serialBuffer[0];
+*/
+    const char md49_read_current_r[] = {0x00,0x28};        // Command to read md49 set acceleration
+    device.write(md49_read_current_r,2);
+    try{ device.read(reply, 1, TIMEOUT); }                             // get answer, acceleration
+    catch(cereal::TimeoutException& e)
+    {
+        ROS_ERROR("Timeout!");
+    }
+    //ROS_INFO("Got this reply (current_r): %i", reply[0]);
+    md49data.current_r =reply[0];
     // Read actual error
     // as serial data from MD49
     // ************************
-    serialBuffer[0] = 0;
-    serialBuffer[1] = 0x2D;					// Command to return volts value
+/*  serialBuffer[0] = 0;
+    serialBuffer[1] = 0x2D;					// Command to return error value
     writeBytes(fd, 2);
     readBytes(fd, 1);
-    md49data.error=serialBuffer[0];
+*/
+    const char md49_read_error[] = {0x00,0x28};        // Command to read md49 set acceleration
+    device.write(md49_read_error,2);
+    try{ device.read(reply, 1, TIMEOUT); }                             // get answer, acceleration
+    catch(cereal::TimeoutException& e)
+    {
+        ROS_ERROR("Timeout!");
+    }
+    //ROS_INFO("Got this reply (error): %i", reply[0]);
+    md49data.error=reply[0];
 
 /*    // Output MD49 data on screen
     // **************************
@@ -261,17 +347,23 @@ void read_MD49_Data (void){
 void set_MD49_speed(void){
     // set serial command for speed_l
     // *******************************
-    serialBuffer[0] = 0;
+ /* serialBuffer[0] = 0;
     serialBuffer[1] = 0x31;					// Command to set motor speed
     serialBuffer[2] = speed_l;				// Speed to be set
+*/
+    const char md49_set_speed_l[]={0x00,0x31,speed_l};
+    device.write(md49_set_speed_l,3);
     // set serial command for speed_r
     // ********************************
-    serialBuffer[3] = 0;
+/*    serialBuffer[3] = 0;
     serialBuffer[4] = 0x32;
     serialBuffer[5] = speed_r;
+*/
+    const char md49_set_speed_r[]={0x00,0x31,speed_r};
+    device.write(md49_set_speed_r,3);
     // send serialBuffer via UART
     // **************************
-    writeBytes(fd, 6);
+    //writeBytes(fd, 6);
     md49data.speed_l=speed_l;
     md49data.speed_r=speed_r;
 }
