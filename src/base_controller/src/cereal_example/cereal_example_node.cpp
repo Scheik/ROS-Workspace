@@ -43,7 +43,7 @@ int main(int argc, char** argv)
         }
         ROS_INFO("Got this reply: %i,%i,%i,%i,%i,%i,%i,%i", reply[0], reply[1], reply[2],reply[3], reply[4], reply[5], reply[6], reply[7]);
 
-        const char send1[]={0x00,0x31,255};
+        const char send1[]={0x00,0x31,128};
         device.write(send1,3);
 
         ros::spinOnce();
