@@ -26,7 +26,7 @@ int main(int argc, char** argv)
     while(ros::ok())
     {
         // Send 'R' over the serial port
-        device.write("\0");
+        device.write(0);
         device.write("%");
 
         // Get the reply, the last value is the timeout in ms
