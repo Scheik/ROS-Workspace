@@ -30,7 +30,7 @@ int main(int argc, char** argv)
     {
         // Send 'R' over the serial port
         //unsigned char zeichen="0";
-        device.write("0");
+        device.write("\0");
         device.write("%");
         //ss("");
         //ss << 0x25;
