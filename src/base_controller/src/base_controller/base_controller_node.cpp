@@ -13,7 +13,7 @@
 #include <base_controller/md49data.h>                       /* Custom message /encoders */
 
 
-const char* serialport_name="/dev/ttyS2";                   /* defines used serialport on BPi. Use "/dev/ttyAMA0" for RPi*/
+const char* serialport_name="/dev/ttyAMA0";                   /* defines used serialport on BPi. Use "/dev/ttyAMA0" for RPi*/
 int serialport_bps=B38400;                                  /* defines used baudrate on serialport */
 int fd;                                                     /* serial port file descriptor */
 struct termios orig;                                        // backuped port options
