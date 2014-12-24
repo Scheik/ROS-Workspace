@@ -31,14 +31,10 @@ int main(int argc, char** argv)
     while(ros::ok())
     {
         // Send 'R' over the serial port
-        char* result;
+        const char s[] = "\x00\x25";
 
-        device.write(itoa(0,result,10));
-        device.write(itoa(0x25,result,10));
-        //ss("");
-        //ss << 0x25;
-        //device.write(ss.str());
-        //device.write("%");
+        device.write(s,2);
+
 
         // Get the reply, the last value is the timeout in ms
         try{ device.read(reply, REPLY_SIZE, TIMEOUT); }
