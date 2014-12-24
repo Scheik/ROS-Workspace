@@ -1,6 +1,9 @@
 #include <ros/ros.h>
 #include <serialport/serialport.h>
 
+#include <sstream>
+#include <string>
+
 #define REPLY_SIZE 8
 #define TIMEOUT 1000
 
@@ -26,8 +29,13 @@ int main(int argc, char** argv)
     while(ros::ok())
     {
         // Send 'R' over the serial port
-        device.write(0);
+        //unsigned char zeichen="0";
+        device.write("0");
         device.write("%");
+        //ss("");
+        //ss << 0x25;
+        //device.write(ss.str());
+        //device.write("%");
 
         // Get the reply, the last value is the timeout in ms
         try{ device.read(reply, REPLY_SIZE, TIMEOUT); }
@@ -35,7 +43,7 @@ int main(int argc, char** argv)
         {
             ROS_ERROR("Timeout!");
         }
-        ROS_INFO("Got this reply: %s", reply);
+        ROS_INFO("Got this reply: %i,%i,%i,%i,%i,%i,%i,%i", reply[0], reply[1], reply[2],reply[3], reply[4], reply[5], reply[6], reply[7]);
 
         ros::spinOnce();
         r.sleep();
