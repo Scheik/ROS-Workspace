@@ -14,7 +14,7 @@ int main(int argc, char** argv)
     char reply[REPLY_SIZE];
 
     // Change the next line according to your port name and baud rate
-    try{ device.open("/dev/ttyUSB0", 9600); }
+    try{ device.open("/dev/ttyAMA0", 38400); }
     catch(cereal::Exception& e)
     {
         ROS_FATAL("Failed to open the serial port!!!");
@@ -26,7 +26,8 @@ int main(int argc, char** argv)
     while(ros::ok())
     {
         // Send 'R' over the serial port
-        device.write("R");
+        device.write("\0");
+        device.write("%");
 
         // Get the reply, the last value is the timeout in ms
         try{ device.read(reply, REPLY_SIZE, TIMEOUT); }
