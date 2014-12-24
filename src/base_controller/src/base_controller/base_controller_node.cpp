@@ -14,7 +14,7 @@
 #include <serialport/serialport.h>
 
 const char* serialport_name="/dev/ttyAMA0";                   /* defines used serialport on BPi. Use "/dev/ttyAMA0" for RPi*/
-int serialport_bps=B38400;                                  /* defines used baudrate on serialport */
+int serialport_bps=38400;                                  /* defines used baudrate on serialport */
 int fd;                                                     /* serial port file descriptor */
 struct termios orig;                                        // backuped port options
 unsigned char speed_l=128, speed_r=128;                     // speed to set for MD49
@@ -118,7 +118,7 @@ int main( int argc, char* argv[] ){
 */
     // Open serialport
     // ***************
-    try{ device.open(serialport_name, 38400); }
+    try{ device.open(serialport_name, serialport_bps); }
     catch(cereal::Exception& e)
     {
         ROS_FATAL("Failed to open the serial port!!!");
