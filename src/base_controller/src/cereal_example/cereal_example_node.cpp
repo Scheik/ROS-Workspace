@@ -7,6 +7,8 @@
 #define REPLY_SIZE 8
 #define TIMEOUT 1000
 
+char* itoa(int value, char* result, int base);
+
 // This example opens the serial port and sends a request 'R' at 1Hz and waits for a reply.
 int main(int argc, char** argv)
 {
@@ -29,9 +31,10 @@ int main(int argc, char** argv)
     while(ros::ok())
     {
         // Send 'R' over the serial port
-        //unsigned char zeichen="0";
-        device.write("");
-        device.write("%");
+        char* result;
+
+        device.write(itoa(0,result,10));
+        device.write(itoa(0x25,result,10));
         //ss("");
         //ss << 0x25;
         //device.write(ss.str());
@@ -48,4 +51,28 @@ int main(int argc, char** argv)
         ros::spinOnce();
         r.sleep();
     }   
+}
+
+char* itoa(int value, char* result, int base) {
+        // check that the base if valid
+        if (base < 2 || base > 36) { *result = '\0'; return result; }
+
+        char* ptr = result, *ptr1 = result, tmp_char;
+        int tmp_value;
+
+        do {
+            tmp_value = value;
+            value /= base;
+            *ptr++ = "zyxwvutsrqponmlkjihgfedcba9876543210123456789abcdefghijklmnopqrstuvwxyz" [35 + (tmp_value - value * base)];
+        } while ( value );
+
+        // Apply negative sign
+        if (tmp_value < 0) *ptr++ = '-';
+        *ptr-- = '\0';
+        while(ptr1 < ptr) {
+            tmp_char = *ptr;
+            *ptr--= *ptr1;
+            *ptr1++ = tmp_char;
+        }
+        return result;
 }
