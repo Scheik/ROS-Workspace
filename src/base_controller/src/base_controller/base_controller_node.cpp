@@ -10,11 +10,9 @@ const char* serialport_name="/dev/ttyAMA0";                 // defines used seri
 int serialport_bps=38400;                                   // defines used baudrate for used serialport serialport_name
 unsigned char speed_l=128, speed_r=128;                     // speed_l MD49 speed_r MD49
 unsigned char last_speed_l=128, last_speed_r=128;           //
-unsigned char md49_mode=0;                                  // mode MD49
-unsigned char md49_acceleration=5;                          // acceleration MD49
 char reply[8];
 
-void read_MD49_Data (void);
+void md49_read_data (void);
 void md49_set_speed (void);
 void md49_set_mode(int mode);
 void md49_set_acceleration(int acceleration);
@@ -137,7 +135,7 @@ int main( int argc, char* argv[] ){
         }
         // Read encoder- and other data from MD49 via UART
         // ***********************************************
-        read_MD49_Data();
+        md49_read_data();
         // Publish encoder values as read to topic /encoders
         // *************************************************
         encoders_pub.publish(encoders);
@@ -151,7 +149,7 @@ int main( int argc, char* argv[] ){
     return 1;
 } // end.main
 
-void read_MD49_Data (void){
+void md49_read_data (void){
     md49_get_encoders();
     md49_get_speed();
     md49_get_volts();
@@ -213,7 +211,7 @@ void md49_disable_timeout(void){
 void md49_disable_regulator(void){
     const char md49_disable_regulator[] = {0x00,0x36};        // Command to enable md49 timeout
     device.write(md49_disable_regulator,2);
-    md49data.timeout=0;
+    md49data.regulator=0;
     ROS_INFO("base_controller: Disabled regulator on MD49");
 }
 
