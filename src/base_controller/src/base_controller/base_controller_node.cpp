@@ -359,7 +359,7 @@ void set_MD49_speed(void){
     serialBuffer[4] = 0x32;
     serialBuffer[5] = speed_r;
 */
-    const char md49_set_speed_r[]={0x00,0x31,speed_r};
+    const char md49_set_speed_r[]={0x00,0x32,speed_r};
     device.write(md49_set_speed_r,3);
     // send serialBuffer via UART
     // **************************
