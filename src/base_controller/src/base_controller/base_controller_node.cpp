@@ -12,7 +12,6 @@ unsigned char speed_l=128, speed_r=128;                     // speed_l MD49 spee
 unsigned char last_speed_l=128, last_speed_r=128;           //
 char reply[8];
 
-void md49_read_data (void);
 void md49_set_speed (void);
 void md49_set_mode(int mode);
 void md49_set_acceleration(int acceleration);
@@ -133,12 +132,20 @@ int main( int argc, char* argv[] ){
             last_speed_l=speed_l;
             last_speed_r=speed_r;
         }
-        // Read encoder- and other data from MD49 via UART
+        // Read encoder- data from MD49 via UART
         // ***********************************************
-        md49_read_data();
+        md49_get_encoders();
         // Publish encoder values as read to topic /encoders
         // *************************************************
         encoders_pub.publish(encoders);
+        // Read other- data from MD49 via UART
+        // ***********************************************
+        md49_get_speed();
+        md49_get_volts();
+        md49_get_currents();
+        //md49_get_acceleration();
+        //md49_get_mode();
+        md49_get_error();
         // Publish MD49 data as read to topic /md49data
         // ********************************************
         md49data_pub.publish(md49data);
@@ -148,16 +155,6 @@ int main( int argc, char* argv[] ){
     }// end.mainloop
     return 1;
 } // end.main
-
-void md49_read_data (void){
-    md49_get_encoders();
-    md49_get_speed();
-    md49_get_volts();
-    md49_get_currents();
-    //md49_get_acceleration();
-    //md49_get_mode();
-    md49_get_error();
-}
 
 void md49_set_speed(void){
     // set and send serial command for speed_l
