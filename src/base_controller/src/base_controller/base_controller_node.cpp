@@ -4,10 +4,8 @@
 #include <base_controller/md49data.h>                       /* Custom message /encoders */
 #include <serialport/serialport.h>                          // Library for serial communications via UART
 
-#define TIMEOUT 1000
+#define TIMEOUT 1000                                        // Timeout for reading serialport in ms
 
-//const char* serialport_name="/dev/ttyAMA0";
-int serialport_bps;                                   // defines used baudrate for used serialport serialport_name
 unsigned char speed_l=128, speed_r=128;                     // speed_l MD49 speed_r MD49
 unsigned char last_speed_l=128, last_speed_r=128;           //
 char reply[8];
@@ -30,7 +28,8 @@ void md49_get_volts(void);
 base_controller::encoders encoders;
 base_controller::md49data md49data;
 cereal::CerealPort device;
-std::string serialport;                                // keeps used serialport on Pi, read from parameters server
+std::string serialport;                                     // keeps used serialport on Pi, is read from parameters server
+int serialport_bps;                                         // keeps used baudrate, is read from parameters server
 
 void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
     if (vel_cmd.linear.x>0){
@@ -62,7 +61,7 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
     double max_vl = 0.2;
     double min_vr = 0.2;
     double min_vl = 0.2;
-    double base_width = 0.4;                                    // Base width in meters
+    double base_width = 0.4;                                // Base width in meters
     //ANFANG Alternative
     if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){vl=0;vr=0;}
     else if(vel_cmd.linear.x == 0){
@@ -105,14 +104,9 @@ int main( int argc, char* argv[] ){
     ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",10);
     ros::Publisher md49data_pub = n.advertise<base_controller::md49data>("md49data",10);
     ros::Rate loop_rate(10);
-    n.param<std::string>("serialportname", serialport, "/dev/ttyAMA0");       // Get serialportname from ROS Parameter sevice, default is ttyAMA0 (RPis GPIO UART)
-    n.param("serialportbps", serialport_bps, 38400);                          // Get serialport bps from ROS Parameter sevice, default is 38400Bps
+    n.param<std::string>("serialport/name", serialport, "/dev/ttyAMA0");       // Get serialportname from ROS Parameter sevice, default is ttyAMA0 (RPis GPIO UART)
+    n.param("serialport/bps", serialport_bps, 38400);                          // Get serialport bps from ROS Parameter sevice, default is 38400Bps
     ROS_INFO("base_controller: base_controller running...");
-    ROS_INFO("base_controller: =============================");
-    ROS_INFO("base_controller: Subscribing to topic /cmd_vel");
-    ROS_INFO("base_controller: Publishing to topic /encoders");
-    ROS_INFO("base_controller: Publishing to topic /md49data");
-
 
     // Open serialport
     // ***************
@@ -124,8 +118,8 @@ int main( int argc, char* argv[] ){
     }
     ROS_INFO("base_controller: Opened Serialport at %s with %i bps.",serialport.c_str(),serialport_bps);
 
-    // Set MD49 defaults (Regulator and Timeout)
-    // *****************************************
+    // Set MD49 defaults
+    // *****************
     md49_enable_timeout();
     md49_enable_regulator();
     md49_set_mode(0);
