@@ -105,8 +105,8 @@ int main( int argc, char* argv[] ){
     ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",10);
     ros::Publisher md49data_pub = n.advertise<base_controller::md49data>("md49data",10);
     ros::Rate loop_rate(10);
-    n.param<std::string>("serialportname_param", serialport, "/dev/ttyAMA0");       // Get serialportname from ROS Parameter sevice, default is ttyAMA0 (RPis GPIO UART)
-    n.param("serialportbps_param", serialport_bps, 38400);                          // Get serialport bps from ROS Parameter sevice, default is 38400Bps
+    n.param<std::string>("serialportname", serialport, "/dev/ttyAMA0");       // Get serialportname from ROS Parameter sevice, default is ttyAMA0 (RPis GPIO UART)
+    n.param("serialportbps", serialport_bps, 38400);                          // Get serialport bps from ROS Parameter sevice, default is 38400Bps
     ROS_INFO("base_controller: base_controller running...");
     ROS_INFO("base_controller: =============================");
     ROS_INFO("base_controller: Subscribing to topic /cmd_vel");
