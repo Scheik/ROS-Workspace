@@ -6,7 +6,7 @@
 
 #define TIMEOUT 1000
 
-const char* serialport_name="/dev/ttyAMA0";                 // defines used serialport on Pi. Use "/dev/ttyAMA0" for RPi or "/dev/ttyS2" for BPi
+//const char* serialport_name="/dev/ttyAMA0";
 int serialport_bps=38400;                                   // defines used baudrate for used serialport serialport_name
 unsigned char speed_l=128, speed_r=128;                     // speed_l MD49 speed_r MD49
 unsigned char last_speed_l=128, last_speed_r=128;           //
@@ -30,6 +30,7 @@ void md49_get_volts(void);
 base_controller::encoders encoders;
 base_controller::md49data md49data;
 cereal::CerealPort device;
+std::string serialport_name;                                // keeps used serialport on Pi, read from parameters server
 
 void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
     if (vel_cmd.linear.x>0){
@@ -109,16 +110,18 @@ int main( int argc, char* argv[] ){
     ROS_INFO("base_controller: Subscribing to topic /cmd_vel");
     ROS_INFO("base_controller: Publishing to topic /encoders");
     ROS_INFO("base_controller: Publishing to topic /md49data");
+    n.setParam("serialportname_param", "/dev/ttyAMA0");
+    n.getParam("serialportname_param", serialport_name);
 
     // Open serialport
     // ***************
-    try{ device.open(serialport_name, serialport_bps); }
+    try{ device.open(serialport_name.c_str(), serialport_bps); }
     catch(cereal::Exception& e)
     {
-        ROS_FATAL("base_controller: Failed to open serialport %s!",serialport_name);
+        ROS_FATAL("base_controller: Failed to open serialport %s!",serialport_name.c_str());
         ROS_BREAK();
     }
-    ROS_INFO("base_controller: Opened Serialport at %s.",serialport_name);
+    ROS_INFO("base_controller: Opened Serialport at %s.",serialport_name.c_str());
 
     // Set MD49 defaults (Regulator and Timeout)
     // *****************************************
