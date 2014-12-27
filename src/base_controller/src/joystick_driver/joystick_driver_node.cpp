@@ -72,8 +72,17 @@ void Joy_Callback (const sensor_msgs::Joy::ConstPtr& msg)
 
 }
 
+void onExit( void )
+{
+    // Run cleanup code here!
+    ROS_INFO("joystick_driver: Exit node");
+}
+
 int main(int argc, char **argv){
-  ros::init(argc, argv, "joystick_driver");
+
+    atexit(onExit);
+
+    ros::init(argc, argv, "joystick_driver");
   ros::NodeHandle n;
   ros::Subscriber sub = n.subscribe("joy", 100, Joy_Callback);
   ros::Publisher cmd_vel_pub = n.advertise<geometry_msgs::Twist>("/cmd_vel", 100);

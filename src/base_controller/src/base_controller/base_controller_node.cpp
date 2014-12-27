@@ -86,8 +86,15 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
     */
 }
 
+void onExit( void )
+{
+    // Run cleanup code here!
+    ROS_INFO("base_controller: Exit node");
+}
 
 int main( int argc, char* argv[] ){
+
+    atexit(onExit);
 
     // Init node
     // *********
