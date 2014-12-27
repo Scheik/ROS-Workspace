@@ -110,8 +110,8 @@ int main( int argc, char* argv[] ){
     ROS_INFO("base_controller: Subscribing to topic /cmd_vel");
     ROS_INFO("base_controller: Publishing to topic /encoders");
     ROS_INFO("base_controller: Publishing to topic /md49data");
-    n.setParam("serialportname_param", "/dev/ttyAMA0");
-    n.getParam("serialportname_param", serialport_name);
+    //n.setParam("serialportname_param", "/dev/ttyAMA0");
+    n.param<std::string>("serialportname_param", serialport_name, "/dev/ttyAMA0");
 
     // Open serialport
     // ***************
