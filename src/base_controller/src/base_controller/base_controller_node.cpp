@@ -7,7 +7,7 @@
 #define TIMEOUT 1000
 
 //const char* serialport_name="/dev/ttyAMA0";
-int serialport_bps=38400;                                   // defines used baudrate for used serialport serialport_name
+int serialport_bps;                                   // defines used baudrate for used serialport serialport_name
 unsigned char speed_l=128, speed_r=128;                     // speed_l MD49 speed_r MD49
 unsigned char last_speed_l=128, last_speed_r=128;           //
 char reply[8];
@@ -30,7 +30,7 @@ void md49_get_volts(void);
 base_controller::encoders encoders;
 base_controller::md49data md49data;
 cereal::CerealPort device;
-std::string serialport_name;                                // keeps used serialport on Pi, read from parameters server
+std::string serialport;                                // keeps used serialport on Pi, read from parameters server
 
 void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
     if (vel_cmd.linear.x>0){
@@ -105,23 +105,24 @@ int main( int argc, char* argv[] ){
     ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",10);
     ros::Publisher md49data_pub = n.advertise<base_controller::md49data>("md49data",10);
     ros::Rate loop_rate(10);
+    n.param<std::string>("serialportname_param", serialport, "/dev/ttyAMA0");       // Get serialportname from ROS Parameter sevice, default is ttyAMA0 (RPis GPIO UART)
+    n.param("serialportbps_param", serialport_bps, 38400);                          // Get serialport bps from ROS Parameter sevice, default is 38400Bps
     ROS_INFO("base_controller: base_controller running...");
     ROS_INFO("base_controller: =============================");
     ROS_INFO("base_controller: Subscribing to topic /cmd_vel");
     ROS_INFO("base_controller: Publishing to topic /encoders");
     ROS_INFO("base_controller: Publishing to topic /md49data");
-    //n.setParam("serialportname_param", "/dev/ttyAMA0");
-    n.param<std::string>("serialportname_param", serialport_name, "/dev/ttyAMA0");
+
 
     // Open serialport
     // ***************
-    try{ device.open(serialport_name.c_str(), serialport_bps); }
+    try{ device.open(serialport.c_str(), serialport_bps); }
     catch(cereal::Exception& e)
     {
-        ROS_FATAL("base_controller: Failed to open serialport %s!",serialport_name.c_str());
+        ROS_FATAL("base_controller: Failed to open serialport %s!",serialport.c_str());
         ROS_BREAK();
     }
-    ROS_INFO("base_controller: Opened Serialport at %s.",serialport_name.c_str());
+    ROS_INFO("base_controller: Opened Serialport at %s.",serialport.c_str());
 
     // Set MD49 defaults (Regulator and Timeout)
     // *****************************************
