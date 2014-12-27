@@ -122,7 +122,7 @@ int main( int argc, char* argv[] ){
         ROS_FATAL("base_controller: Failed to open serialport %s!",serialport.c_str());
         ROS_BREAK();
     }
-    ROS_INFO("base_controller: Opened Serialport at %s.",serialport.c_str());
+    ROS_INFO("base_controller: Opened Serialport at %s with %i bps.",serialport.c_str(),serialport_bps);
 
     // Set MD49 defaults (Regulator and Timeout)
     // *****************************************
