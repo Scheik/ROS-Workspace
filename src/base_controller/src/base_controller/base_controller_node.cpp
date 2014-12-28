@@ -1,14 +1,14 @@
 #include <ros/ros.h>                                        /* ROS */
 #include <geometry_msgs/Twist.h>                            /* ROS Twist message */
-#include <base_controller/encoders.h>                       /* Custom message /encoders */
-#include <base_controller/md49data.h>                       /* Custom message /encoders */
-#include <serialport/serialport.h>                          // Library for serial communications via UART
+#include <base_controller/encoders.h>                       /* custom message /encoders */
+#include <base_controller/md49data.h>                       /* custom message /encoders */
+#include <serialport/serialport.h>                          // library for serial communications via UART
 
-#define TIMEOUT 1000                                        // Timeout for reading serialport in ms
-
-unsigned char speed_l=128, speed_r=128;                     // speed_l MD49 speed_r MD49
-unsigned char last_speed_l=128, last_speed_r=128;           //
-char reply[8];
+#define TIMEOUT 1000                                        // timeout for reading serialport in ms
+#define ON true
+#define OFF false
+#define OR ||
+#define NOT !=
 
 void md49_set_speed (void);
 void md49_set_mode(int mode);
@@ -25,11 +25,18 @@ void md49_get_currents(void);
 void md49_get_error(void);
 void md49_get_volts(void);
 
-base_controller::encoders encoders;
-base_controller::md49data md49data;
-cereal::CerealPort device;
+base_controller::encoders encoders;                         // topic /encoders
+base_controller::md49data md49data;                         // topic /md49data
+cereal::CerealPort device;                                  // serialport
 std::string serialport;                                     // keeps used serialport on Pi, is read from parameters server
 int serialport_bps;                                         // keeps used baudrate, is read from parameters server
+int md49_mode;                                              // keeps MD49 Mode, is read from parameters server
+int md49_acceleration;                                      // keeps MD49 Acceleration,  is read from parameters server
+bool md49_timeout;
+bool md49_regulator;
+unsigned char speed_l=128, speed_r=128;                     // default speed_l and speed_r for MD49
+unsigned char last_speed_l=128, last_speed_r=128;           // buffers last set speed_l and speed_r
+char reply[8];                                              // max buffersize serial input
 
 void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
     if (vel_cmd.linear.x>0){
@@ -86,18 +93,9 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
     */
 }
 
-void onExit( void )
-{
-    // Run cleanup code here!
-    ROS_INFO("base_controller: Exit node");
-}
-
 int main( int argc, char* argv[] ){
 
-    atexit(onExit);
-
     // Init node
-    // *********
     ros::init(argc, argv, "base_controller" );
     ros::NodeHandle n;
     ros::Subscriber sub = n.subscribe("/cmd_vel", 10, cmd_vel_callback);
@@ -106,10 +104,14 @@ int main( int argc, char* argv[] ){
     ros::Rate loop_rate(10);
     n.param<std::string>("serialport/name", serialport, "/dev/ttyAMA0");       // Get serialportname from ROS Parameter sevice, default is ttyAMA0 (RPis GPIO UART)
     n.param("serialport/bps", serialport_bps, 38400);                          // Get serialport bps from ROS Parameter sevice, default is 38400Bps
+    n.param("md49/mode", md49_mode, 0);                                        // Get MD49 Mode from ROS Parameter sevice, default is Mode=0
+    n.param("md49/acceleration", md49_acceleration, 5);                        // Get MD49 Acceleration from ROS Parameter sevice, default is Acceleration=0
+    n.param("md49/regulator", md49_regulator, ON);                        // Get MD49 Regulator from ROS Parameter sevice, default is Regulator=ON
+    n.param("md49/timeout", md49_timeout, ON);                        // Get MD49 Timeout from ROS Parameter sevice, default is Timeout=ON
+    //n.param("md49/speed_l", speed_l, 128);                        // Get MD49 Timeout from ROS Parameter sevice, default is Timeout=ON
     ROS_INFO("base_controller: base_controller running...");
 
     // Open serialport
-    // ***************
     try{ device.open(serialport.c_str(), serialport_bps); }
     catch(cereal::Exception& e)
     {
@@ -119,32 +121,26 @@ int main( int argc, char* argv[] ){
     ROS_INFO("base_controller: Opened Serialport at %s with %i bps.",serialport.c_str(),serialport_bps);
 
     // Set MD49 defaults
-    // *****************
     md49_enable_timeout();
     md49_enable_regulator();
-    md49_set_mode(0);
-    md49_set_acceleration(5);
+    md49_set_mode(md49_mode);
+    md49_set_acceleration(md49_acceleration);
 
     // Mainloop
-    // ********
     while(n.ok())
     {
         // set speed on MD49 via UART as set through /cmd_vel
         // if speed_l or speed_r changed since last cycle
-        // **************************************************
-        if ((speed_l!=last_speed_l) || (speed_r!=last_speed_r)){
+        if ((speed_l NOT last_speed_l) OR (speed_r NOT last_speed_r)){
             md49_set_speed();
             last_speed_l=speed_l;
             last_speed_r=speed_r;
         }
         // Read encoder- data from MD49 via UART
-        // ***********************************************
         md49_get_encoders();
         // Publish encoder values as read to topic /encoders
-        // *************************************************
         encoders_pub.publish(encoders);
         // Read other- data from MD49 via UART
-        // ***********************************************
         md49_get_speed();
         md49_get_volts();
         md49_get_currents();
@@ -152,9 +148,8 @@ int main( int argc, char* argv[] ){
         //md49_get_mode();
         md49_get_error();
         // Publish MD49 data as read to topic /md49data
-        // ********************************************
         md49data_pub.publish(md49data);
-        // ********************************************
+        // Loop
         ros::spinOnce();
         loop_rate.sleep();
     }// end.mainloop
@@ -163,16 +158,15 @@ int main( int argc, char* argv[] ){
 
 void md49_set_speed(void){
     // set and send serial command for speed_l
-    // ***************************************
     const char md49_set_speed_l[]={0x00,0x31,speed_l};
     device.write(md49_set_speed_l,3);
     // set and send serial command for speed_r
-    // ***************************************
     const char md49_set_speed_r[]={0x00,0x32,speed_r};
     device.write(md49_set_speed_r,3);
-    ROS_INFO("base_controller: Set speed_l=%i and speed_r=%i on MD49", speed_l,speed_r);
+    //Alter speed_l and speed_r in message for topic /md49data
     md49data.speed_l=speed_l;
     md49data.speed_r=speed_r;
+    ROS_INFO("base_controller: Set speed_l=%i and speed_r=%i on MD49", speed_l,speed_r);
 }
 
 void md49_set_mode(int mode){
