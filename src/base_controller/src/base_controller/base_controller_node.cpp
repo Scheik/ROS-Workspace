@@ -110,7 +110,6 @@ int main( int argc, char* argv[] ){
     n.param("md49/timeout", md49_timeout, ON);                                 // Get MD49 Timeout from ROS Parameter sevice, default is Timeout=ON
     n.param("md49/speed_l", speed_l, 128);                                     // Get MD49 speed_l from ROS Parameter sevice, default is spee_l=128
     n.param("md49/speed_r", speed_r, 128);                                     // Get MD49 speed_r from ROS Parameter sevice, default is spee_r=128
-    last_speed_l=speed_l;last_speed_r=speed_r;
     ROS_INFO("base_controller: base_controller running...");
 
     // Open serialport
@@ -123,6 +122,7 @@ int main( int argc, char* argv[] ){
     ROS_INFO("base_controller: Opened Serialport at %s with %i bps.",serialport.c_str(),serialport_bps);
 
     // Set MD49 defaults
+    md49_set_speed();
     md49_enable_timeout();
     md49_enable_regulator();
     md49_set_mode(md49_mode);
@@ -135,8 +135,6 @@ int main( int argc, char* argv[] ){
         // if speed_l or speed_r changed since last cycle
         if ((speed_l NOT last_speed_l) OR (speed_r NOT last_speed_r)){
             md49_set_speed();
-            last_speed_l=speed_l;
-            last_speed_r=speed_r;
         }
         // Read encoder- data from MD49 via UART
         md49_get_encoders();
@@ -168,6 +166,7 @@ void md49_set_speed(void){
     //Alter speed_l and speed_r in message for topic /md49data
     md49data.speed_l=speed_l;
     md49data.speed_r=speed_r;
+    last_speed_l=speed_l; last_speed_r=speed_r;
     ROS_INFO("base_controller: Set speed_l=%i and speed_r=%i on MD49", speed_l,speed_r);
 }
 
