@@ -34,8 +34,8 @@ int md49_mode;                                              // keeps MD49 Mode, 
 int md49_acceleration;                                      // keeps MD49 Acceleration,  is read from parameters server
 bool md49_timeout;
 bool md49_regulator;
-unsigned char speed_l=128, speed_r=128;                     // default speed_l and speed_r for MD49
-unsigned char last_speed_l=128, last_speed_r=128;           // buffers last set speed_l and speed_r
+int speed_l=128, speed_r=128;                     // default speed_l and speed_r for MD49
+int last_speed_l=128, last_speed_r=128;           // buffers last set speed_l and speed_r
 char reply[8];                                              // max buffersize serial input
 
 void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
