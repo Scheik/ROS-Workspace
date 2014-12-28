@@ -34,7 +34,7 @@ int md49_mode;                                              // keeps MD49 Mode, 
 int md49_acceleration;                                      // keeps MD49 Acceleration,  is read from parameters server
 bool md49_timeout;
 bool md49_regulator;
-int speed_l=128, speed_r=128;                     // default speed_l and speed_r for MD49
+int speed_l, speed_r;                     // default speed_l and speed_r for MD49
 int last_speed_l=128, last_speed_r=128;           // buffers last set speed_l and speed_r
 char reply[8];                                              // max buffersize serial input
 
@@ -110,6 +110,7 @@ int main( int argc, char* argv[] ){
     n.param("md49/timeout", md49_timeout, ON);                                 // Get MD49 Timeout from ROS Parameter sevice, default is Timeout=ON
     n.param("md49/speed_l", speed_l, 128);                                     // Get MD49 speed_l from ROS Parameter sevice, default is spee_l=128
     n.param("md49/speed_r", speed_r, 128);                                     // Get MD49 speed_r from ROS Parameter sevice, default is spee_r=128
+    last_speed_l=speed_l;last_speed_r=speed_r;
     ROS_INFO("base_controller: base_controller running...");
 
     // Open serialport
