@@ -9,7 +9,8 @@ Package "base_controller" with nodes:
 This Robot Hardware is build around a Raspberry Pi 
 and some AVR ATMegas. 
 
-EMG-49 Drives are driven with MD49 (both from Devantech).
+Robots drives are two EMG-49 geared Motors with wheelencoders, connected to MD49 Driverboard (both from Devantech) with serial connection to RPi.
+
 ROS Distribution on RPi and Ubuntu-Workstation is Groovy.
 
 INSTALL INTO CATKIN_WORKSPACE:
