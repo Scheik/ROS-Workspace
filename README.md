@@ -12,8 +12,6 @@ and some AVR ATMegas.
 EMG-49 Drives are driven with MD49 (both from Devantech).
 ROS Distribution on RPi and Ubuntu-Workstation is Groovy.
 
-Install package base_controller on RPi and Ubuntu- Workstation.
-
 INSTALL INTO CATKIN_WORKSPACE:
 ---------------------------
 
