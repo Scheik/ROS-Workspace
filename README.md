@@ -3,7 +3,7 @@ ROS-Groovy-Workspace
 Includes the following ROS Packages for my mobile Robot:
 
 Package "base_controller" with nodes: 
-"base_controller", "joystick_driver", "odometry"
+"base_controller", "joystick_driver", "odometry", "sqlite_connector"
 
 
 This Robot Hardware is build around a Raspberry Pi 
