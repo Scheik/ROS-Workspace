@@ -194,8 +194,8 @@ add_dependencies(base_controller base_controller_gencpp)
 add_dependencies(base_controller base_controller_EXPORTED_TARGETS)
 target_link_libraries(base_controller ${catkin_LIBRARIES})
 
-#add_executable(joystick_driver src/joystick_driver/joystick_driver_node.cpp)
-#target_link_libraries(joystick_driver ${catkin_LIBRARIES})
+add_executable(joystick_driver src/joystick_driver/joystick_driver_node.cpp)
+target_link_libraries(joystick_driver ${catkin_LIBRARIES})
 
 #add_executable(odometry src/odometry/odometry_node.cpp)
 #add_dependencies(odometry odometry_gencpp)
