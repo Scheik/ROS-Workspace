@@ -1,10 +1,10 @@
 <launch>
   <machine
-    name="Pi-on-Robot"
-    address="Pi-on-Robot.local"
+    name="robotOS"
+    address="robotOS.local"
     env-loader="/opt/ros/groovy/myenv.sh"
-    user="pi"
-    password="raspberry"
+    user="robot"
+    password="hacker"
   />
   <!-- Load parameters for base_controller_node -->
   <rosparam
