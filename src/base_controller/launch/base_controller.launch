@@ -24,6 +24,6 @@
     pkg="base_controller"   
     type="base_controller"
     required="true"
-    machine="Pi-on-Robot"
+    machine="robotOS"
   />
 </launch>
