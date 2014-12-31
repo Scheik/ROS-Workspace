@@ -1,30 +1,28 @@
-<!--
 #######################
-serialport_default.yaml
+#serialport_default.yaml
 #######################
-XML config file with all ROS parameters 
-for serial comunications. 
-The parameters set here are used from 
-base_controller_node
-
-Parameters must be read into
-namespace /serialport as done 
-with the following console command:
-rosparam load -v src/base_controller/config/serialport_defaults.yaml /serialport 
-or like in launchfile base_controller.launch, which is recommended way
-to start node base_conroller
+#XML config file with all ROS parameters 
+#for serial comunications. 
+#The parameters set here are used from 
+#base_controller_node
+#
+#Parameters must be read into
+#namespace /serialport as done 
+#with the following console command:
+#rosparam load -v src/base_controller/config/serialport_defaults.yaml /serialport 
+#or like in launchfile base_controller.launch, which is recommended way
+#to start node base_conroller
 
 ###############
-/serialport/bps
+#/serialport/bps
 ###############
 use 38400 or 9600 (Set corresponding jumper for selected baudrate on MD49)
 
 ################
-/serialport/name
+#/serialport/name
 ################
-use /dev/ttyAMA0 for Raspberry Pi
-use /dev/ttyS0 for Banana Pi
-use /dev/ttyS1 for pcDuino
--->
+#use /dev/ttyAMA0 for Raspberry Pi
+#use /dev/ttyS0 for Banana Pi
+#use /dev/ttyS1 for pcDuino
 
 {bps: 38400, name: /dev/ttyS1}
