@@ -16,7 +16,7 @@
 ###############
 #/serialport/bps
 ###############
-use 38400 or 9600 (Set corresponding jumper for selected baudrate on MD49)
+#use 38400 or 9600 (Set corresponding jumper for selected baudrate on MD49)
 
 ################
 #/serialport/name
