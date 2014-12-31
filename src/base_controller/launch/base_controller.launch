@@ -4,7 +4,7 @@
     address="robotOS.local"
     env-loader="/opt/ros/groovy/myenv.sh"
     user="robot"
-    password="hacker"
+    password="hacker#1977"
   />
   <!-- Load parameters for base_controller_node -->
   <rosparam
