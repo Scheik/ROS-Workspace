@@ -25,4 +25,4 @@
 #use /dev/ttyS0 for Banana Pi
 #use /dev/ttyS1 for pcDuino
 
-{bps: 38400, name: /dev/ttyS0}
+{bps: 38400, name: /dev/ttyS1}
