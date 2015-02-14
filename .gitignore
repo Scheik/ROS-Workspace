@@ -6,6 +6,9 @@ devel/
 *.*.user
 *.*.autosave
 
+# CLion
+*.idea
+
 # Compiled Object files
 *.slo
 *.lo
