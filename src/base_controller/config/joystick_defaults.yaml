@@ -1,1 +1,21 @@
+#######################
+#joystick_defaults.yaml
+#######################
+#XML config file with all ROS parameters for USB-Joystick/Gamepad. 
+#The parameters set here are used from base_controller_node
+#
+#Parameters must be read into
+#namespace /joystick as done 
+#with the following console command:
+#rosparam load -v src/base_controller/config/joystick_defaults.yaml /joystick 
+#or like in launchfile base_controller.launch, which is recommended way
+#to start node base_conroller
+#
+################
+#/joystick/name
+################
+#use /dev/input/js0 for Joystick connected to laptopOS
+#use ...
+#use ...
+
 {dev: /dev/input/js0}
