@@ -1,0 +1,10 @@
+<robot name="robot">
+  <link name="base_link">
+	<visual>
+		<geometry>
+			<box size="0.5 0.5 0.1"/>
+
+		</geometry>
+	</visual>
+  </link>  
+</robot>
