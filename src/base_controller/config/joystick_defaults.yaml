@@ -8,8 +8,8 @@
 #namespace /joystick as done 
 #with the following console command:
 #rosparam load -v src/base_controller/config/joystick_defaults.yaml /joystick 
-#or like in launchfile base_controller.launch, which is recommended way
-#to start node base_conroller
+#or like in launchfile joystick_driver.launch, which is recommended way
+#to start node joystick_driver
 #
 ################
 #/joystick/name
