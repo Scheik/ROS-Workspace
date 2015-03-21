@@ -5,26 +5,25 @@
 // Standard Libraries
 #include <stdlib.h>
 #include <math.h>
-// Own Libraries
 
 // Variables
 int16_t Joy_Button_Up_pressed=0;
 int16_t Joy_Button_Down_pressed=0;
 int16_t Joy_Button_Left_pressed=0;
 int16_t Joy_Button_Right_pressed=0;
-int16_t Joy_Button_Up_pressed_last=0;
-int16_t Joy_Button_Down_pressed_last=0;
-int16_t Joy_Button_Left_pressed_last=0;
-int16_t Joy_Button_Right_pressed_last=0;
+//int16_t Joy_Button_Up_pressed_last=0;
+//int16_t Joy_Button_Down_pressed_last=0;
+//int16_t Joy_Button_Left_pressed_last=0;
+//int16_t Joy_Button_Right_pressed_last=0;
 
 float Joy_AnalogLeft_Up_pressed;
 float Joy_AnalogLeft_Down_pressed;
 float Joy_AnalogLeft_Left_pressed;
 float Joy_AnalogLeft_Right_pressed;
-float Joy_AnalogLeft_Up_pressed_last=0;
-float Joy_AnalogLeft_Down_pressed_last=0;
-float Joy_AnalogLeft_Left_pressed_last=0;
-float Joy_AnalogLeft_Right_pressed_last=0;
+//float Joy_AnalogLeft_Up_pressed_last=0;
+//float Joy_AnalogLeft_Down_pressed_last=0;
+//float Joy_AnalogLeft_Left_pressed_last=0;
+//float Joy_AnalogLeft_Right_pressed_last=0;
 
 double linear_x=0;
 double angular_z=0;
@@ -67,6 +66,34 @@ void Joy_Callback (const sensor_msgs::Joy::ConstPtr& msg)
     if (Joystick_Buttons_Left_Right==0) {
         Joy_Button_Left_pressed=Joystick_Buttons_Left_Right;
         Joy_Button_Right_pressed=Joystick_Buttons_Left_Right;
+        angular_z=0;
+    }
+
+    // Joystick Analog pressed?
+    if (Joystick_AnalogLeft_Left_Right>0) {
+        Joy_AnalogLeft_Left_pressed=Joystick_AnalogLeft_Left_Right;
+        angular_z=1.0;
+    }
+    if (Joystick_AnalogLeft_Left_Right<0) {
+        Joy_AnalogLeft_Right_pressed=Joystick_AnalogLeft_Left_Right;
+        angular_z=-1.0;
+    }
+    if (Joystick_AnalogLeft_Up_Down>0) {
+        Joy_AnalogLeft_Up_pressed=Joystick_AnalogLeft_Up_Down;
+        linear_x=0.2;
+    }
+    if (Joystick_AnalogLeft_Up_Down<0) {
+        Joy_AnalogLeft_Down_pressed=Joystick_AnalogLeft_Up_Down;
+        linear_x=-0.2;
+    }
+    if (Joystick_AnalogLeft_Up_Down==0) {
+        Joy_AnalogLeft_Down_pressed=Joystick_AnalogLeft_Up_Down;
+        Joy_AnalogLeft_Up_pressed=Joystick_AnalogLeft_Up_Down;
+        linear_x=0;
+    }
+    if (Joystick_AnalogLeft_Left_Right==0) {
+        Joy_AnalogLeft_Left_pressed=Joystick_AnalogLeft_Left_Right;
+        Joy_AnalogLeft_Right_pressed=Joystick_AnalogLeft_Left_Right;
         angular_z=0;
     }
 
