@@ -40,8 +40,10 @@ char reply[8];                                              // max buffersize se
 
 void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
     if (vel_cmd.linear.x>0){
-        speed_l = 255;
-        speed_r = 255;
+        //speed_l = 255;
+        //speed_r = 255;
+        speed_l = 128+(640*0,2);
+        speed_r = 128+(640*0,2);
     }
     if (vel_cmd.linear.x<0){
         speed_l = 0;
