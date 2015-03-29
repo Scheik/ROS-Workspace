@@ -39,26 +39,24 @@ int last_speed_l=128, last_speed_r=128;                     // buffers last set 
 char reply[8];                                              // max buffersize serial input
 
 void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
+    // Drive For- or Backward:
     if (vel_cmd.linear.x != 0){
         speed_l = 128+(635*vel_cmd.linear.x);
         speed_r = 128+(635*vel_cmd.linear.x);
     }
+    // Drive stopped:
     if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){
         speed_l = 128;
         speed_r = 128;
     }
+    // Turn clock- or counterclockwise:
     if (vel_cmd.angular.z != 0){
         speed_l = 128 - (127*vel_cmd.angular.z);
         speed_r = 128 + (127*vel_cmd.angular.z);
-        //speed_l = 0;
-        //speed_r = 255;
     }
-    //if (vel_cmd.angular.z<0){
-    //    speed_l = 255;
-    //    speed_r = 0;
-    //}
     ROS_INFO("base_controller: Received /cmd_vel message. Requested speed_l=%i, speed_r=%i",speed_l,speed_r);
 
+    // Compute odometry data
     /*
     double vr = 0.0;
     double vl = 0.0;
@@ -67,7 +65,6 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
     double min_vr = 0.2;
     double min_vl = 0.2;
     double base_width = 0.4;                                // Base width in meters
-    //ANFANG Alternative
     if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){vl=0;vr=0;}
     else if(vel_cmd.linear.x == 0){
         // turning
@@ -87,7 +84,6 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
         if (vr > max_vr) {vr=max_vr;}
         if (vr < min_vr) {vr=min_vr;}
     }
-    //ENDE Alternative
     */
 }
 
