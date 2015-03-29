@@ -40,29 +40,23 @@ char reply[8];                                              // max buffersize se
 
 void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
     if (vel_cmd.linear.x != 0){
-        //speed_l = 255;
-        //speed_r = 255;
         speed_l = 128+(635*vel_cmd.linear.x);
         speed_r = 128+(635*vel_cmd.linear.x);
     }
-    //if (vel_cmd.linear.x<0){
-        //speed_l = 0;
-        //speed_r = 0;
-     //   speed_l = 128+(635*vel_cmd.linear.x);
-     //   speed_r = 128+(635*vel_cmd.linear.x);
-    //}
     if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){
         speed_l = 128;
         speed_r = 128;
     }
-    if (vel_cmd.angular.z>0){
-        speed_l = 0;
-        speed_r = 255;
+    if (vel_cmd.angular.z != 0){
+        speed_l = 128 - (127*vel_cmd.angular.z);
+        speed_r = 128 + (127*vel_cmd.angular.z);
+        //speed_l = 0;
+        //speed_r = 255;
     }
-    if (vel_cmd.angular.z<0){
-        speed_l = 255;
-        speed_r = 0;
-    }
+    //if (vel_cmd.angular.z<0){
+    //    speed_l = 255;
+    //    speed_r = 0;
+    //}
     ROS_INFO("base_controller: Received /cmd_vel message. Requested speed_l=%i, speed_r=%i",speed_l,speed_r);
 
     /*
