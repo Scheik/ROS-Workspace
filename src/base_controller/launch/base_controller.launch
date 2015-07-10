@@ -22,7 +22,7 @@
   <node
     name="setuart2"
     pkg="base_controller"
-    type="setuart2on.sh"
+    type="scripts/setuart2on.sh"
     required="true"
     output="screen"
     machine="robotOS"
