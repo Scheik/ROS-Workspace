@@ -23,7 +23,7 @@
     name="setuart2"
     pkg="base_controller"
     type="setuart2"
-    arg="on"
+    args="on"
     required="true"
     output="screen"
     machine="robotOS"
