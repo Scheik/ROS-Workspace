@@ -24,7 +24,7 @@
     name="setuart2"
     pkg="base_controller"
     type="setuart2"
-    args="setuart2on"
+    args="$(arg setuart2on)"
     required="true"
     output="screen"
     machine="robotOS"
