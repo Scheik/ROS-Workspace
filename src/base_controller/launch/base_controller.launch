@@ -19,12 +19,10 @@
   />
 
   <!-- Run base_controller_node -->
-  <arg name="setuart2on" value="on"/> 
   <node
     name="setuart2"
     pkg="base_controller"
-    type="setuart2"
-    args="$(arg setuart2on)"
+    type="setuart2on.sh"
     required="true"
     output="screen"
     machine="robotOS"
