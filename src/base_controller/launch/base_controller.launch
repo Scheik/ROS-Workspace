@@ -24,6 +24,7 @@
     pkg="base_controller"
     type="setuart2"
     required="true"
+    args="on"
     output="screen"
     machine="robotOS"
   />
