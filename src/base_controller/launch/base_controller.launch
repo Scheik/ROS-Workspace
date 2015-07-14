@@ -19,14 +19,6 @@
   />
 
   <!-- Run base_controller_node -->
-  <node
-    name="setuart2"
-    pkg="base_controller"
-    type="$(find base_controller)scripts/setuart2on.sh"
-    required="true"
-    output="screen"
-    machine="robotOS"
-  />
   <node 
     name="base_controller" 
     pkg="base_controller"   
