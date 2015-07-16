@@ -2,7 +2,7 @@
   <machine
     name="robotOS"
     address="robotOS.local"
-    env-loader="/opt/ros/groovy/myenv.sh"
+    env-loader="/opt/ros/indigo/myenv.sh"
     user="robot"
     password="hacker#1977"
   />
