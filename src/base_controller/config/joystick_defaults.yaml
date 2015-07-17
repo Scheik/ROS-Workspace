@@ -14,8 +14,8 @@
 ################
 #/joystick/name
 ################
-#use /dev/input/js0 for Joystick connected to laptopOS
+#use /dev/input/js1 for Joystick connected to laptopOS
 #use /dev/input/js2 for Joystick connected to VM
 #use ...
 
-{dev: /dev/input/js0}
+{dev: /dev/input/js1}
