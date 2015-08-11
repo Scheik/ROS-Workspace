@@ -96,7 +96,7 @@ int main( int argc, char* argv[] ){
     ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",10);
     ros::Publisher md49data_pub = n.advertise<base_controller::md49data>("md49data",10);
     ros::Rate loop_rate(10);
-    n.param<std::string>("serialport/name", serialport, "/dev/ttyAMA0");       // Get serialportname from ROS Parameter sevice, default is ttyAMA0 (RPis GPIO UART)
+    n.param<std::string>("serialport/name", serialport, "/dev/ttyS0");       // Get serialportname from ROS Parameter sevice, default is ttyS0 (pcDuinos GPIO UART)
     n.param("serialport/bps", serialport_bps, 38400);                          // Get serialport bps from ROS Parameter sevice, default is 38400Bps
     n.param("md49/mode", md49_mode, 0);                                        // Get MD49 Mode from ROS Parameter sevice, default is Mode=0
     n.param("md49/acceleration", md49_acceleration, 5);                        // Get MD49 Acceleration from ROS Parameter sevice, default is Acceleration=0
