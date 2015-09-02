@@ -10,7 +10,7 @@
 #define OR ||
 #define NOT !=
 
-void md49_set_speed (void);
+void md49_set_speed (int speed_l, int speed_r);
 void md49_set_mode(int mode);
 void md49_set_acceleration(int acceleration);
 void md49_enable_timeout(void);
@@ -34,27 +34,27 @@ int md49_mode;                                              // keeps MD49 Mode, 
 int md49_acceleration;                                      // keeps MD49 Acceleration,  is read from parameters server
 bool md49_timeout;
 bool md49_regulator;
-int speed_l, speed_r;                                       // default speed_l and speed_r for MD49
-int last_speed_l=128, last_speed_r=128;                     // buffers last set speed_l and speed_r
+int requested_speed_l, requested_speed_r;                                       // default speed_l and speed_r for MD49
+int actual_speed_l=128, actual_speed_r=128;                     // buffers last set speed_l and speed_r
 char reply[8];                                              // max buffersize serial input
 
 void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
     // Drive For- or Backward:
     if (vel_cmd.linear.x != 0){
-        speed_l = 128+(635*vel_cmd.linear.x);
-        speed_r = 128+(635*vel_cmd.linear.x);
+    	requested_speed_l = 128+(635*vel_cmd.linear.x);
+    	requested_speed_r = 128+(635*vel_cmd.linear.x);
     }
     // Drive stopped:
     if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){
-        speed_l = 128;
-        speed_r = 128;
+    	requested_speed_l = 128;
+    	requested_speed_r = 128;
     }
     // Turn clock- or counterclockwise:
     if (vel_cmd.angular.z != 0){
-        speed_l = 128 - (127*vel_cmd.angular.z);
-        speed_r = 128 + (127*vel_cmd.angular.z);
+    	requested_speed_l = 128 - (127*vel_cmd.angular.z);
+    	requested_speed_r = 128 + (127*vel_cmd.angular.z);
     }
-    ROS_INFO("base_controller: Received /cmd_vel message. Requested speed_l=%i, speed_r=%i",speed_l,speed_r);
+    ROS_INFO("base_controller: Received /cmd_vel message. Requested speed_l=%i, speed_r=%i",requested_speed_l,requested_speed_r);
 
     // Compute odometry data
     /*
@@ -102,8 +102,8 @@ int main( int argc, char* argv[] ){
     n.param("md49/acceleration", md49_acceleration, 5);                        // Get MD49 Acceleration from ROS Parameter sevice, default is Acceleration=0
     n.param("md49/regulator", md49_regulator, ON);                             // Get MD49 Regulator from ROS Parameter sevice, default is Regulator=ON
     n.param("md49/timeout", md49_timeout, ON);                                 // Get MD49 Timeout from ROS Parameter sevice, default is Timeout=ON
-    n.param("md49/speed_l", speed_l, 128);                                     // Get MD49 speed_l from ROS Parameter sevice, default is spee_l=128
-    n.param("md49/speed_r", speed_r, 128);                                     // Get MD49 speed_r from ROS Parameter sevice, default is spee_r=128
+    n.param("md49/speed_l", requested_speed_l, 128);                                     // Get MD49 speed_l from ROS Parameter sevice, default is spee_l=128
+    n.param("md49/speed_r", requested_speed_r, 128);                                     // Get MD49 speed_r from ROS Parameter sevice, default is spee_r=128
     ROS_INFO("base_controller: base_controller running...");
 
     // Open serialport
@@ -116,7 +116,7 @@ int main( int argc, char* argv[] ){
     ROS_INFO("base_controller: Opened Serialport at %s with %i bps.",serialport.c_str(),serialport_bps);
 
     // Set MD49 defaults
-    md49_set_speed();
+    md49_set_speed(requested_speed_l,requested_speed_r);
     md49_enable_timeout();
     md49_enable_regulator();
     md49_set_mode(md49_mode);
@@ -127,8 +127,8 @@ int main( int argc, char* argv[] ){
     {
         // set speed on MD49 via UART as set through /cmd_vel
         // if speed_l or speed_r changed since last cycle
-        if ((speed_l NOT last_speed_l) OR (speed_r NOT last_speed_r)){
-            md49_set_speed();
+        if ((requested_speed_l NOT actual_speed_l) OR (requested_speed_r NOT actual_speed_r)){
+            md49_set_speed(requested_speed_l,requested_speed_r);
         }
         // Read encoder- data from MD49 via UART
         md49_get_encoders();
@@ -150,7 +150,7 @@ int main( int argc, char* argv[] ){
     return 1;
 } // end.main
 
-void md49_set_speed(void){
+void md49_set_speed(int speed_l, int speed_r){
     // set and send serial command for speed_l
     const char md49_set_speed_l[]={0x00,0x31,speed_l};
     device.write(md49_set_speed_l,3);
@@ -158,10 +158,10 @@ void md49_set_speed(void){
     const char md49_set_speed_r[]={0x00,0x32,speed_r};
     device.write(md49_set_speed_r,3);
     //Alter speed_l and speed_r in message for topic /md49data
-    md49data.speed_l=speed_l;
-    md49data.speed_r=speed_r;
-    last_speed_l=speed_l; last_speed_r=speed_r;
-    ROS_INFO("base_controller: Set speed_l=%i and speed_r=%i on MD49", speed_l,speed_r);
+    md49data.speed_l=requested_speed_l;
+    md49data.speed_r=requested_speed_r;
+    actual_speed_l=requested_speed_l; actual_speed_r=requested_speed_r;
+    ROS_INFO("base_controller: Set speed_l=%i and speed_r=%i on MD49", requested_speed_l,requested_speed_r);
 }
 
 void md49_set_mode(int mode){

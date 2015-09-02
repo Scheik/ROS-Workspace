@@ -1,11 +1,11 @@
 <launch>
-   
+   <!-- Load parameters for joy_node -->
    <rosparam
      command="load"
      ns="/joy_node"
      file="$(find base_controller)/config/joystick_defaults.yaml"
    />
-
+   <!-- Run joy_node -->
    <node 
      name="joy_node" 
      pkg="joy"   
@@ -13,7 +13,7 @@
      required="true"
      output="screen"
    />
-
+   <!-- Run joystick_driver node -->
    <node
      name="joystick_driver"
      pkg="base_controller"
@@ -21,5 +21,4 @@
      required="true"
      output="screen"
    />
-
 </launch>

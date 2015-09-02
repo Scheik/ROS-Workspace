@@ -1,0 +1,55 @@
+<!-- This launchfile starts nodes base_controller on robotOS and joy_node + joystick_driver on workstationOS -->
+<launch>
+  <machine
+    name="robotOS"
+    address="robotOS.local"
+    env-loader="/opt/ros/indigo/myenv.sh"
+    user="robot"
+    password="hacker#1977"
+    default="false"
+  />
+  <!-- Load parameters for base_controller_node -->
+  <rosparam
+    command="load"
+    ns="/md49"
+    file="$(find base_controller)/config/md49_defaults.yaml"
+  />
+  <rosparam
+    command="load"
+    ns="/serialport"
+    file="$(find base_controller)/config/serialport_defaults.yaml"
+  />
+  <!-- Load parameters for joy_node -->
+  <rosparam
+    command="load"
+    ns="/joy_node"
+    file="$(find base_controller)/config/joystick_defaults.yaml"
+  />
+
+  <!-- Run base_controller node -->
+  <node 
+    name="base_controller" 
+    pkg="base_controller"   
+    type="base_controller"
+    required="true"
+    output="screen"
+    machine="robotOS"
+  />
+  <!-- Run joy_node -->
+  <node 
+    name="joy_node" 
+    pkg="joy"   
+    type="joy_node"
+    required="true"
+    output="screen"
+  />
+  <!-- Run joystick_driver node -->
+  <node
+    name="joystick_driver"
+    pkg="base_controller"
+    type="joystick_driver"
+    required="true"
+    output="screen"
+  />
+
+</launch>
