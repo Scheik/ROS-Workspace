@@ -6,20 +6,19 @@ Package "base_controller" with nodes:
 "base_controller", "joystick_driver", "odometry", "sqlite_connector"
 
 
-This Robot Hardware is build around a Raspberry Pi 
-and some AVR ATMegas. 
+This Robot Hardware is build around a pcDuino . 
 
-Robots drives are two EMG-49 geared Motors with wheelencoders, connected to MD49 Driverboard (both from Devantech) with serial connection to RPi.
+Robots drives are two EMG-49 geared Motors with wheelencoders, connected to MD49 Driverboard (both from Devantech) with serial connection to pcDuino.
 
-ROS Distribution on RPi and Ubuntu-Workstation is Groovy.
+ROS Distribution on pcDuino and Ubuntu-Workstation is Indigo.
 
 INSTALL INTO CATKIN_WORKSPACE:
 ---------------------------
 
 $ cd ~
 
-$ git clone https://github.com/scheik/ROS-Groovy-Workspace.git
+$ git clone https://github.com/scheik/ROS-Workspace.git
 
-$ cd ~/ROS-Groovy-Workspace
+$ cd ~/ROS-Workspace
 
 $ catkin_make
