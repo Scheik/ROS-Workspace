@@ -1,8 +1,10 @@
 #include <ros/ros.h>                                        /* ROS */
 #include <geometry_msgs/Twist.h>                            /* ROS Twist message */
-#include <base_controller/encoders.h>                       /* custom message /encoders */
+//#include <base_controller/encoders.h>                       /* custom message /encoders */
 #include <base_controller/md49data.h>                       /* custom message /encoders */
 #include <serialport/serialport.h>                          // library for serial communications via UART
+#include <custom_messages/md49_data.h>
+#include <custom_messages/md49_encoders.h>
 
 #define TIMEOUT 1000                                        // timeout for reading serialport in ms
 #define ON true
@@ -25,8 +27,10 @@ void md49_get_currents(void);
 void md49_get_error(void);
 void md49_get_volts(void);
 
-base_controller::encoders encoders;                         // topic /encoders
-base_controller::md49data md49data;                         // topic /md49data
+//base_controller::encoders encoders;                         // topic /encoders
+//base_controller::md49data md49data;                         // topic /md49data
+custom_messages::md49_data md49_data;
+custom_messages::md49_encoders md49_encoders;
 cereal::CerealPort device;                                  // serialport
 std::string serialport;                                     // keeps used serialport on Pi, is read from parameters server
 int serialport_bps;                                         // keeps used baudrate, is read from parameters server
@@ -93,8 +97,9 @@ int main( int argc, char* argv[] ){
     ros::init(argc, argv, "base_controller" );
     ros::NodeHandle n;
     ros::Subscriber sub = n.subscribe("/cmd_vel", 10, cmd_vel_callback);
-    ros::Publisher encoders_pub = n.advertise<base_controller::encoders>("encoders",10);
-    ros::Publisher md49data_pub = n.advertise<base_controller::md49data>("md49data",10);
+    ros::Publisher md49_encoders_pub = n.advertise<custom_messages::md49_encoders>("md49_encoders",10);
+    ros::Publisher md49_data_pub = n.advertise<custom_messages::md49_data>("md49_data",10);
+    //ros::Publisher md49_data_pub = n.advertise<base_controller::md49data>("md49_data",10);
     ros::Rate loop_rate(10);
     n.param<std::string>("serialport/name", serialport, "/dev/ttyS0");       // Get serialportname from ROS Parameter sevice, default is ttyS0 (pcDuinos GPIO UART)
     n.param("serialport/bps", serialport_bps, 38400);                          // Get serialport bps from ROS Parameter sevice, default is 38400Bps
@@ -133,7 +138,7 @@ int main( int argc, char* argv[] ){
         // Read encoder- data from MD49 via UART
         md49_get_encoders();
         // Publish encoder values as read to topic /encoders
-        encoders_pub.publish(encoders);
+        md49_encoders_pub.publish(md49_encoders);
         // Read other- data from MD49 via UART
         md49_get_speed();
         md49_get_volts();
@@ -142,7 +147,7 @@ int main( int argc, char* argv[] ){
         //md49_get_mode();
         md49_get_error();
         // Publish MD49 data as read to topic /md49data
-        md49data_pub.publish(md49data);
+        md49_data_pub.publish(md49_data);
         // Loop
         ros::spinOnce();
         loop_rate.sleep();
@@ -158,8 +163,10 @@ void md49_set_speed(int speed_l, int speed_r){
     const char md49_set_speed_r[]={0x00,0x32,speed_r};
     device.write(md49_set_speed_r,3);
     //Alter speed_l and speed_r in message for topic /md49data
-    md49data.speed_l=requested_speed_l;
-    md49data.speed_r=requested_speed_r;
+    //md49data.speed_l=requested_speed_l;
+    md49_data.speed_l=requested_speed_l;
+    //md49data.speed_r=requested_speed_r;
+    md49_data.speed_l=requested_speed_l;
     actual_speed_l=requested_speed_l; actual_speed_r=requested_speed_r;
     ROS_INFO("base_controller: Set speed_l=%i and speed_r=%i on MD49", requested_speed_l,requested_speed_r);
 }
@@ -168,41 +175,47 @@ void md49_set_mode(int mode){
     const char md49_set_mode[]={0x00,0x34,mode};
     device.write(md49_set_mode,3);
     ROS_INFO("base_controller: Set mode=%i on MD49", mode);
-    md49data.mode=mode;
+    //md49data.mode=mode;
+    md49_data.mode=mode;
 }
 
 void md49_set_acceleration(int acceleration){
     const char md49_set_acceleration[]={0x00,0x33,acceleration};
     device.write(md49_set_acceleration,3);
     ROS_INFO("base_controller: Set acceleration=%i on MD49", acceleration);
-    md49data.acceleration=acceleration;
+    //md49data.acceleration=acceleration;
+    md49_data.acceleration=acceleration;
 }
 
 void md49_enable_timeout(void){
     const char md49_enable_timeout[] = {0x00,0x39};        // Command to enable md49 timeout
     device.write(md49_enable_timeout,2);
-    md49data.timeout=1;
+    //md49data.timeout=1;
+    md49_data.timeout=0;
     ROS_INFO("base_controller: Enabled timeout on MD49");
 }
 
 void md49_enable_regulator(void){
     const char md49_enable_regulator[] = {0x00,0x37};        // Command to enable md49 regulator
     device.write(md49_enable_regulator,2);
-    md49data.regulator=1;
+    //md49data.regulator=1;
+    md49_data.timeout=0;
     ROS_INFO("base_controller: Enabled regulator on MD49");
 }
 
 void md49_disable_timeout(void){
     const char md49_disable_timeout[] = {0x00,0x38};        // Command to enable md49 regulator
     device.write(md49_disable_timeout,2);
-    md49data.timeout=0;
+    //md49data.timeout=0;
+    md49_data.timeout=0;
     ROS_INFO("base_controller: Disabled timeout on MD49");
 }
 
 void md49_disable_regulator(void){
     const char md49_disable_regulator[] = {0x00,0x36};        // Command to enable md49 timeout
     device.write(md49_disable_regulator,2);
-    md49data.regulator=0;
+    //md49data.regulator=0;
+    md49_data.regulator=0;
     ROS_INFO("base_controller: Disabled regulator on MD49");
 }
 
@@ -214,7 +227,8 @@ void md49_get_acceleration(void){
         ROS_ERROR("base_controller: Timeout reading MD49 acceleration!");
     }
     //ROS_INFO("base_controller: MD49 Acceleration= %i", reply[0]);
-    md49data.acceleration=reply[0];
+    //md49data.acceleration=reply[0];
+    md49_data.acceleration=reply[0];
 }
 
 void md49_get_mode(void){
@@ -225,7 +239,8 @@ void md49_get_mode(void){
         ROS_ERROR("base_controller: Timeout reading MD49 Mode!");
     }
     //ROS_INFO("base_controller: MD49 Mode= %i", reply[0]);
-    md49data.mode=reply[0];
+    //md49data.mode=reply[0];
+    md49_data.mode=reply[0];
 }
 
 void md49_get_speed(void){
@@ -235,14 +250,16 @@ void md49_get_speed(void){
     catch(cereal::TimeoutException& e){
         ROS_ERROR("base_controller: Timeout reading MD49 speed_l!");
     }
-    md49data.speed_l=reply[0];
+    //md49data.speed_l=reply[0];
+    md49_data.speed_l=reply[0];
     const char md49_get_speed_r[] = {0x00,0x22};        // Command to read md49 set acceleration
     device.write(md49_get_speed_r,2);
     try{ device.read(reply, 1, TIMEOUT); }                             // get answer, acceleration
     catch(cereal::TimeoutException& e){
         ROS_ERROR("base_controller: Timeout reading MD49 speed_r!");
     }
-    md49data.speed_r=reply[0];
+    //md49data.speed_r=reply[0];
+    md49_data.speed_r=reply[0];
     //ROS_INFO("base_controller: MD49 speed_l= %i, speed_r= %i", speed_l,speed_r);
 }
 
@@ -258,22 +275,38 @@ void md49_get_encoders(void){
     }
     // Set all values of custom message /encoders,
     // *******************************************
-    encoders.encoder_l = reply[0] << 24;                       // Put together first encoder value
-    encoders.encoder_l |= (reply[1] << 16);
-    encoders.encoder_l |= (reply[2] << 8);
-    encoders.encoder_l |= (reply[3]);
-    encoders.encoder_r = reply[4] << 24;                       // Put together second encoder value
-    encoders.encoder_r |= (reply[5] << 16);
-    encoders.encoder_r |= (reply[6] << 8);
-    encoders.encoder_r |= (reply[7]);
-    encoders.encoderbyte1l=reply[0];
-    encoders.encoderbyte2l=reply[1];
-    encoders.encoderbyte3l=reply[2];
-    encoders.encoderbyte4l=reply[3];
-    encoders.encoderbyte1r=reply[4];
-    encoders.encoderbyte2r=reply[5];
-    encoders.encoderbyte3r=reply[6];
-    encoders.encoderbyte4r=reply[7];
+    //encoders.encoder_l = reply[0] << 24;                       // Put together first encoder value
+    //encoders.encoder_l |= (reply[1] << 16);
+    //encoders.encoder_l |= (reply[2] << 8);
+    //encoders.encoder_l |= (reply[3]);
+    //encoders.encoder_r = reply[4] << 24;                       // Put together second encoder value
+    //encoders.encoder_r |= (reply[5] << 16);
+    //encoders.encoder_r |= (reply[6] << 8);
+    //encoders.encoder_r |= (reply[7]);
+    //encoders.encoderbyte1l=reply[0];
+    //encoders.encoderbyte2l=reply[1];
+    //encoders.encoderbyte3l=reply[2];
+    //encoders.encoderbyte4l=reply[3];
+    //encoders.encoderbyte1r=reply[4];
+    //encoders.encoderbyte2r=reply[5];
+    //encoders.encoderbyte3r=reply[6];
+    //encoders.encoderbyte4r=reply[7];
+    md49_encoders.encoder_l = reply[0] << 24;                       // Put together first encoder value
+    md49_encoders.encoder_l |= (reply[1] << 16);
+    md49_encoders.encoder_l |= (reply[2] << 8);
+    md49_encoders.encoder_l |= (reply[3]);
+    md49_encoders.encoder_r = reply[4] << 24;                       // Put together second encoder value
+    md49_encoders.encoder_r |= (reply[5] << 16);
+    md49_encoders.encoder_r |= (reply[6] << 8);
+    md49_encoders.encoder_r |= (reply[7]);
+    md49_encoders.encoderbyte1l=reply[0];
+    md49_encoders.encoderbyte2l=reply[1];
+    md49_encoders.encoderbyte3l=reply[2];
+    md49_encoders.encoderbyte4l=reply[3];
+    md49_encoders.encoderbyte1r=reply[4];
+    md49_encoders.encoderbyte2r=reply[5];
+    md49_encoders.encoderbyte3r=reply[6];
+    md49_encoders.encoderbyte4r=reply[7];
     //ROS_INFO("Got this reply: %i,%i,%i,%i,%i,%i,%i,%i", reply[0], reply[1], reply[2],reply[3], reply[4], reply[5], reply[6], reply[7]);
 }
 
@@ -288,7 +321,8 @@ void md49_get_volts(void){
         ROS_ERROR("base_controller: Timeout reading MD49 volts!");
     }
     //ROS_INFO("Got this reply (volts): %i", reply[0]);
-    md49data.volts=reply[0];
+    //md49data.volts=reply[0];
+    md49_data.volts=reply[0];
 }
 
 void md49_get_currents(void){
@@ -302,7 +336,8 @@ void md49_get_currents(void){
         ROS_ERROR("base_controller: Timeout reading MD49 current_l!");
     }
     //ROS_INFO("Got this reply (current_l): %i", reply[0]);
-    md49data.current_l =reply[0];
+    //md49data.current_l =reply[0];
+    md49_data.current_l =reply[0];
     const char md49_get_current_r[] = {0x00,0x28};        // Command to read md49 set current_r
     device.write(md49_get_current_r,2);
     try{ device.read(reply, 1, TIMEOUT); }                             // get answer, current_r
@@ -310,7 +345,8 @@ void md49_get_currents(void){
         ROS_ERROR("base_controller: Timeout reading MD49 current_r!");
     }
     //ROS_INFO("Got this reply (current_r): %i", reply[0]);
-    md49data.current_r =reply[0];
+    //md49data.current_r =reply[0];
+    md49_data.current_r =reply[0];
 }
 
 void md49_get_error(void){
@@ -324,7 +360,8 @@ void md49_get_error(void){
         ROS_ERROR("base_controller: Timeout reading MD49 errorbyte!");
     }
     //ROS_INFO("Got this reply (error): %i", reply[0]);
-    md49data.error=reply[0];
+    //md49data.error=reply[0];
+    md49_data.error=reply[0];
 }
 
 void md49_reset_encoders(void){

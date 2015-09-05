@@ -9,9 +9,10 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
-  message_generation
   tf
   serialport
+  message_generation
+  custom_messages
 )
 
 find_package(serialport REQUIRED)
@@ -55,11 +56,12 @@ find_package(serialport REQUIRED)
 #   Message1.msg
 #   Message2.msg
 # )
-add_message_files(
-  FILES
-  encoders.msg
-  md49data.msg
-)
+#add_message_files(
+#  FILES
+#  encoders.msg
+#  md49data.msg
+#)
+
 
 
 ## Generate services in the 'srv' folder
@@ -81,10 +83,11 @@ add_message_files(
 #   DEPENDENCIES
 #   geometry_msgs#   std_msgs
 # )
-generate_messages(
-  DEPENDENCIES
-  std_msgs
-)
+
+#generate_messages(
+#  DEPENDENCIES
+#  std_msgs
+#)
 
 ###################################
 ## catkin specific configuration ##
@@ -178,34 +181,25 @@ include_directories(
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-#add_executable(helloworld src/helloworld/helloworld_node.cpp)
-#target_link_libraries(helloworld ${catkin_LIBRARIES})
-
-#add_executable(md49_console src/md49_console/md49_console_node.cpp)
-#target_link_libraries(md49_console ${catkin_LIBRARIES})
-
  # enable pkg_check_modules macro
  include(FindPkgConfig)
  pkg_check_modules(SQLITE sqlite3)
 
 add_executable(base_controller src/base_controller/base_controller_node.cpp)
 target_link_libraries(base_controller ${catkin_LIBRARIES})
-add_dependencies(base_controller base_controller_generate_messages_cpp)
+add_dependencies(base_controller custom_messages_generate_messages_cpp)
 add_dependencies(base_controller base_controller_EXPORTED_TARGETS)
-#add_dependencies(base_controller base_controller_gencpp)
 
 add_executable(odometry src/odometry/odometry_node.cpp)
 target_link_libraries(odometry ${catkin_LIBRARIES})
 add_dependencies(odometry odometry_generate_messages_cpp)
 add_dependencies(odometry odometry_EXPORTED_TARGETS)
-#add_dependencies(odometry odometry_gencpp)
 
 add_executable(sqlite_connector src/sqlite_connector/sqlite_connector_node.cpp)
 target_link_libraries(sqlite_connector ${catkin_LIBRARIES})
 target_link_libraries(sqlite_connector sqlite3)
 add_dependencies(sqlite_connector sqlite_connector_generate_messages_cpp)
 add_dependencies(sqlite_connector sqlite_connector_EXPORTED_TARGETS)
-#add_dependencies(sqlite_connector sqlite_connector_gencpp)
 
 add_executable(joystick_driver src/joystick_driver/joystick_driver_node.cpp)
 target_link_libraries(joystick_driver ${catkin_LIBRARIES})
