@@ -1,7 +1,7 @@
 #include <ros/ros.h>                                        /* ROS */
 #include <geometry_msgs/Twist.h>                            /* ROS Twist message */
 //#include <base_controller/encoders.h>                       /* custom message /encoders */
-#include <base_controller/md49data.h>                       /* custom message /encoders */
+//#include <base_controller/md49data.h>                       /* custom message /encoders */
 #include <serialport/serialport.h>                          // library for serial communications via UART
 #include <custom_messages/md49_data.h>
 #include <custom_messages/md49_encoders.h>
@@ -28,7 +28,7 @@ void md49_get_error(void);
 void md49_get_volts(void);
 
 //base_controller::encoders encoders;                         // topic /encoders
-//base_controller::md49data md49data;                         // topic /md49data
+//base_controller::md49data md49data;          encoders               // topic /md49data
 custom_messages::md49_data md49_data;
 custom_messages::md49_encoders md49_encoders;
 cereal::CerealPort device;                                  // serialport
