@@ -192,7 +192,7 @@ add_dependencies(base_controller base_controller_EXPORTED_TARGETS)
 
 add_executable(odometry src/odometry/odometry_node.cpp)
 target_link_libraries(odometry ${catkin_LIBRARIES})
-add_dependencies(odometry odometry_generate_messages_cpp)
+add_dependencies(odometry custom_messages_generate_messages_cpp)
 add_dependencies(odometry odometry_EXPORTED_TARGETS)
 
 add_executable(sqlite_connector src/sqlite_connector/sqlite_connector_node.cpp)

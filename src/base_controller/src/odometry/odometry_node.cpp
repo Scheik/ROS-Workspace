@@ -1,5 +1,5 @@
 #include "ros/ros.h"
-#include <base_controller/encoders.h>               /* Custom message /encoders */
+#include <custom_messages/md49_encoders.h>
 #include <sensor_msgs/JointState.h>
 #include <tf/transform_broadcaster.h>
 #include <nav_msgs/Odometry.h>
@@ -23,27 +23,27 @@ double vy;
 double vth;
 //ros::Time current_time_encoder, last_time_encoder;
 
-void encoderdata_callback(const base_controller::encoders& encoders){
+void encoderdata_callback(const custom_messages::md49_encoders& md49_encoders){
     //EncoderL=encoders.encoder_l;
     //EncoderR=encoders.encoder_r;
     //current_time_encoder = ros::Time::now();
     // calculate odomety
     // *****************
-    deltaLeft = encoders.encoder_l - previous_EncoderL;
-    deltaRight = encoders.encoder_r - previous_EncoderR;
+    deltaLeft = md49_encoders.encoder_l - previous_EncoderL;
+    deltaRight = md49_encoders.encoder_r - previous_EncoderR;
 
     vx = deltaLeft * meter_per_tick;
     vy = deltaRight * meter_per_tick;
 
-    previous_EncoderL = encoders.encoder_l;
-    previous_EncoderR = encoders.encoder_r;
+    previous_EncoderL = md49_encoders.encoder_l;
+    previous_EncoderR = md49_encoders.encoder_r;
     //last_time_encoder = current_time_encoder;
 }
 
 int main( int argc, char* argv[] ){
     ros::init(argc, argv, "odometry" );
     ros::NodeHandle n;
-    ros::Subscriber sub = n.subscribe("/encoders", 100, encoderdata_callback);
+    ros::Subscriber sub = n.subscribe("/md49_encoders", 100, encoderdata_callback);
     ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("odom", 50);
     tf::TransformBroadcaster odom_broadcaster;
 
