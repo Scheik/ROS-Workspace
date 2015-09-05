@@ -8,6 +8,9 @@ devel/
 *.*.user
 *.*.autosave
 
+# KDevelop files
+*.kdev4
+
 # CLion
 *.idea
 
