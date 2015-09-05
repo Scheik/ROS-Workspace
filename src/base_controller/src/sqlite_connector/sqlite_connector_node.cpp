@@ -7,11 +7,11 @@
 #include <ctype.h>                                          /* isxxx() */
 #include <sqlite3.h>
 #include <ros/ros.h>                                        /* ROS */
-#include <base_controller/encoders.h>                       /* Custom message /encoders */
-#include <base_controller/md49data.h>                       /* Custom message /encoders */
+#include <custom_messages/md49_encoders.h>
+#include <custom_messages//md49_data.h>                       /* Custom message /encoders */
 
-base_controller::encoders encoders;
-base_controller::md49data md49data;
+custom_messages::md49_encoders md49_encoders;
+custom_messages::md49_data md49_data;
 
 // sqlite globals
 sqlite3 *db;
@@ -24,30 +24,30 @@ char sql_buffer[400];
 void open_sqlite_db_md49data(void);
 void execute_update_sqlite(void);
 
-void encoders_callback(const base_controller::encoders& encoders){
+void md49_encoders_callback(const custom_messages::md49_encoders& md49_encoders){
 
     // Write data read from MD49 into
     // sqlite3 database md49data.db
     // ******************************
     // EncoderL & EncoderR
-    cx = snprintf (sql_buffer,400,"UPDATE md49data SET EncoderL=%i, EncoderR=%i WHERE ID=1;", encoders.encoder_l, encoders.encoder_r);
+    cx = snprintf (sql_buffer,400,"UPDATE md49data SET EncoderL=%i, EncoderR=%i WHERE ID=1;", md49_encoders.encoder_l, md49_encoders.encoder_r);
     execute_update_sqlite();
     // Encoderbytes 1-4 left
     cx = snprintf (sql_buffer,400,"UPDATE md49data SET Encoderbyte1L=%i, Encoderbyte2L=%i, " \
-     "Encoderbyte3L=%i, Encoderbyte4L=%i WHERE ID=1;", encoders.encoderbyte1l, encoders.encoderbyte2l, encoders.encoderbyte3l, encoders.encoderbyte4l);
+     "Encoderbyte3L=%i, Encoderbyte4L=%i WHERE ID=1;", md49_encoders.encoderbyte1l, md49_encoders.encoderbyte2l, md49_encoders.encoderbyte3l, md49_encoders.encoderbyte4l);
     execute_update_sqlite();
     // Encoderbytes 1-4 right
     cx = snprintf (sql_buffer,400,"UPDATE md49data SET Encoderbyte1R=%i, Encoderbyte2R=%i, " \
-     "Encoderbyte3R=%i, Encoderbyte4R=%i WHERE ID=1;", encoders.encoderbyte1r, encoders.encoderbyte2r, encoders.encoderbyte3r, encoders.encoderbyte4r);
+     "Encoderbyte3R=%i, Encoderbyte4R=%i WHERE ID=1;", md49_encoders.encoderbyte1r, md49_encoders.encoderbyte2r, md49_encoders.encoderbyte3r, md49_encoders.encoderbyte4r);
     execute_update_sqlite();
 }
 
-void md49data_callback(const base_controller::md49data& md49data){
+void md49_data_callback(const custom_messages::md49_data& md49_data){
         // SpeedL, SpeedR, Volts, CurrentL, CurrentR, Error, Acceleration, Mode, Regulator, Timeout
         cx = snprintf (sql_buffer,400,"UPDATE md49data SET SpeedL=%i, SpeedR=%i, " \
                        "Volts=%i, CurrentL=%i, CurrentR=%i, Error=%i, Acceleration=%i, Mode=%i, " \
                        "Regulator=%i, Timeout=%i " \
-                       "WHERE ID=1;",md49data.speed_l,md49data.speed_r,md49data.volts,md49data.current_l,md49data.current_r,md49data.error,md49data.acceleration,md49data.mode,md49data.regulator,md49data.timeout);
+                       "WHERE ID=1;",md49_data.speed_l,md49_data.speed_r,md49_data.volts,md49_data.current_l,md49_data.current_r,md49_data.error,md49_data.acceleration,md49_data.mode,md49_data.regulator,md49_data.timeout);
         execute_update_sqlite();
 
 }
@@ -58,8 +58,8 @@ int main( int argc, char* argv[] ){
     // *********
     ros::init(argc, argv, "sqlite_controller" );
     ros::NodeHandle n;
-    ros::Subscriber encoders_sub = n.subscribe("/encoders", 10, encoders_callback);
-    ros::Subscriber md49data_sub = n.subscribe("/md49data", 10, md49data_callback);
+    ros::Subscriber md49_encoders_sub = n.subscribe("/md49_encoders", 10, md49_encoders_callback);
+    ros::Subscriber md49_data_sub = n.subscribe("/md49_data", 10, md49_data_callback);
     ros::Rate loop_rate(2);
     ROS_INFO("sqlite_connector running...");
     ROS_INFO("=============================");
