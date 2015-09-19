@@ -1,14 +1,23 @@
 #include <ros/ros.h>                                        	/* ROS */
 #include <geometry_msgs/Twist.h>                            	/* ROS Twist message */
 #include <serialport/serialport.h>                          	// library for serial communications via UART
-#include <custom_messages/md49_data.h>				/* custom message /md49_data */
-#include <custom_messages/md49_encoders.h>			/* custom message /md49_encoders */
+#include <custom_messages/md49_data.h>                          /* custom message /md49_data */
+#include <custom_messages/md49_encoders.h>                      /* custom message /md49_encoders */
 
 #define TIMEOUT 1000                                        	// timeout for reading serialport in ms
 #define ON true
 #define OFF false
 #define OR ||
 #define NOT !=
+
+class md49{
+public:
+    md49(int speed_l, int speed_r, int mode, int acceleration, int timeout, int regulator);
+
+    void set_speed(int speed_l, int speed_r);
+    void set_mode(int mode);
+
+};
 
 void md49_set_speed (int speed_l, int speed_r);
 void md49_set_mode(int mode);
