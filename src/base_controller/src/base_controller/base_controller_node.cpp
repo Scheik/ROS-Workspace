@@ -32,7 +32,7 @@ void md49_get_encoders(void);
 void md49_get_speed(void);
 void md49_get_currents(void);
 void md49_get_error(void);
-void md49_get_volts(void);
+int md49_get_volts();
 
 custom_messages::md49_data md49_data;				// topic /md49_data
 custom_messages::md49_encoders md49_encoders;			// topic /md49_encoders
@@ -64,36 +64,6 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
     	requested_speed_r = 128 + (127*vel_cmd.angular.z);
     }
     ROS_INFO("base_controller: Received /cmd_vel message. Requested speed_l=%i, speed_r=%i",requested_speed_l,requested_speed_r);
-
-    // Compute odometry data
-    /*
-    double vr = 0.0;
-    double vl = 0.0;
-    double max_vr = 0.2;
-    double max_vl = 0.2;
-    double min_vr = 0.2;
-    double min_vl = 0.2;
-    double base_width = 0.4;                                // Base width in meters
-    if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){vl=0;vr=0;}
-    else if(vel_cmd.linear.x == 0){
-        // turning
-        vr = vel_cmd.angular.z * base_width / 2.0;
-        vl = (-1) * vr;
-    }
-    else if(vel_cmd.angular.z == 0){
-        // forward / backward
-        vl = vr = vel_cmd.linear.x;
-    }
-    else{
-        // moving doing arcs
-        vl = vel_cmd.linear.x - vel_cmd.angular.z * base_width / 2.0;
-        if (vl > max_vl) {vl=max_vl;}
-        if (vl < min_vl) {vl=min_vl;}
-        vr = vel_cmd.linear.x + vel_cmd.angular.z * base_width / 2.0;
-        if (vr > max_vr) {vr=max_vr;}
-        if (vr < min_vr) {vr=min_vr;}
-    }
-    */
 }
 
 int main( int argc, char* argv[] ){
@@ -144,7 +114,7 @@ int main( int argc, char* argv[] ){
         md49_encoders_pub.publish(md49_encoders);
         // Read other- data from MD49 via UART
         md49_get_speed();
-        md49_get_volts();
+        md49_data.volts=md49_get_volts();
         md49_get_currents();
         //md49_get_acceleration();
         //md49_get_mode();
@@ -285,7 +255,7 @@ void md49_get_encoders(void){
     //ROS_INFO("Got this reply: %i,%i,%i,%i,%i,%i,%i,%i", reply[0], reply[1], reply[2],reply[3], reply[4], reply[5], reply[6], reply[7]);
 }
 
-void md49_get_volts(void){
+int md49_get_volts(){
     // Read actual volts
     // as serial data from MD49
     // ************************
@@ -296,7 +266,8 @@ void md49_get_volts(void){
         ROS_ERROR("base_controller: Timeout reading MD49 volts!");
     }
     //ROS_INFO("Got this reply (volts): %i", reply[0]);
-    md49_data.volts=reply[0];
+    return reply[0];
+    //md49_data.volts=reply[0];
 }
 
 void md49_get_currents(void){
