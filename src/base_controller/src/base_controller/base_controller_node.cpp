@@ -327,10 +327,10 @@ int main( int argc, char* argv[] ){
     ros::Rate loop_rate(10);
     n.param<std::string>("serialport/name", serialport, "/dev/ttyS0");         // Get serialportname from ROS Parameter sevice, default is ttyS0 (pcDuinos GPIO UART)
     n.param("serialport/bps", serialport_bps, 38400);                          // Get serialport bps from ROS Parameter sevice, default is 38400Bps
-    n.param("md49/mode", mymd49.initial_mode, 0);                                // Get MD49 Mode from ROS Parameter sevice, default is Mode=0
-    n.param("md49/acceleration", mymd49.initial_acceleration, 5);                // Get MD49 Acceleration from ROS Parameter sevice, default is Acceleration=0
-    n.param("md49/regulator", mymd49.initial_regulator, true);                     // Get MD49 Regulator from ROS Parameter sevice, default is Regulator=ON
-    n.param("md49/timeout", mymd49.initial_timeout, true);                         // Get MD49 Timeout from ROS Parameter sevice, default is Timeout=ON
+    n.param("md49/mode", mymd49.initial_mode, 0);                              // Get MD49 Mode from ROS Parameter sevice, default is Mode=0
+    n.param("md49/acceleration", mymd49.initial_acceleration, 5);              // Get MD49 Acceleration from ROS Parameter sevice, default is Acceleration=0
+    n.param("md49/regulator", mymd49.initial_regulator, true);                 // Get MD49 Regulator from ROS Parameter sevice, default is Regulator=ON
+    n.param("md49/timeout", mymd49.initial_timeout, true);                     // Get MD49 Timeout from ROS Parameter sevice, default is Timeout=ON
     n.param("md49/speed_l", requested_speed_l, 128);                           // Get MD49 speed_l from ROS Parameter sevice, default is spee_l=128
     n.param("md49/speed_r", requested_speed_r, 128);                           // Get MD49 speed_r from ROS Parameter sevice, default is spee_r=128
     ROS_INFO("base_controller: base_controller running...");
