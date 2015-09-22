@@ -65,8 +65,6 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
 
 class md49{
 public:
-    //int requested_speed_l, requested_speed_r;                   	// requested speed_l and speed_r for MD49
-    //int actual_speed_l, actual_speed_r;                 	// buffers last set speed_l and speed_r
     /**
      * @brief md49
      * @param speed_l
@@ -79,9 +77,30 @@ public:
     md49(int speed_l, int speed_r, int mode, int acceleration, bool timeout, bool regulator)
     {
         set_speed(speed_l,speed_r);
-
+        set_mode(mode);
+        set_acceleration(acceleration);
+        if (timeout=ON)
+        {
+            enable_timeout();
+        }
+        else if (timeout=OFF)
+        {
+            disable_timeout();
+        }
+        if (regulator=ON)
+        {
+            enable_regulator();
+        }
+        else if (regulator=OFF)
+        {
+            disable_regulator();
+        }
     }
-
+    /**
+     * @brief set_speed
+     * @param speed_l
+     * @param speed_r
+     */
     void set_speed(int speed_l, int speed_r)
     {
         // set and send serial command for speed_l
@@ -90,14 +109,65 @@ public:
         // set and send serial command for speed_r
         const char md49_set_speed_r[]={0x00,0x32,speed_r};
         device.write(md49_set_speed_r,3);
-        //Alter speed_l and speed_r in message for topic /md49_data
-        //md49_data.speed_l=requested_speed_l;
-        //md49_data.speed_l=requested_speed_l;
         actual_speed_l=requested_speed_l; actual_speed_r=requested_speed_r;
         ROS_INFO("base_controller: Set speed_l=%i and speed_r=%i on MD49", requested_speed_l,requested_speed_r);
     }
-
-    void set_mode(int mode);
+    /**
+     * @brief set_mode
+     * @param mode
+     */
+    void set_mode(int mode)
+    {
+        const char md49_set_mode[]={0x00,0x34,mode};
+        device.write(md49_set_mode,3);
+        ROS_INFO("base_controller: Set mode=%i on MD49", mode);
+    }
+    /**
+     * @brief set_acceleration
+     * @param acceleration
+     */
+    void set_acceleration(int acceleration)
+    {
+        const char md49_set_acceleration[]={0x00,0x33,acceleration};
+        device.write(md49_set_acceleration,3);
+        ROS_INFO("base_controller: Set acceleration=%i on MD49", acceleration);
+    }
+    /**
+     * @brief enable_timeout
+     */
+    void enable_timeout(void){
+        const char md49_enable_timeout[] = {0x00,0x39};        // Command to enable md49 timeout
+        device.write(md49_enable_timeout,2);
+        md49_data.timeout=1;
+        ROS_INFO("base_controller: Enabled timeout on MD49");
+    }
+    /**
+     * @brief enable_regulator
+     */
+    void enable_regulator(void){
+        const char md49_enable_regulator[] = {0x00,0x37};        // Command to enable md49 regulator
+        device.write(md49_enable_regulator,2);
+        md49_data.regulator=1;
+        ROS_INFO("base_controller: Enabled regulator on MD49");
+    }
+    /**
+     * @brief disable_timeout
+     */
+    void disable_timeout(void){
+        const char md49_disable_timeout[] = {0x00,0x38};        // Command to enable md49 regulator
+        device.write(md49_disable_timeout,2);
+        md49_data.timeout=0;
+        ROS_INFO("base_controller: Disabled timeout on MD49");
+    }
+    /**
+     * @brief disable_regulator
+     */
+    void disable_regulator(void){
+        const char md49_disable_regulator[] = {0x00,0x36};        // Command to enable md49 timeout
+        device.write(md49_disable_regulator,2);
+        md49_data.regulator=0;
+        ROS_INFO("base_controller: Disabled regulator on MD49");
+    }
 
 };
 
@@ -134,10 +204,10 @@ int main( int argc, char* argv[] ){
 
     // Set MD49 defaults
     //md49_set_speed(requested_speed_l,requested_speed_r);
-    md49_enable_timeout();
-    md49_enable_regulator();
-    md49_set_mode(initial_md49_mode);
-    md49_set_acceleration(initial_md49_acceleration);
+    //md49_enable_timeout();
+    //md49_enable_regulator();
+    //md49_set_mode(initial_md49_mode);
+    //md49_set_acceleration(initial_md49_acceleration);
 
     // Mainloop
     while(n.ok())
@@ -165,89 +235,6 @@ int main( int argc, char* argv[] ){
     }// end.mainloop
     return 1;
 } // end.main
-
-/**
- * @brief md49_set_speed
- * @param speed_l
- * @param speed_r
- */
-/*
-void md49_set_speed(int speed_l, int speed_r){
-    // set and send serial command for speed_l
-    const char md49_set_speed_l[]={0x00,0x31,speed_l};
-    device.write(md49_set_speed_l,3);
-    // set and send serial command for speed_r
-    const char md49_set_speed_r[]={0x00,0x32,speed_r};
-    device.write(md49_set_speed_r,3);
-    //Alter speed_l and speed_r in message for topic /md49_data
-    //md49_data.speed_l=requested_speed_l;
-    //md49_data.speed_l=requested_speed_l;
-    actual_speed_l=requested_speed_l; actual_speed_r=requested_speed_r;
-    ROS_INFO("base_controller: Set speed_l=%i and speed_r=%i on MD49", requested_speed_l,requested_speed_r);
-}
-*/
-
-/**
- * @brief md49_set_mode
- * @param mode
- */
-void md49_set_mode(int mode){
-    const char md49_set_mode[]={0x00,0x34,mode};
-    device.write(md49_set_mode,3);
-    ROS_INFO("base_controller: Set mode=%i on MD49", mode);
-    //md49_data.mode=mode;
-}
-
-/**
- * @brief md49_set_acceleration
- * @param acceleration
- */
-void md49_set_acceleration(int acceleration){
-    const char md49_set_acceleration[]={0x00,0x33,acceleration};
-    device.write(md49_set_acceleration,3);
-    ROS_INFO("base_controller: Set acceleration=%i on MD49", acceleration);
-    //md49_data.acceleration=acceleration;
-}
-
-/**
- * @brief md49_enable_timeout
- */
-void md49_enable_timeout(void){
-    const char md49_enable_timeout[] = {0x00,0x39};        // Command to enable md49 timeout
-    device.write(md49_enable_timeout,2);
-    md49_data.timeout=1;
-    ROS_INFO("base_controller: Enabled timeout on MD49");
-}
-
-/**
- * @brief md49_enable_regulator
- */
-void md49_enable_regulator(void){
-    const char md49_enable_regulator[] = {0x00,0x37};        // Command to enable md49 regulator
-    device.write(md49_enable_regulator,2);
-    md49_data.regulator=1;
-    ROS_INFO("base_controller: Enabled regulator on MD49");
-}
-
-/**
- * @brief md49_disable_timeout
- */
-void md49_disable_timeout(void){
-    const char md49_disable_timeout[] = {0x00,0x38};        // Command to enable md49 regulator
-    device.write(md49_disable_timeout,2);
-    md49_data.timeout=0;
-    ROS_INFO("base_controller: Disabled timeout on MD49");
-}
-
-/**
- * @brief md49_disable_regulator
- */
-void md49_disable_regulator(void){
-    const char md49_disable_regulator[] = {0x00,0x36};        // Command to enable md49 timeout
-    device.write(md49_disable_regulator,2);
-    md49_data.regulator=0;
-    ROS_INFO("base_controller: Disabled regulator on MD49");
-}
 
 /**
  * @brief md49_get_acceleration
