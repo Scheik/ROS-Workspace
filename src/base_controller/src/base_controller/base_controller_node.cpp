@@ -1,4 +1,4 @@
-#include <ros/ros.h>                                                                            /**<  ROS */
+#include <ros/ros.h>                                                                            /**<  Include ROS functionality */
 #include <geometry_msgs/Twist.h>                                                                /**<  ROS Twist message */
 #include <serialport/serialport.h>                                                              /**<  library for serial communications via UART*/
 #include <custom_messages/md49_data.h>                                                          /**<  custom message /md49_data */
