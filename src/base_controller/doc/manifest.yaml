@@ -1,0 +1,23 @@
+actions: []
+authors: Fabian Prinzing <scheik.todeswache@googlemail.com>
+brief: ''
+bugtracker: ''
+depends:
+- catkin
+- roscpp
+- message_runtime
+- std_msgs
+- serialport
+- tf
+- rospy
+- custom_messages
+- message_generation
+- geometry_msgs
+description: The base_controller package
+license: BSD
+maintainers: scheik <scheik.todeswache@googlemail.com>
+msgs: []
+package_type: package
+repo_url: ''
+srvs: []
+url: ''
