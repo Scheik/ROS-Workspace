@@ -36,14 +36,37 @@ int initial_md49_mode;                                              	// keeps MD
 int initial_md49_acceleration;                                      	// keeps MD49 Acceleration,  is read from parameters server
 bool initial_md49_timeout;
 bool initial_md49_regulator;
-//int requested_speed_l, requested_speed_r;                   	// requested speed_l and speed_r for MD49
-//int actual_speed_l=128, actual_speed_r=128;                 	// buffers last set speed_l and speed_r
+int requested_speed_l, requested_speed_r;                   	// requested speed_l and speed_r for MD49
+int actual_speed_l=128, actual_speed_r=128;                 	// buffers last set speed_l and speed_r
 char reply[8];                                             	// max buffersize serial input
+
+/**
+ * @brief cmd_vel_callback
+ * @param vel_cmd
+ */
+void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
+    // Drive For- or Backward:
+    if (vel_cmd.linear.x != 0){
+        requested_speed_l = 128+(635*vel_cmd.linear.x);
+        requested_speed_r = 128+(635*vel_cmd.linear.x);
+    }
+    // Drive stopped:
+    if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){
+        requested_speed_l = 128;
+        requested_speed_r = 128;
+    }
+    // Turn clock- or counterclockwise:
+    if (vel_cmd.angular.z != 0){
+        requested_speed_l = 128 - (127*vel_cmd.angular.z);
+        requested_speed_r = 128 + (127*vel_cmd.angular.z);
+    }
+    ROS_INFO("base_controller: Received /cmd_vel message. Requested speed_l=%i, speed_r=%i",requested_speed_l,requested_speed_r);
+}
 
 class md49{
 public:
-    int requested_speed_l, requested_speed_r;                   	// requested speed_l and speed_r for MD49
-    int actual_speed_l, actual_speed_r;                 	// buffers last set speed_l and speed_r
+    //int requested_speed_l, requested_speed_r;                   	// requested speed_l and speed_r for MD49
+    //int actual_speed_l, actual_speed_r;                 	// buffers last set speed_l and speed_r
     /**
      * @brief md49
      * @param speed_l
@@ -78,34 +101,8 @@ public:
 
 };
 
-//generate class md49
-md49 mymd49(mymd49.requested_speed_l,mymd49.requested_speed_r,initial_md49_mode,initial_md49_acceleration,initial_md49_timeout,initial_md49_regulator);
-
-
-/**
- * @brief cmd_vel_callback
- * @param vel_cmd
- */
-void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
-    // Drive For- or Backward:
-    if (vel_cmd.linear.x != 0){
-        mymd49.requested_speed_l = 128+(635*vel_cmd.linear.x);
-        mymd49.requested_speed_r = 128+(635*vel_cmd.linear.x);
-    }
-    // Drive stopped:
-    if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){
-        mymd49.requested_speed_l = 128;
-        mymd49.requested_speed_r = 128;
-    }
-    // Turn clock- or counterclockwise:
-    if (vel_cmd.angular.z != 0){
-        mymd49.requested_speed_l = 128 - (127*vel_cmd.angular.z);
-        mymd49.requested_speed_r = 128 + (127*vel_cmd.angular.z);
-    }
-    ROS_INFO("base_controller: Received /cmd_vel message. Requested speed_l=%i, speed_r=%i",mymd49.requested_speed_l,mymd49.requested_speed_r);
-}
-
 int main( int argc, char* argv[] ){
+
     // Init node
     ros::init(argc, argv, "base_controller" );
     ros::NodeHandle n;
@@ -119,8 +116,8 @@ int main( int argc, char* argv[] ){
     n.param("md49/acceleration", initial_md49_acceleration, 5);                // Get MD49 Acceleration from ROS Parameter sevice, default is Acceleration=0
     n.param("md49/regulator", initial_md49_regulator, ON);                     // Get MD49 Regulator from ROS Parameter sevice, default is Regulator=ON
     n.param("md49/timeout", initial_md49_timeout, ON);                         // Get MD49 Timeout from ROS Parameter sevice, default is Timeout=ON
-    n.param("md49/speed_l", mymd49.requested_speed_l, 128);                           // Get MD49 speed_l from ROS Parameter sevice, default is spee_l=128
-    n.param("md49/speed_r", mymd49.requested_speed_r, 128);                           // Get MD49 speed_r from ROS Parameter sevice, default is spee_r=128
+    n.param("md49/speed_l", requested_speed_l, 128);                           // Get MD49 speed_l from ROS Parameter sevice, default is spee_l=128
+    n.param("md49/speed_r", requested_speed_r, 128);                           // Get MD49 speed_r from ROS Parameter sevice, default is spee_r=128
     ROS_INFO("base_controller: base_controller running...");
 
     // Open serialport
@@ -131,6 +128,9 @@ int main( int argc, char* argv[] ){
         ROS_BREAK();
     }
     ROS_INFO("base_controller: Opened Serialport at %s with %i bps.",serialport.c_str(),serialport_bps);
+
+    //generate class md49
+    md49 mymd49(requested_speed_l,requested_speed_r,initial_md49_mode,initial_md49_acceleration,initial_md49_timeout,initial_md49_regulator);
 
     // Set MD49 defaults
     //md49_set_speed(requested_speed_l,requested_speed_r);
@@ -143,8 +143,8 @@ int main( int argc, char* argv[] ){
     while(n.ok())
     {
         // set speed on MD49 via UART as set through /cmd_vel if speed_l or speed_r changed since last cycle
-        if ((mymd49.requested_speed_l NOT mymd49.actual_speed_l) OR (mymd49.requested_speed_r NOT mymd49.actual_speed_r)){
-            mymd49.set_speed(mymd49.requested_speed_l,mymd49.requested_speed_r);
+        if ((requested_speed_l NOT actual_speed_l) OR (requested_speed_r NOT actual_speed_r)){
+            mymd49.set_speed(requested_speed_l,requested_speed_r);
         }
         // Read encoder- data from MD49 via UART and publish encoder values as read to topic /md49_encoders
         md49_get_encoders();
