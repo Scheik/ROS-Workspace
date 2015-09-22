@@ -6,58 +6,34 @@
 
 #define TIMEOUT 1000                                                                            /**<  timeout for reading serialport in ms */
 
-custom_messages::md49_data md49_data;                                                           /**<  topic /md49_data */
-custom_messages::md49_encoders md49_encoders;                                                   /**<  topic /md49_encoders */
+//custom_messages::md49_data md49_data;                                                           /**<  topic /md49_data */
+//custom_messages::md49_encoders md49_encoders;                                                   /**<  topic /md49_encoders */
 cereal::CerealPort device;                                                                      /**<  serialport */
 std::string serialport;                                                                         /**<  used serialport on pcDuino, is read from parameters server */
 int serialport_bps;                                                                             /**<  used baudrate, is read from parameters server */
 char reply[8];                                                                                  /**<  max buffersize serial input */
-int initial_md49_mode;                                                                          /**<  MD49 Mode, is read from parameters server */
-int initial_md49_acceleration;                                                                  /**<  MD49 Acceleration,  is read from parameters server */
-bool initial_md49_timeout;                                                                      /**<  MD49 Timeout-Mode, is read from parameters server */
-bool initial_md49_regulator;                                                                    /**<  MD40 Regulator-Mode , is read from parameters server */
 int requested_speed_l, requested_speed_r;                                                       /**<  requested speed_l and speed_r for MD49 */
-int actual_speed_l=128, actual_speed_r=128;                                                     /**<  buffers actual set speed_l and speed_r */
-
-
-/**
- * @brief cmd_vel_callback
- * @param vel_cmd
- */
-void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
-    // Drive For- or Backward:
-    if (vel_cmd.linear.x != 0){
-        requested_speed_l = 128+(635*vel_cmd.linear.x);
-        requested_speed_r = 128+(635*vel_cmd.linear.x);
-    }
-    // Drive stopped:
-    if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){
-        requested_speed_l = 128;
-        requested_speed_r = 128;
-    }
-    // Turn clock- or counterclockwise:
-    if (vel_cmd.angular.z != 0){
-        requested_speed_l = 128 - (127*vel_cmd.angular.z);
-        requested_speed_r = 128 + (127*vel_cmd.angular.z);
-    }
-    ROS_INFO("base_controller: Received /cmd_vel message. Requested speed_l=%i, speed_r=%i",requested_speed_l,requested_speed_r);
-}
+int actual_speed_l, actual_speed_r;                                                             /**<  buffers actual set speed_l and speed_r */
 
 /**
  * @brief The md49 class
  */
 class md49{
 public:
+    custom_messages::md49_data md49_data;                                                           /**<  topic /md49_data */
+    custom_messages::md49_encoders md49_encoders;                                                   /**<  topic /md49_encoders */
+    int initial_mode;                                                                          /**<  MD49 Mode, is read from parameters server */
+    int initial_acceleration;                                                                  /**<  MD49 Acceleration,  is read from parameters server */
+    bool initial_timeout;                                                                      /**<  MD49 Timeout-Mode, is read from parameters server */
+    bool initial_regulator;                                                                    /**<  MD40 Regulator-Mode , is read from parameters server */
     /**
-     * @brief md49 : The constructor
-     * @param speed_l
-     * @param speed_r
-     * @param mode
-     * @param acceleration
-     * @param timeout
-     * @param regulator
+     * @brief md49 constructor
      */
-    md49(int speed_l, int speed_r, int mode, int acceleration, bool timeout, bool regulator)
+    md49()
+    {
+        //nothing to do in the constructor, MD49 is initialized in function init
+    }
+    void init(int speed_l, int speed_r, int mode, int acceleration, bool timeout, bool regulator)
     {
         set_speed(speed_l,speed_r);
         set_mode(mode);
@@ -306,9 +282,42 @@ public:
         device.write(md49_reset_encoders,2);
         ROS_INFO("base_controller: Reset encoders on MD49");
     }
-};
+};//end of class md49
 
+/**
+ * @brief cmd_vel_callback: Is called, whenever a message (cmd_vel) arrives
+ * @param vel_cmd
+ */
+void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
+    // Drive For- or Backward:
+    if (vel_cmd.linear.x != 0){
+        requested_speed_l = 128+(635*vel_cmd.linear.x);
+        requested_speed_r = 128+(635*vel_cmd.linear.x);
+    }
+    // Drive stopped:
+    if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){
+        requested_speed_l = 128;
+        requested_speed_r = 128;
+    }
+    // Turn clock- or counterclockwise:
+    if (vel_cmd.angular.z != 0){
+        requested_speed_l = 128 - (127*vel_cmd.angular.z);
+        requested_speed_r = 128 + (127*vel_cmd.angular.z);
+    }
+    ROS_INFO("base_controller: Received /cmd_vel message. Requested speed_l=%i, speed_r=%i",requested_speed_l,requested_speed_r);
+}
+
+/**
+ * @brief main
+ * @param argc
+ * @param argv
+ * @return
+ */
 int main( int argc, char* argv[] ){
+    // *******************************************
+    // * Generate instance mymd49 of class md49  *
+    // *******************************************
+    md49 mymd49;
     // *****************
     // * Init ROS node *
     // *****************
@@ -320,10 +329,10 @@ int main( int argc, char* argv[] ){
     ros::Rate loop_rate(10);
     n.param<std::string>("serialport/name", serialport, "/dev/ttyS0");         // Get serialportname from ROS Parameter sevice, default is ttyS0 (pcDuinos GPIO UART)
     n.param("serialport/bps", serialport_bps, 38400);                          // Get serialport bps from ROS Parameter sevice, default is 38400Bps
-    n.param("md49/mode", initial_md49_mode, 0);                                // Get MD49 Mode from ROS Parameter sevice, default is Mode=0
-    n.param("md49/acceleration", initial_md49_acceleration, 5);                // Get MD49 Acceleration from ROS Parameter sevice, default is Acceleration=0
-    n.param("md49/regulator", initial_md49_regulator, true);                     // Get MD49 Regulator from ROS Parameter sevice, default is Regulator=ON
-    n.param("md49/timeout", initial_md49_timeout, true);                         // Get MD49 Timeout from ROS Parameter sevice, default is Timeout=ON
+    n.param("md49/mode", mymd49.initial_mode, 0);                                // Get MD49 Mode from ROS Parameter sevice, default is Mode=0
+    n.param("md49/acceleration", mymd49.initial_acceleration, 5);                // Get MD49 Acceleration from ROS Parameter sevice, default is Acceleration=0
+    n.param("md49/regulator", mymd49.initial_regulator, true);                     // Get MD49 Regulator from ROS Parameter sevice, default is Regulator=ON
+    n.param("md49/timeout", mymd49.initial_timeout, true);                         // Get MD49 Timeout from ROS Parameter sevice, default is Timeout=ON
     n.param("md49/speed_l", requested_speed_l, 128);                           // Get MD49 speed_l from ROS Parameter sevice, default is spee_l=128
     n.param("md49/speed_r", requested_speed_r, 128);                           // Get MD49 speed_r from ROS Parameter sevice, default is spee_r=128
     ROS_INFO("base_controller: base_controller running...");
@@ -337,10 +346,10 @@ int main( int argc, char* argv[] ){
         ROS_BREAK();
     }
     ROS_INFO("base_controller: Opened Serialport at %s with %i bps.",serialport.c_str(),serialport_bps);
-    // ***************************************************************************************
-    // * Generate instance mymd49 of class md49 and set initial settings through constructor *
-    // ***************************************************************************************
-    md49 mymd49(requested_speed_l,requested_speed_r,initial_md49_mode,initial_md49_acceleration,initial_md49_timeout,initial_md49_regulator);
+    // *********************************
+    // * Set initial settings for MD49 *
+    // *********************************
+    mymd49.init(requested_speed_l,requested_speed_r,mymd49.initial_mode,mymd49.initial_acceleration,mymd49.initial_timeout,mymd49.initial_regulator);
     // ************
     // * Mainloop *
     // ************
@@ -352,21 +361,22 @@ int main( int argc, char* argv[] ){
         }
         // Read encoder- data from MD49 via UART and publish encoder values as read to topic /md49_encoders
         mymd49.get_encoders();
-        md49_encoders_pub.publish(md49_encoders);
+        md49_encoders_pub.publish(mymd49.md49_encoders);
         // Read other- data from MD49 via UART and publish MD49 data as read to topic /md49_data
-        md49_data.speed_l=mymd49.get_speed_l();
-        md49_data.speed_r=mymd49.get_speed_r();
-        md49_data.volts=mymd49.get_volts();
-        md49_data.current_l=mymd49.get_current_l();
-        md49_data.current_r=mymd49.get_current_r();
-        md49_data.acceleration=mymd49.get_acceleration();
-        md49_data.mode=mymd49.get_mode();
-        md49_data.error=mymd49.get_error();
-        md49_data_pub.publish(md49_data);
+        mymd49.md49_data.speed_l=mymd49.get_speed_l();
+        mymd49.md49_data.speed_r=mymd49.get_speed_r();
+        mymd49.md49_data.volts=mymd49.get_volts();
+        mymd49.md49_data.current_l=mymd49.get_current_l();
+        mymd49.md49_data.current_r=mymd49.get_current_r();
+        mymd49.md49_data.acceleration=mymd49.get_acceleration();
+        mymd49.md49_data.mode=mymd49.get_mode();
+        mymd49.md49_data.error=mymd49.get_error();
+        md49_data_pub.publish(mymd49.md49_data);
         // Loop
         ros::spinOnce();
         loop_rate.sleep();
     }// end.mainloop
     return 1;
 } // end.main
+
 
