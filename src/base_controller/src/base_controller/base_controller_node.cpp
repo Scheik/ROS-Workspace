@@ -6,8 +6,6 @@
 
 #define TIMEOUT 1000                                                                            /**<  timeout for reading serialport in ms */
 
-//custom_messages::md49_data md49_data;                                                           /**<  topic /md49_data */
-//custom_messages::md49_encoders md49_encoders;                                                   /**<  topic /md49_encoders */
 cereal::CerealPort device;                                                                      /**<  serialport */
 std::string serialport;                                                                         /**<  used serialport on pcDuino, is read from parameters server */
 int serialport_bps;                                                                             /**<  used baudrate, is read from parameters server */
@@ -20,12 +18,12 @@ int actual_speed_l, actual_speed_r;                                             
  */
 class md49{
 public:
-    custom_messages::md49_data md49_data;                                                           /**<  topic /md49_data */
-    custom_messages::md49_encoders md49_encoders;                                                   /**<  topic /md49_encoders */
-    int initial_mode;                                                                          /**<  MD49 Mode, is read from parameters server */
-    int initial_acceleration;                                                                  /**<  MD49 Acceleration,  is read from parameters server */
-    bool initial_timeout;                                                                      /**<  MD49 Timeout-Mode, is read from parameters server */
-    bool initial_regulator;                                                                    /**<  MD40 Regulator-Mode , is read from parameters server */
+    custom_messages::md49_data md49_data;                                                       /**<  topic /md49_data */
+    custom_messages::md49_encoders md49_encoders;                                               /**<  topic /md49_encoders */
+    int initial_mode;                                                                           /**<  MD49 Mode, is read from parameters server */
+    int initial_acceleration;                                                                   /**<  MD49 Acceleration,  is read from parameters server */
+    bool initial_timeout;                                                                       /**<  MD49 Timeout-Mode, is read from parameters server */
+    bool initial_regulator;                                                                     /**<  MD40 Regulator-Mode , is read from parameters server */
     /**
      * @brief md49 constructor
      */
