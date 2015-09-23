@@ -1,3 +1,36 @@
+/**
+ * @file    base_controller_node.cpp
+ * @author  Fabian Prinzing <scheik.todeswache@googlemail.com>
+ * @version v2.0.0
+ *
+ * @section LICENSE
+ *
+ * Copyright (C) 2015, Fabian Prinzing. All Rights Reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *   1.Redistributions of source code must retain the above copyright notice,
+ *     this list of conditions and the following disclaimer.
+ *   2.Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *   3.The name of the author may not be used to endorse or promote products
+ *     derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY Fabian Prinzing "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+ * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
+ * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * @section DESCRIPTION
+ *
+ * Details
+ */
+
 #include <ros/ros.h>                                                                            /**<  Include ROS functionality */
 #include <geometry_msgs/Twist.h>                                                                /**<  ROS Twist message */
 #include <serialport/serialport.h>                                                              /**<  library for serial communications via UART*/
@@ -346,21 +379,22 @@ public:
 int main( int argc, char* argv[] )
 {
     ros::init(argc, argv, "base_controller" );                                                          /**< Init as ROS node */
-    SubscribeAndPublish mySubscribeAndPublish;                                                          /**< Generate instance mySubsribeAndPublish of class SubscribeAndPublish */
     ros::Rate loop_rate(10);                                                                            /**< Set ROS loop rate */
+    SubscribeAndPublish mySubscribeAndPublish;                                                          /**< Generate instance mySubsribeAndPublish of class SubscribeAndPublish */
     MD49 myMD49;                                                                                        /**< Generate instance myMD49 of class MD49 */
+
     // ********************************************
     // * Load parameters from config/.yaml- files *
     // ********************************************
-    mySubscribeAndPublish.n.param<std::string>("serialport/name", serialport, "/dev/ttyS0");         // Get serialportname from ROS Parameter sevice, default is ttyS0 (pcDuinos GPIO UART)
-    mySubscribeAndPublish.n.param("serialport/bps", serialport_bps, 38400);                          // Get serialport bps from ROS Parameter sevice, default is 38400Bps
-    mySubscribeAndPublish.n.param("md49/mode", myMD49.initial_mode, 0);                              // Get MD49 Mode from ROS Parameter sevice, default is Mode=0
-    mySubscribeAndPublish.n.param("md49/acceleration", myMD49.initial_acceleration, 5);              // Get MD49 Acceleration from ROS Parameter sevice, default is Acceleration=0
-    mySubscribeAndPublish.n.param("md49/regulator", myMD49.initial_regulator, true);                 // Get MD49 Regulator from ROS Parameter sevice, default is Regulator=ON
-    mySubscribeAndPublish.n.param("md49/timeout", myMD49.initial_timeout, true);                     // Get MD49 Timeout from ROS Parameter sevice, default is Timeout=ON
-    mySubscribeAndPublish.n.param("md49/speed_l", mySubscribeAndPublish.requested_speed_l, 128);                           // Get MD49 speed_l from ROS Parameter sevice, default is spee_l=128
-    mySubscribeAndPublish.n.param("md49/speed_r", mySubscribeAndPublish.requested_speed_r, 128);                           // Get MD49 speed_r from ROS Parameter sevice, default is spee_r=128
-    ROS_INFO("base_controller: base_controller running...");
+    mySubscribeAndPublish.n.param<std::string>("serialport/name", serialport, "/dev/ttyS0");            /**< Get serialportname from ROS Parameter sevice, default is ttyS0 (pcDuinos GPIO UART) */
+    mySubscribeAndPublish.n.param("serialport/bps", serialport_bps, 38400);                             /**< Get serialport bps from ROS Parameter sevice, default is 38400Bps */
+    mySubscribeAndPublish.n.param("md49/mode", myMD49.initial_mode, 0);                                 /**< Get MD49 Mode from ROS Parameter sevice, default is Mode=0 */
+    mySubscribeAndPublish.n.param("md49/acceleration", myMD49.initial_acceleration, 5);                 /**< Get MD49 Acceleration from ROS Parameter sevice, default is Acceleration=0 */
+    mySubscribeAndPublish.n.param("md49/regulator", myMD49.initial_regulator, true);                    /**< Get MD49 Regulator from ROS Parameter sevice, default is Regulator=ON */
+    mySubscribeAndPublish.n.param("md49/timeout", myMD49.initial_timeout, true);                        /**< Get MD49 Timeout from ROS Parameter sevice, default is Timeout=ON */
+    mySubscribeAndPublish.n.param("md49/speed_l", mySubscribeAndPublish.requested_speed_l, 128);        /**< Get MD49 speed_l from ROS Parameter sevice, default is spee_l=128 */
+    mySubscribeAndPublish.n.param("md49/speed_r", mySubscribeAndPublish.requested_speed_r, 128);        /**< Get MD49 speed_r from ROS Parameter sevice, default is spee_r=128 */
+
     // *******************
     // * Open serialport *
     // *******************
@@ -371,6 +405,7 @@ int main( int argc, char* argv[] )
         ROS_BREAK();
     }
     ROS_INFO("base_controller: Opened Serialport at %s with %i bps.",serialport.c_str(),serialport_bps);
+
     // *********************************
     // * Set initial settings for MD49 *
     // *********************************
