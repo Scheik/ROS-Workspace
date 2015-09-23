@@ -22,8 +22,8 @@ public:
     ros::Subscriber vel_cmd_sub;
     ros::Publisher md49_encoders_pub;
     ros::Publisher md49_data_pub;
-    int requested_speed_l, requested_speed_r;                                                       /**<  requested speed_l and speed_r for MD49 computed from cmd_vel */
-    int actual_speed_l, actual_speed_r;                                                             /**<  buffers actual set speed_l and speed_r for MD49 */
+    int requested_speed_l, requested_speed_r;                                                   /**<  requested speed_l and speed_r for MD49 computed from cmd_vel */
+    int actual_speed_l, actual_speed_r;                                                         /**<  buffers actual set speed_l and speed_r for MD49 */
     /**
      * @brief SubscribeAndPublish constructor
      */
@@ -32,7 +32,7 @@ public:
         vel_cmd_sub = n.subscribe("/cmd_vel", 10, &SubscribeAndPublish::cmd_vel_callback, this);
         md49_encoders_pub = n.advertise<custom_messages::md49_encoders>("md49_encoders",10);
         md49_data_pub = n.advertise<custom_messages::md49_data>("md49_data",10);
-    }
+    }//end.constructor SubscribeAndPublish
     /**
      * @brief cmd_vel_callback
      * @param vel_cmd
@@ -55,14 +55,15 @@ public:
             requested_speed_r = 128 + (127*vel_cmd.angular.z);
         }
         ROS_INFO("base_controller: Received /cmd_vel message. Requested speed_l=%i, speed_r=%i",requested_speed_l,requested_speed_r);
-    }// End of function cmd_vel_callback
+    }//end.cmd_vel_callback
 };// End of class SubscribeAndPublish
 
 
 /**
  * @brief The MD49 class
  */
-class MD49{
+class MD49
+{
 public:
     custom_messages::md49_data md49_data;                                                       /**<  genrate instance of topic /md49_data from package custom_messages */
     custom_messages::md49_encoders md49_encoders;                                               /**<  genrate instance of topic /md49_encoders from package custom_messages */
@@ -76,7 +77,16 @@ public:
     MD49()
     {
         //nothing to do in the constructor, MD49 is initialized in function init
-    }
+    }//end.constructor MD49
+    /**
+     * @brief init
+     * @param speed_l
+     * @param speed_r
+     * @param mode
+     * @param acceleration
+     * @param timeout
+     * @param regulator
+     */
     void init(int speed_l, int speed_r, int mode, int acceleration, bool timeout, bool regulator)
     {
         set_speed(speed_l,speed_r);
@@ -98,7 +108,7 @@ public:
         {
             disable_regulator();
         }
-    }
+    }//end.init
     /**
      * @brief set_speed
      * @param speed_l
@@ -113,7 +123,7 @@ public:
         const char md49_set_speed_r[]={0x00,0x32,speed_r};
         device.write(md49_set_speed_r,3);
         ROS_INFO("base_controller: Set speed_l=%i and speed_r=%i on MD49", speed_l,speed_r);
-    }
+    }//end.set_speed
     /**
      * @brief set_mode
      * @param mode
@@ -123,7 +133,7 @@ public:
         const char md49_set_mode[]={0x00,0x34,mode};
         device.write(md49_set_mode,3);
         ROS_INFO("base_controller: Set mode=%i on MD49", mode);
-    }
+    }//end.set_mode
     /**
      * @brief set_acceleration
      * @param acceleration
@@ -133,7 +143,7 @@ public:
         const char md49_set_acceleration[]={0x00,0x33,acceleration};
         device.write(md49_set_acceleration,3);
         ROS_INFO("base_controller: Set acceleration=%i on MD49", acceleration);
-    }
+    }//end.set_acceleration
     /**
      * @brief enable_timeout
      */
@@ -142,7 +152,7 @@ public:
         device.write(md49_enable_timeout,2);
         md49_data.timeout=1;
         ROS_INFO("base_controller: Enabled timeout on MD49");
-    }
+    }//end.enable_timeout
     /**
      * @brief enable_regulator
      */
@@ -151,7 +161,7 @@ public:
         device.write(md49_enable_regulator,2);
         md49_data.regulator=1;
         ROS_INFO("base_controller: Enabled regulator on MD49");
-    }
+    }//end.enable_regulator
     /**
      * @brief disable_timeout
      */
@@ -160,7 +170,7 @@ public:
         device.write(md49_disable_timeout,2);
         md49_data.timeout=0;
         ROS_INFO("base_controller: Disabled timeout on MD49");
-    }
+    }//end.disable_timeout
     /**
      * @brief disable_regulator
      */
@@ -169,7 +179,7 @@ public:
         device.write(md49_disable_regulator,2);
         md49_data.regulator=0;
         ROS_INFO("base_controller: Disabled regulator on MD49");
-    }
+    }//end.disable_regulator
     /**
      * @brief get_acceleration
      * @return
@@ -183,7 +193,7 @@ public:
         }
         //ROS_INFO("base_controller: MD49 Acceleration= %i", reply[0]);
         return reply[0];
-    }
+    }//end.get_acceleration
     /**
      * @brief get_mode
      * @return
@@ -197,7 +207,7 @@ public:
         }
         //ROS_INFO("base_controller: MD49 Mode= %i", reply[0]);
         return reply[0];
-    }
+    }//end.get_mode
     /**
      * @brief get_speed_l
      * @return
@@ -211,7 +221,7 @@ public:
         }
         return reply[0];
         //ROS_INFO("base_controller: MD49 speed_l= %i, speed_r= %i", speed_l,speed_r);
-    }
+    }//end.get_speed_l
     /**
      * @brief get_speed_r
      * @return
@@ -225,7 +235,7 @@ public:
         }
         return reply[0];
         //ROS_INFO("base_controller: MD49 speed_l= %i, speed_r= %i", speed_l,speed_r);
-    }
+    }//end.get_speed_r
     /**
      * @brief get_encoders
      */
@@ -259,7 +269,7 @@ public:
         md49_encoders.encoderbyte3r=reply[6];
         md49_encoders.encoderbyte4r=reply[7];
         //ROS_INFO("Got this reply: %i,%i,%i,%i,%i,%i,%i,%i", reply[0], reply[1], reply[2],reply[3], reply[4], reply[5], reply[6], reply[7]);
-    }
+    }//end.get_encoders
     /**
      * @brief get_volts
      * @return
@@ -273,7 +283,7 @@ public:
         }
         //ROS_INFO("Got this reply (volts): %i", reply[0]);
         return reply[0];
-    }
+    }//end.get_volts
     /**
      * @brief get_current_l
      * @return
@@ -287,7 +297,7 @@ public:
         }
         //ROS_INFO("Got this reply (current_l): %i", reply[0]);
         return reply[0];
-    }
+    }//end.get_current_l
     /**
      * @brief get_current_r
      * @return
@@ -301,13 +311,12 @@ public:
         }
         //ROS_INFO("Got this reply (current_r): %i", reply[0]);
         return reply[0];
-    }
+    }//end.get_current_r
     /**
      * @brief get_error
      * @return
      */
     int get_error(){
-        // ************************
         const char md49_get_error[] = {0x00,0x2D};                  // put together command to read md49 error
         device.write(md49_get_error,2);
         try{ device.read(reply, 1, TIMEOUT); }                      // get answer, error
@@ -316,7 +325,7 @@ public:
         }
         //ROS_INFO("Got this reply (error): %i", reply[0]);
         return reply[0];
-    }
+    }//end.get_error
     /**
      * @brief reset_encoders
      */
@@ -324,7 +333,7 @@ public:
         const char md49_reset_encoders[] = {0x00,0x35};             // put together command to reset md49 encoders
         device.write(md49_reset_encoders,2);
         ROS_INFO("base_controller: Reset encoders on MD49");
-    }
+    }//end.reset_encoders
 };//End of class MD49
 
 
@@ -340,7 +349,6 @@ int main( int argc, char* argv[] )
     SubscribeAndPublish mySubscribeAndPublish;                                                          /**< Generate instance mySubsribeAndPublish of class SubscribeAndPublish */
     ros::Rate loop_rate(10);                                                                            /**< Set ROS loop rate */
     MD49 myMD49;                                                                                        /**< Generate instance myMD49 of class MD49 */
-
     // ********************************************
     // * Load parameters from config/.yaml- files *
     // ********************************************
@@ -353,7 +361,6 @@ int main( int argc, char* argv[] )
     mySubscribeAndPublish.n.param("md49/speed_l", mySubscribeAndPublish.requested_speed_l, 128);                           // Get MD49 speed_l from ROS Parameter sevice, default is spee_l=128
     mySubscribeAndPublish.n.param("md49/speed_r", mySubscribeAndPublish.requested_speed_r, 128);                           // Get MD49 speed_r from ROS Parameter sevice, default is spee_r=128
     ROS_INFO("base_controller: base_controller running...");
-
     // *******************
     // * Open serialport *
     // *******************
@@ -364,7 +371,6 @@ int main( int argc, char* argv[] )
         ROS_BREAK();
     }
     ROS_INFO("base_controller: Opened Serialport at %s with %i bps.",serialport.c_str(),serialport_bps);
-
     // *********************************
     // * Set initial settings for MD49 *
     // *********************************
@@ -375,17 +381,23 @@ int main( int argc, char* argv[] )
     // ************
     while(mySubscribeAndPublish.n.ok())
     {
-        // set speed on MD49 via UART as set through /cmd_vel if speed_l or speed_r changed since last cycle
+        // *****************************************************************************************************
+        // * set speed on MD49 via UART as set through /cmd_vel if speed_l or speed_r changed since last cycle *
+        // *****************************************************************************************************
         if ((mySubscribeAndPublish.requested_speed_l != mySubscribeAndPublish.actual_speed_l) || (mySubscribeAndPublish.requested_speed_r != mySubscribeAndPublish.actual_speed_r))
         {
             myMD49.set_speed(mySubscribeAndPublish.requested_speed_l,mySubscribeAndPublish.requested_speed_r);
             mySubscribeAndPublish.actual_speed_l=mySubscribeAndPublish.requested_speed_l;
             mySubscribeAndPublish.actual_speed_r=mySubscribeAndPublish.requested_speed_r;
         }
-        // Read encoder- data from MD49 via UART and publish encoder values as read to topic /md49_encoders
+        // ****************************************************************************************************
+        // * Read encoder- data from MD49 via UART and publish encoder values as read to topic /md49_encoders *
+        // ****************************************************************************************************
         myMD49.get_encoders();
         mySubscribeAndPublish.md49_encoders_pub.publish(myMD49.md49_encoders);
-        // Read other- data from MD49 via UART and publish MD49 data as read to topic /md49_data
+        // *****************************************************************************************
+        // * Read other- data from MD49 via UART and publish MD49 data as read to topic /md49_data *
+        // *****************************************************************************************
         myMD49.md49_data.speed_l=myMD49.get_speed_l();
         myMD49.md49_data.speed_r=myMD49.get_speed_r();
         myMD49.md49_data.volts=myMD49.get_volts();
@@ -395,7 +407,9 @@ int main( int argc, char* argv[] )
         myMD49.md49_data.mode=myMD49.get_mode();
         myMD49.md49_data.error=myMD49.get_error();
         mySubscribeAndPublish.md49_data_pub.publish(myMD49.md49_data);
-        // Loop
+        // ********
+        // * Loop *
+        // ********
         ros::spinOnce();
         loop_rate.sleep();
     }// end.mainloop
