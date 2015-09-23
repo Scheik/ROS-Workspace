@@ -32,7 +32,7 @@
     pkg="base_controller"   
     type="base_controller"
     required="true"
-    output="screen"
+    output="log"
     machine="robotOS"
   />
   <!-- Run joy_node -->
