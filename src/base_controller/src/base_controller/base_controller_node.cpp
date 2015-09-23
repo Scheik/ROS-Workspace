@@ -60,7 +60,7 @@ public:
     /**
      * @brief SubscribeAndPublish constructor
      */
-    SubscribeAndPublish()
+    SubscribeAndPublish() : actual_speed_l(128), actual_speed_r(128), requested_speed_l(128), requested_speed_r(128)
     {
         vel_cmd_sub = n.subscribe("/cmd_vel", 10, &SubscribeAndPublish::cmd_vel_callback, this);
         md49_encoders_pub = n.advertise<custom_messages::md49_encoders>("md49_encoders",10);
@@ -107,7 +107,7 @@ public:
     /**
      * @brief MD49 constructor
      */
-    MD49()
+    MD49() : initial_mode(0), initial_acceleration(5), initial_timeout(true), initial_regulator(true)
     {
         //nothing to do in the constructor, MD49 is initialized in function init
     }//end.constructor MD49
@@ -125,19 +125,19 @@ public:
         set_speed(speed_l,speed_r);
         set_mode(mode);
         set_acceleration(acceleration);
-        if (timeout=true)
+        if (timeout==true)
         {
             enable_timeout();
         }
-        else if (timeout=false)
+        else if (timeout==false)
         {
             disable_timeout();
         }
-        if (regulator=true)
+        if (regulator==true)
         {
             enable_regulator();
         }
-        else if (regulator=false)
+        else if (regulator==false)
         {
             disable_regulator();
         }
