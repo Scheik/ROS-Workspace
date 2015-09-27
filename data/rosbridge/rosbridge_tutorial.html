@@ -59,7 +59,7 @@
   });
 
   listener.subscribe(function(message) {
-    console.log('Received message on ' + listener.name + ': ' + message.data);
+    console.log('Received message on ' + listener.name + ': ' + message.acceleration.data);
     listener.unsubscribe();
   });
 
