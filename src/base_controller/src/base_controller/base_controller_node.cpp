@@ -66,7 +66,7 @@ public:
     /**
      * @brief SubscribeAndPublish constructor
      */
-    SubscribeAndPublish() : actual_speed_l(128), actual_speed_r(128), requested_speed_l(128), requested_speed_r(128)
+    SubscribeAndPublish()
     {
         vel_cmd_sub = n.subscribe("/cmd_vel", 10, &SubscribeAndPublish::cmd_vel_callback, this);
         md49_encoders_pub = n.advertise<custom_messages::md49_encoders>("md49_encoders",10);
