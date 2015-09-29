@@ -74,7 +74,9 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
  * @brief The md49 class
  */
 class md49{
+
 public:
+
     custom_messages::md49_data md49_data;                                                           /**<  topic /md49_data */
     custom_messages::md49_encoders md49_encoders;                                                   /**<  topic /md49_encoders */
 
@@ -339,6 +341,7 @@ public:
 };
 
 int main( int argc, char* argv[] ){
+
     int initial_md49_mode;                                                                          /**<  MD49 Mode, is read from parameters server */
     int initial_md49_acceleration;                                                                  /**<  MD49 Acceleration,  is read from parameters server */
     bool initial_md49_timeout;                                                                      /**<  MD49 Timeout-Mode, is read from parameters server */
@@ -362,6 +365,7 @@ int main( int argc, char* argv[] ){
     n.param("md49/speed_l", requested_speed_l, 128);                           // Get MD49 speed_l from ROS Parameter sevice, default is spee_l=128
     n.param("md49/speed_r", requested_speed_r, 128);                           // Get MD49 speed_r from ROS Parameter sevice, default is spee_r=128
     ROS_INFO("base_controller: base_controller running...");
+
     // *******************
     // * Open serialport *
     // *******************
@@ -372,10 +376,12 @@ int main( int argc, char* argv[] ){
         ROS_BREAK();
     }
     ROS_INFO("base_controller: Opened Serialport at %s with %i bps.",serialport.c_str(),serialport_bps);
+
     // ***************************************************************************************
     // * Generate instance mymd49 of class md49 and set initial settings through constructor *
     // ***************************************************************************************
     md49 mymd49(requested_speed_l,requested_speed_r,initial_md49_mode,initial_md49_acceleration,initial_md49_timeout,initial_md49_regulator);
+
     // ************
     // * Mainloop *
     // ************
