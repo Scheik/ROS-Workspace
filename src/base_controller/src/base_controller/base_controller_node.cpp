@@ -53,8 +53,7 @@ class SubscribeAndPublish
 
 private:
 
-    int requested_speed_l, requested_speed_r;                                                   /**<  requested speed_l and speed_r for MD49 computed from cmd_vel */
-    int actual_speed_l, actual_speed_r;                                                         /**<  buffers actual set speed_l and speed_r for MD49 */
+                                                            /**<  buffers actual set speed_l and speed_r for MD49 */
 
 public:
 
@@ -62,6 +61,8 @@ public:
     ros::Subscriber vel_cmd_sub;
     ros::Publisher md49_encoders_pub;
     ros::Publisher md49_data_pub;
+    int requested_speed_l, requested_speed_r;                                                   /**<  requested speed_l and speed_r for MD49 computed from cmd_vel */
+    int actual_speed_l, actual_speed_r;
 
     /**
      * @brief SubscribeAndPublish constructor
