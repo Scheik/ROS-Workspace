@@ -39,16 +39,10 @@
 
 #define TIMEOUT 1000                                                                            /**<  timeout for reading serialport in ms */
 
-custom_messages::md49_data md49_data;                                                           /**<  topic /md49_data */
-custom_messages::md49_encoders md49_encoders;                                                   /**<  topic /md49_encoders */
 cereal::CerealPort device;                                                                      /**<  serialport */
 std::string serialport;                                                                         /**<  used serialport on pcDuino, is read from parameters server */
 int serialport_bps;                                                                             /**<  used baudrate, is read from parameters server */
 char reply[8];                                                                                  /**<  max buffersize serial input */
-int initial_md49_mode;                                                                          /**<  MD49 Mode, is read from parameters server */
-int initial_md49_acceleration;                                                                  /**<  MD49 Acceleration,  is read from parameters server */
-bool initial_md49_timeout;                                                                      /**<  MD49 Timeout-Mode, is read from parameters server */
-bool initial_md49_regulator;                                                                    /**<  MD40 Regulator-Mode , is read from parameters server */
 int requested_speed_l, requested_speed_r;                                                       /**<  requested speed_l and speed_r for MD49 */
 int actual_speed_l=128, actual_speed_r=128;                                                     /**<  buffers actual set speed_l and speed_r */
 
@@ -81,6 +75,9 @@ void cmd_vel_callback(const geometry_msgs::Twist& vel_cmd){
  */
 class md49{
 public:
+    custom_messages::md49_data md49_data;                                                           /**<  topic /md49_data */
+    custom_messages::md49_encoders md49_encoders;                                                   /**<  topic /md49_encoders */
+
     /**
      * @brief md49 : The constructor
      * @param speed_l
@@ -342,6 +339,11 @@ public:
 };
 
 int main( int argc, char* argv[] ){
+    int initial_md49_mode;                                                                          /**<  MD49 Mode, is read from parameters server */
+    int initial_md49_acceleration;                                                                  /**<  MD49 Acceleration,  is read from parameters server */
+    bool initial_md49_timeout;                                                                      /**<  MD49 Timeout-Mode, is read from parameters server */
+    bool initial_md49_regulator;                                                                    /**<  MD40 Regulator-Mode , is read from parameters server */
+
     // *****************
     // * Init ROS node *
     // *****************
@@ -385,17 +387,17 @@ int main( int argc, char* argv[] ){
         }
         // Read encoder- data from MD49 via UART and publish encoder values as read to topic /md49_encoders
         mymd49.get_encoders();
-        md49_encoders_pub.publish(md49_encoders);
+        md49_encoders_pub.publish(mymd49.md49_encoders);
         // Read other- data from MD49 via UART and publish MD49 data as read to topic /md49_data
-        md49_data.speed_l=mymd49.get_speed_l();
-        md49_data.speed_r=mymd49.get_speed_r();
-        md49_data.volts=mymd49.get_volts();
-        md49_data.current_l=mymd49.get_current_l();
-        md49_data.current_r=mymd49.get_current_r();
-        md49_data.acceleration=mymd49.get_acceleration();
-        md49_data.mode=mymd49.get_mode();
-        md49_data.error=mymd49.get_error();
-        md49_data_pub.publish(md49_data);
+        mymd49.md49_data.speed_l=mymd49.get_speed_l();
+        mymd49.md49_data.speed_r=mymd49.get_speed_r();
+        mymd49.md49_data.volts=mymd49.get_volts();
+        mymd49.md49_data.current_l=mymd49.get_current_l();
+        mymd49.md49_data.current_r=mymd49.get_current_r();
+        mymd49.md49_data.acceleration=mymd49.get_acceleration();
+        mymd49.md49_data.mode=mymd49.get_mode();
+        mymd49.md49_data.error=mymd49.get_error();
+        md49_data_pub.publish(mymd49.md49_data);
         // Loop
         ros::spinOnce();
         loop_rate.sleep();
