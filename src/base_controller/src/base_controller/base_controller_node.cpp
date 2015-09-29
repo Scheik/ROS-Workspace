@@ -497,11 +497,11 @@ int main( int argc, char* argv[] )
         // *****************************************************************************************************
         // * set speed on MD49 via UART as set through /cmd_vel if speed_l or speed_r changed since last cycle *
         // *****************************************************************************************************
-        if ((mySubscribeAndPublish.get_requested_speed_l() != mySubscribeAndPublish.get_actual_speed_l()) || (mySubscribeAndPublish.get_requested_speed_r() != mySubscribeAndPublish.get_actual_speed_r()))
+        if ((mySubscribeAndPublish.requested_speed_l != mySubscribeAndPublish.actual_speed_l) || (mySubscribeAndPublish.requested_speed_r != mySubscribeAndPublish.actual_speed_r))
         {
-            myMD49.set_speed(mySubscribeAndPublish.get_requested_speed_l(),mySubscribeAndPublish.get_requested_speed_r());
-            mySubscribeAndPublish.set_actual_speed_l(mySubscribeAndPublish.get_requested_speed_l());
-            mySubscribeAndPublish.set_actual_speed_r(mySubscribeAndPublish.get_requested_speed_r());
+            myMD49.set_speed(mySubscribeAndPublish.requested_speed_l,mySubscribeAndPublish.requested_speed_r);
+            mySubscribeAndPublish.actual_speed_l=mySubscribeAndPublish.requested_speed_l;
+            mySubscribeAndPublish.actual_speed_r=mySubscribeAndPublish.requested_speed_r;
         }
         // ****************************************************************************************************
         // * Read encoder- data from MD49 via UART and publish encoder values as read to topic /md49_encoders *
