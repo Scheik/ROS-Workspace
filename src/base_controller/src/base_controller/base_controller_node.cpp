@@ -43,6 +43,8 @@ cereal::CerealPort device;                                                      
 std::string serialport;                                                                         /**<  used serialport on pcDuino, is read from parameters server */
 int serialport_bps;                                                                             /**<  used baudrate, is read from parameters server */
 char reply[8];                                                                                  /**<  max buffersize serial input */
+custom_messages::md49_data md49_data;                                                           /**<  genrate message /md49_data of type md49_data from package custom_messages */
+custom_messages::md49_encoders md49_encoders;                                                   /**<  genrate message /md49_encoders of type md49_encoders from package custom_messages */
 
 
 /**
@@ -50,13 +52,52 @@ char reply[8];                                                                  
  */
 class SubscribeAndPublish
 {
+
+private:
+
+    int requested_speed_l, requested_speed_r;                                                   /**<  requested speed_l and speed_r for MD49 computed from cmd_vel */
+    int actual_speed_l, actual_speed_r;                                                         /**<  buffers actual set speed_l and speed_r for MD49 */
+
 public:
+
     ros::NodeHandle n;
     ros::Subscriber vel_cmd_sub;
     ros::Publisher md49_encoders_pub;
     ros::Publisher md49_data_pub;
-    int requested_speed_l, requested_speed_r;                                                   /**<  requested speed_l and speed_r for MD49 computed from cmd_vel */
-    int actual_speed_l, actual_speed_r;                                                         /**<  buffers actual set speed_l and speed_r for MD49 */
+
+    int get_requested_speed_l()
+    {
+        return requested_speed_l;
+    }
+    int get_requested_speed_r()
+    {
+        return requested_speed_r;
+    }
+    void set_requested_speed_l(int speed_l)
+    {
+        requested_speed_l=speed_l;
+    }
+    void set_requested_speed_r(int speed_r)
+    {
+        requested_speed_r=speed_r;
+    }
+    int get_actual_speed_l()
+    {
+        return actual_speed_l;
+    }
+    int get_actual_speed_r()
+    {
+        return actual_speed_r;
+    }
+    void set_actual_speed_l(int speed_l)
+    {
+        actual_speed_l=speed_l;
+    }
+    void set_actual_speed_r(int speed_r)
+    {
+        actual_speed_r=speed_r;
+    }
+
     /**
      * @brief SubscribeAndPublish constructor
      */
@@ -98,19 +139,39 @@ public:
 class MD49
 {
 public:
-    custom_messages::md49_data md49_data;                                                       /**<  genrate instance of topic /md49_data from package custom_messages */
-    custom_messages::md49_encoders md49_encoders;                                               /**<  genrate instance of topic /md49_encoders from package custom_messages */
-    int initial_mode;                                                                           /**<  MD49 Mode, is read from parameters server */
-    int initial_acceleration;                                                                   /**<  MD49 Acceleration,  is read from parameters server */
-    bool initial_timeout;                                                                       /**<  MD49 Timeout-Mode, is read from parameters server */
-    bool initial_regulator;                                                                     /**<  MD40 Regulator-Mode , is read from parameters server */
+
     /**
-     * @brief MD49 constructor
+     * @brief MD49
+     * @param speed_l
+     * @param speed_r
+     * @param mode
+     * @param acceleration
+     * @param timeout
+     * @param regulator
      */
-    MD49() : initial_mode(0), initial_acceleration(5), initial_timeout(true), initial_regulator(true)
+    MD49(int initial_speed_l, int initial_speed_r, int initial_mode, int initial_acceleration, bool initial_timeout, bool initial_regulator)
     {
-        //nothing to do in the constructor, MD49 is initialized in function init
+        set_speed(initial_speed_l,initial_speed_r);
+        set_mode(initial_mode);
+        set_acceleration(initial_acceleration);
+        if (initial_timeout==true)
+        {
+            enable_timeout();
+        }
+        else if (initial_timeout==false)
+        {
+            disable_timeout();
+        }
+        if (initial_regulator==true)
+        {
+            enable_regulator();
+        }
+        else if (initial_regulator==false)
+        {
+            disable_regulator();
+        }
     }//end.constructor MD49
+
     /**
      * @brief init
      * @param speed_l
@@ -378,22 +439,31 @@ public:
  */
 int main( int argc, char* argv[] )
 {
+    int initial_mode_from_parameter_service;                                                            /**< Stores initial mode to be read from parameter service */
+    int initial_acceleration_from_parameter_service;                                                    /**< Stores initial acceleration to be read from parameter service */
+    bool initial_timeout_from_parameter_service;                                                        /**< Stores initial timeout state to be read from parameter service */
+    bool initial_regulator_from_parameter_service;                                                      /**< Stores initial regulator state to be read from parameter service */
+    int initial_speed_l_from_parameter_service;                                                         /**< Stores initial speed_l to be read from parameter service */
+    int initial_speed_r_from_parameter_service;                                                         /**< Stores initial speed_r to be read from parameter service */
     ros::init(argc, argv, "base_controller" );                                                          /**< Init as ROS node */
     ros::Rate loop_rate(10);                                                                            /**< Set ROS loop rate */
+
+    // **********************************************************************
+    // * Create instance mySubscribeAndPublish of class SubscribeAndPublish *
+    // **********************************************************************
     SubscribeAndPublish mySubscribeAndPublish;                                                          /**< Generate instance mySubsribeAndPublish of class SubscribeAndPublish */
-    MD49 myMD49;                                                                                        /**< Generate instance myMD49 of class MD49 */
 
     // ********************************************
     // * Load parameters from config/.yaml- files *
     // ********************************************
     mySubscribeAndPublish.n.param<std::string>("serialport/name", serialport, "/dev/ttyS0");            /**< Get serialportname from ROS Parameter sevice, default is ttyS0 (pcDuinos GPIO UART) */
     mySubscribeAndPublish.n.param("serialport/bps", serialport_bps, 38400);                             /**< Get serialport bps from ROS Parameter sevice, default is 38400Bps */
-    mySubscribeAndPublish.n.param("md49/mode", myMD49.initial_mode, 0);                                 /**< Get MD49 Mode from ROS Parameter sevice, default is Mode=0 */
-    mySubscribeAndPublish.n.param("md49/acceleration", myMD49.initial_acceleration, 5);                 /**< Get MD49 Acceleration from ROS Parameter sevice, default is Acceleration=0 */
-    mySubscribeAndPublish.n.param("md49/regulator", myMD49.initial_regulator, true);                    /**< Get MD49 Regulator from ROS Parameter sevice, default is Regulator=ON */
-    mySubscribeAndPublish.n.param("md49/timeout", myMD49.initial_timeout, true);                        /**< Get MD49 Timeout from ROS Parameter sevice, default is Timeout=ON */
-    mySubscribeAndPublish.n.param("md49/speed_l", mySubscribeAndPublish.requested_speed_l, 128);        /**< Get MD49 speed_l from ROS Parameter sevice, default is spee_l=128 */
-    mySubscribeAndPublish.n.param("md49/speed_r", mySubscribeAndPublish.requested_speed_r, 128);        /**< Get MD49 speed_r from ROS Parameter sevice, default is spee_r=128 */
+    mySubscribeAndPublish.n.param("md49/mode", initial_mode_from_parameter_service, 0);                 /**< Get MD49 Mode from ROS Parameter sevice, default is Mode=0 */
+    mySubscribeAndPublish.n.param("md49/acceleration", initial_acceleration_from_parameter_service, 5); /**< Get MD49 Acceleration from ROS Parameter sevice, default is Acceleration=0 */
+    mySubscribeAndPublish.n.param("md49/regulator", initial_timeout_from_parameter_service, true);      /**< Get MD49 Regulator from ROS Parameter sevice, default is Regulator=ON */
+    mySubscribeAndPublish.n.param("md49/timeout", initial_regulator_from_parameter_service, true);      /**< Get MD49 Timeout from ROS Parameter sevice, default is Timeout=ON */
+    mySubscribeAndPublish.n.param("md49/speed_l", initial_speed_l_from_parameter_service, 128);        /**< Get MD49 speed_l from ROS Parameter sevice, default is spee_l=128 */
+    mySubscribeAndPublish.n.param("md49/speed_r", initial_speed_r_from_parameter_service, 128);        /**< Get MD49 speed_r from ROS Parameter sevice, default is spee_r=128 */
 
     // *******************
     // * Open serialport *
@@ -407,9 +477,14 @@ int main( int argc, char* argv[] )
     ROS_INFO("base_controller: Opened Serialport at %s with %i bps.",serialport.c_str(),serialport_bps);
 
     // *********************************
+    // * Create instance myMD49 of class MD49 and set initial settings for MD49 within constructor of class *
+    // *********************************
+    MD49 myMD49(initial_speed_l_from_parameter_service,initial_speed_r_from_parameter_service,initial_mode_from_parameter_service,initial_acceleration_from_parameter_service,initial_timeout_from_parameter_service,initial_regulator_from_parameter_service);                                                                                        /**< Generate instance myMD49 of class MD49 */
+
+    // *********************************
     // * Set initial settings for MD49 *
     // *********************************
-    myMD49.init(mySubscribeAndPublish.requested_speed_l,mySubscribeAndPublish.requested_speed_r,myMD49.initial_mode,myMD49.initial_acceleration,myMD49.initial_timeout,myMD49.initial_regulator);
+    //myMD49.init(myMD49.get_initial_speed_l(),myMD49.get_initial_speed_r(),myMD49.get_initial_mode(),myMD49.get_initial_acceleration(),myMD49.get_initial_timeout(),myMD49.get_initial_regulator());
 
     // ************
     // * Mainloop *
@@ -419,29 +494,29 @@ int main( int argc, char* argv[] )
         // *****************************************************************************************************
         // * set speed on MD49 via UART as set through /cmd_vel if speed_l or speed_r changed since last cycle *
         // *****************************************************************************************************
-        if ((mySubscribeAndPublish.requested_speed_l != mySubscribeAndPublish.actual_speed_l) || (mySubscribeAndPublish.requested_speed_r != mySubscribeAndPublish.actual_speed_r))
+        if ((mySubscribeAndPublish.get_requested_speed_l() != mySubscribeAndPublish.get_actual_speed_l()) || (mySubscribeAndPublish.get_requested_speed_r() != mySubscribeAndPublish.get_actual_speed_r()))
         {
-            myMD49.set_speed(mySubscribeAndPublish.requested_speed_l,mySubscribeAndPublish.requested_speed_r);
-            mySubscribeAndPublish.actual_speed_l=mySubscribeAndPublish.requested_speed_l;
-            mySubscribeAndPublish.actual_speed_r=mySubscribeAndPublish.requested_speed_r;
+            myMD49.set_speed(mySubscribeAndPublish.get_requested_speed_l(),mySubscribeAndPublish.get_requested_speed_r());
+            mySubscribeAndPublish.set_actual_speed_l(mySubscribeAndPublish.get_requested_speed_l());
+            mySubscribeAndPublish.set_actual_speed_r(mySubscribeAndPublish.get_requested_speed_r());
         }
         // ****************************************************************************************************
         // * Read encoder- data from MD49 via UART and publish encoder values as read to topic /md49_encoders *
         // ****************************************************************************************************
         myMD49.get_encoders();
-        mySubscribeAndPublish.md49_encoders_pub.publish(myMD49.md49_encoders);
+        mySubscribeAndPublish.md49_encoders_pub.publish(md49_encoders);
         // *****************************************************************************************
         // * Read other- data from MD49 via UART and publish MD49 data as read to topic /md49_data *
         // *****************************************************************************************
-        myMD49.md49_data.speed_l=myMD49.get_speed_l();
-        myMD49.md49_data.speed_r=myMD49.get_speed_r();
-        myMD49.md49_data.volts=myMD49.get_volts();
-        myMD49.md49_data.current_l=myMD49.get_current_l();
-        myMD49.md49_data.current_r=myMD49.get_current_r();
-        myMD49.md49_data.acceleration=myMD49.get_acceleration();
-        myMD49.md49_data.mode=myMD49.get_mode();
-        myMD49.md49_data.error=myMD49.get_error();
-        mySubscribeAndPublish.md49_data_pub.publish(myMD49.md49_data);
+        md49_data.speed_l=myMD49.get_speed_l();
+        md49_data.speed_r=myMD49.get_speed_r();
+        md49_data.volts=myMD49.get_volts();
+        md49_data.current_l=myMD49.get_current_l();
+        md49_data.current_r=myMD49.get_current_r();
+        md49_data.acceleration=myMD49.get_acceleration();
+        md49_data.mode=myMD49.get_mode();
+        md49_data.error=myMD49.get_error();
+        mySubscribeAndPublish.md49_data_pub.publish(md49_data);
         // ********
         // * Loop *
         // ********
