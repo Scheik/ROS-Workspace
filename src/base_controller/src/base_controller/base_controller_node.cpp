@@ -43,8 +43,6 @@ cereal::CerealPort device;                                                      
 std::string serialport;                                                                         /**<  used serialport on pcDuino, is read from parameters server */
 int serialport_bps;                                                                             /**<  used baudrate, is read from parameters server */
 char reply[8];                                                                                  /**<  max buffersize serial input */
-custom_messages::md49_data md49_data;                                                           /**<  genrate message /md49_data of type md49_data from package custom_messages */
-custom_messages::md49_encoders md49_encoders;                                                   /**<  genrate message /md49_encoders of type md49_encoders from package custom_messages */
 
 
 /**
@@ -139,6 +137,9 @@ public:
 class MD49
 {
 public:
+
+    custom_messages::md49_data md49_data;                                                           /**<  genrate message /md49_data of type md49_data from package custom_messages */
+    custom_messages::md49_encoders md49_encoders;                                                   /**<  genrate message /md49_encoders of type md49_encoders from package custom_messages */
 
     /**
      * @brief MD49
@@ -504,19 +505,19 @@ int main( int argc, char* argv[] )
         // * Read encoder- data from MD49 via UART and publish encoder values as read to topic /md49_encoders *
         // ****************************************************************************************************
         myMD49.get_encoders();
-        mySubscribeAndPublish.md49_encoders_pub.publish(md49_encoders);
+        mySubscribeAndPublish.md49_encoders_pub.publish(myMD49.md49_encoders);
         // *****************************************************************************************
         // * Read other- data from MD49 via UART and publish MD49 data as read to topic /md49_data *
         // *****************************************************************************************
-        md49_data.speed_l=myMD49.get_speed_l();
-        md49_data.speed_r=myMD49.get_speed_r();
-        md49_data.volts=myMD49.get_volts();
-        md49_data.current_l=myMD49.get_current_l();
-        md49_data.current_r=myMD49.get_current_r();
-        md49_data.acceleration=myMD49.get_acceleration();
-        md49_data.mode=myMD49.get_mode();
-        md49_data.error=myMD49.get_error();
-        mySubscribeAndPublish.md49_data_pub.publish(md49_data);
+        myMD49.md49_data.speed_l=myMD49.get_speed_l();
+        myMD49.md49_data.speed_r=myMD49.get_speed_r();
+        myMD49.md49_data.volts=myMD49.get_volts();
+        myMD49.md49_data.current_l=myMD49.get_current_l();
+        myMD49.md49_data.current_r=myMD49.get_current_r();
+        myMD49.md49_data.acceleration=myMD49.get_acceleration();
+        myMD49.md49_data.mode=myMD49.get_mode();
+        myMD49.md49_data.error=myMD49.get_error();
+        mySubscribeAndPublish.md49_data_pub.publish(myMD49.md49_data);
         // ********
         // * Loop *
         // ********
