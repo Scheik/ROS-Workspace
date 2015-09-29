@@ -65,39 +65,6 @@ public:
     ros::Publisher md49_encoders_pub;
     ros::Publisher md49_data_pub;
 
-    int get_requested_speed_l()
-    {
-        return requested_speed_l;
-    }
-    int get_requested_speed_r()
-    {
-        return requested_speed_r;
-    }
-    void set_requested_speed_l(int speed_l)
-    {
-        requested_speed_l=speed_l;
-    }
-    void set_requested_speed_r(int speed_r)
-    {
-        requested_speed_r=speed_r;
-    }
-    int get_actual_speed_l()
-    {
-        return actual_speed_l;
-    }
-    int get_actual_speed_r()
-    {
-        return actual_speed_r;
-    }
-    void set_actual_speed_l(int speed_l)
-    {
-        actual_speed_l=speed_l;
-    }
-    void set_actual_speed_r(int speed_r)
-    {
-        actual_speed_r=speed_r;
-    }
-
     /**
      * @brief SubscribeAndPublish constructor
      */
@@ -130,6 +97,39 @@ public:
         }
         ROS_INFO("base_controller: Received /cmd_vel message. Requested speed_l=%i, speed_r=%i",requested_speed_l,requested_speed_r);
     }//end.cmd_vel_callback
+
+    int get_requested_speed_l()
+    {
+        return requested_speed_l;
+    }
+    int get_requested_speed_r()
+    {
+        return requested_speed_r;
+    }
+    void set_requested_speed_l(int speed_l)
+    {
+        requested_speed_l=speed_l;
+    }
+    void set_requested_speed_r(int speed_r)
+    {
+        requested_speed_r=speed_r;
+    }
+    int get_actual_speed_l()
+    {
+        return actual_speed_l;
+    }
+    int get_actual_speed_r()
+    {
+        return actual_speed_r;
+    }
+    void set_actual_speed_l(int speed_l)
+    {
+        actual_speed_l=speed_l;
+    }
+    void set_actual_speed_r(int speed_r)
+    {
+        actual_speed_r=speed_r;
+    }
 };// End of class SubscribeAndPublish
 
 
