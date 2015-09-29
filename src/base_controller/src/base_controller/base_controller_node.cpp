@@ -440,12 +440,6 @@ public:
  */
 int main( int argc, char* argv[] )
 {
-    int initial_mode_from_parameter_service;                                                            /**< Stores initial mode to be read from parameter service */
-    int initial_acceleration_from_parameter_service;                                                    /**< Stores initial acceleration to be read from parameter service */
-    bool initial_timeout_from_parameter_service;                                                        /**< Stores initial timeout state to be read from parameter service */
-    bool initial_regulator_from_parameter_service;                                                      /**< Stores initial regulator state to be read from parameter service */
-    int initial_speed_l_from_parameter_service;                                                         /**< Stores initial speed_l to be read from parameter service */
-    int initial_speed_r_from_parameter_service;                                                         /**< Stores initial speed_r to be read from parameter service */
     ros::init(argc, argv, "base_controller" );                                                          /**< Init as ROS node */
     ros::Rate loop_rate(10);                                                                            /**< Set ROS loop rate */
 
@@ -453,6 +447,13 @@ int main( int argc, char* argv[] )
     // * Create instance mySubscribeAndPublish of class SubscribeAndPublish *
     // **********************************************************************
     SubscribeAndPublish mySubscribeAndPublish;                                                          /**< Generate instance mySubsribeAndPublish of class SubscribeAndPublish */
+
+    int initial_mode_from_parameter_service;                                                            /**< Stores initial mode to be read from parameter service */
+    int initial_acceleration_from_parameter_service;                                                    /**< Stores initial acceleration to be read from parameter service */
+    bool initial_timeout_from_parameter_service;                                                        /**< Stores initial timeout state to be read from parameter service */
+    bool initial_regulator_from_parameter_service;                                                      /**< Stores initial regulator state to be read from parameter service */
+    int initial_speed_l_from_parameter_service;                                                         /**< Stores initial speed_l to be read from parameter service */
+    int initial_speed_r_from_parameter_service;                                                         /**< Stores initial speed_r to be read from parameter service */
 
     // ********************************************
     // * Load parameters from config/.yaml- files *
