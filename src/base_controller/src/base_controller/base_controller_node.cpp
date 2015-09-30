@@ -49,7 +49,7 @@ class SubscribeAndPublish
 public:
 
     ros::NodeHandle n;
-    ros::Subscriber sub;
+    //ros::Subscriber sub;
     ros::Publisher md49_encoders_pub;
     ros::Publisher md49_data_pub;
 
@@ -60,14 +60,14 @@ public:
         md49_data_pub = n.advertise<custom_messages::md49_data>("md49_data",10);
         //Topic you want to subscribe
         sub = n.subscribe("/cmd_vel", 1, &SubscribeAndPublish::cmd_vel_callback, this);
-        n.param<std::string>("serialport/name", serialport, "/dev/ttyS0");         // Get serialportname from ROS Parameter sevice, default is ttyS0 (pcDuinos GPIO UART)
-        n.param("serialport/bps", serialport_bps, 38400);                          // Get serialport bps from ROS Parameter sevice, default is 38400Bps
-        n.param("md49/mode", initial_md49_mode, 0);                                // Get MD49 Mode from ROS Parameter sevice, default is Mode=0
-        n.param("md49/acceleration", initial_md49_acceleration, 5);                // Get MD49 Acceleration from ROS Parameter sevice, default is Acceleration=0
-        n.param("md49/regulator", initial_md49_regulator, true);                   // Get MD49 Regulator from ROS Parameter sevice, default is Regulator=ON
-        n.param("md49/timeout", initial_md49_timeout, true);                       // Get MD49 Timeout from ROS Parameter sevice, default is Timeout=ON
-        n.param("md49/speed_l", requested_speed_l, 128);                           // Get MD49 speed_l from ROS Parameter sevice, default is spee_l=128
-        n.param("md49/speed_r",  requested_speed_r, 128);                           // Get MD49 speed_r from ROS Parameter sevice, default is spee_r=128
+        n.param<std::string>("serialport/name", serialport, "/dev/ttyS0");                      // Get serialportname from ROS Parameter sevice, default is ttyS0 (pcDuinos GPIO UART)
+        n.param("serialport/bps", serialport_bps, 38400);                                       // Get serialport bps from ROS Parameter sevice, default is 38400Bps
+        n.param("md49/mode", initial_md49_mode, 0);                                             // Get MD49 Mode from ROS Parameter sevice, default is Mode=0
+        n.param("md49/acceleration", initial_md49_acceleration, 5);                             // Get MD49 Acceleration from ROS Parameter sevice, default is Acceleration=0
+        n.param("md49/regulator", initial_md49_regulator, true);                                // Get MD49 Regulator from ROS Parameter sevice, default is Regulator=ON
+        n.param("md49/timeout", initial_md49_timeout, true);                                    // Get MD49 Timeout from ROS Parameter sevice, default is Timeout=ON
+        n.param("md49/speed_l", requested_speed_l, 128);                                        // Get MD49 speed_l from ROS Parameter sevice, default is spee_l=128
+        n.param("md49/speed_r",  requested_speed_r, 128);                                       // Get MD49 speed_r from ROS Parameter sevice, default is spee_r=128
         actual_speed_l=requested_speed_l;
         actual_speed_r=requested_speed_r;
       }
@@ -164,12 +164,10 @@ private:
     int initial_md49_acceleration;                                                                  /**<  MD49 Acceleration,  is read from parameters server */
     bool initial_md49_timeout;                                                                      /**<  MD49 Timeout-Mode, is read from parameters server */
     bool initial_md49_regulator;                                                                    /**<  MD40 Regulator-Mode , is read from parameters server */
-    //int initial_speed_l;
-    //int initial_speed_r;
     std::string serialport;                                                                         /**<  used serialport on pcDuino, is read from parameters server */
     int serialport_bps;                                                                             /**<  used baudrate, is read from parameters server */
    // ros::NodeHandle n;
-   // ros::Subscriber sub;
+    ros::Subscriber sub;
    // ros::Publisher md49_encoders_pub;
    // ros::Publisher md49_data_pub;
 }; //End of class SubscribeAndPublish
@@ -457,11 +455,6 @@ int main( int argc, char* argv[] ){
     ros::Rate loop_rate(10);
 
     ROS_INFO("base_controller: base_controller running...");
-
-    //SubscribeAndPublish.set_actual_speed_l(initial_speed_l);
-    //SubscribeAndPublish.set_actual_speed_r(initial_speed_r);
-    //SubscribeAndPublish.set_requested_speed_l(initial_speed_l);
-    //SubscribeAndPublish.set_requested_speed_r(initial_speed_r);
 
     // *******************
     // * Open serialport *
