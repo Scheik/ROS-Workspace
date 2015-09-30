@@ -37,18 +37,13 @@
 #include <custom_messages/md49_data.h>                                                          /**<  custom message /md49_data */
 #include <custom_messages/md49_encoders.h>                                                      /**<  custom message /md49_encoders */
 
-#define TIMEOUT 1000                                                                            /**<  timeout for reading serialport in ms */
-cereal::CerealPort device;                                                                      /**<  serialport */
-char reply[8];                                                                                  /**<  max buffersize serial input */
-
+#define TIMEOUT 1000                                                                            /**<  timeout for reading serialport in ms */                                                                               /**<  max buffersize serial input */
 
 class BaseController
 {
 public:
 
     ros::NodeHandle n;
-    //ros::Publisher md49_encoders_pub;
-    //ros::Publisher md49_data_pub;
 
     /**
      * @brief BaseController
@@ -110,13 +105,13 @@ public:
     /**
      * @brief read_encoders
      */
-    void read_encoders()
+    void publish_encoders()
     {
         get_encoders();
         md49_encoders_pub.publish(md49_encoders);
     }
 
-    void read_md49_data()
+    void publish_md49_data()
     {
         md49_data.speed_l=get_speed_l();
         md49_data.speed_r=get_speed_r();
@@ -485,6 +480,8 @@ public:
 
 private:
 
+    cereal::CerealPort device;                                                                      /**<  serialport */
+    char reply[8];
     int requested_speed_l, requested_speed_r;                                                       /**<  requested speed_l and speed_r for MD49 */
     int actual_speed_l, actual_speed_r;                                                             /**<  buffers actual set speed_l and speed_r */
     int initial_md49_mode;                                                                          /**<  MD49 Mode, is read from parameters server */
@@ -516,10 +513,9 @@ int main( int argc, char* argv[] ){
     // *******************
     myBaseController.open_serialport();
 
-    // ***************************************************************************************
-    // * Generate instance mymd49 of class md49 and set initial settings through constructor *
-    // ***************************************************************************************
-    //md49 mymd49(myBaseController.get_requested_speed_l(),myBaseController.get_requested_speed_r(), myBaseController.get_initial_md49_mode(), myBaseController.get_initial_md49_acceleration(), myBaseController.get_initial_md49_timeout(), myBaseController.get_initial_md49_regulator());
+    // *****************************
+    // * Set initial MD49 settings *
+    // *****************************
     myBaseController.init_md49(myBaseController.get_requested_speed_l(),myBaseController.get_requested_speed_r(),myBaseController.get_initial_md49_mode(),myBaseController.get_initial_md49_acceleration(),myBaseController.get_initial_md49_timeout(),myBaseController.get_initial_md49_regulator());
 
     // ************
@@ -536,9 +532,9 @@ int main( int argc, char* argv[] ){
             ROS_INFO("base_controller: Set speed_l=%i and speed_r=%i on MD49", myBaseController.get_requested_speed_l(), myBaseController.get_requested_speed_r());
         }
         // Read encoder- data from MD49 via UART and publish encoder values as read to topic /md49_encoders
-        myBaseController.read_encoders();
+        myBaseController.publish_encoders();
         // Read other- data from MD49 via UART and publish MD49 data as read to topic /md49_data
-        myBaseController.read_md49_data();
+        myBaseController.publish_md49_data();
         // Loop
         ros::spinOnce();
         loop_rate.sleep();
