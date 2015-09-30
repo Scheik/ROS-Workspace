@@ -40,8 +40,7 @@
 #define TIMEOUT 1000                                                                            /**<  timeout for reading serialport in ms */
 
 cereal::CerealPort device;                                                                      /**<  serialport */
-std::string serialport;                                                                         /**<  used serialport on pcDuino, is read from parameters server */
-int serialport_bps;                                                                             /**<  used baudrate, is read from parameters server */
+
 char reply[8];                                                                                  /**<  max buffersize serial input */
 
 
@@ -61,6 +60,16 @@ public:
         md49_data_pub = n.advertise<custom_messages::md49_data>("md49_data",10);
         //Topic you want to subscribe
         sub = n.subscribe("/cmd_vel", 1, &SubscribeAndPublish::cmd_vel_callback, this);
+        n.param<std::string>("serialport/name", serialport, "/dev/ttyS0");         // Get serialportname from ROS Parameter sevice, default is ttyS0 (pcDuinos GPIO UART)
+        n.param("serialport/bps", serialport_bps, 38400);                          // Get serialport bps from ROS Parameter sevice, default is 38400Bps
+        n.param("md49/mode", initial_md49_mode, 0);                                // Get MD49 Mode from ROS Parameter sevice, default is Mode=0
+        n.param("md49/acceleration", initial_md49_acceleration, 5);                // Get MD49 Acceleration from ROS Parameter sevice, default is Acceleration=0
+        n.param("md49/regulator", initial_md49_regulator, true);                   // Get MD49 Regulator from ROS Parameter sevice, default is Regulator=ON
+        n.param("md49/timeout", initial_md49_timeout, true);                       // Get MD49 Timeout from ROS Parameter sevice, default is Timeout=ON
+        n.param("md49/speed_l", requested_speed_l, 128);                           // Get MD49 speed_l from ROS Parameter sevice, default is spee_l=128
+        n.param("md49/speed_r",  requested_speed_r, 128);                           // Get MD49 speed_r from ROS Parameter sevice, default is spee_r=128
+        actual_speed_l=requested_speed_l;
+        actual_speed_r=requested_speed_r;
       }
 
     /**
@@ -121,11 +130,44 @@ public:
         actual_speed_r=speed_r;
     }
 
+    int get_initial_md49_mode()
+    {
+        return initial_md49_mode;
+    }
+    int get_initial_md49_acceleration()
+    {
+        return initial_md49_acceleration;
+    }
+    int get_initial_md49_timeout()
+    {
+        return initial_md49_timeout;
+    }
+    int get_initial_md49_regulator()
+    {
+        return initial_md49_regulator;
+    }
+    std::string get_serialport()
+    {
+        return serialport;
+    }
+    int get_serialport_bps()
+    {
+        return serialport_bps;
+    }
+
+
 private:
 
     int requested_speed_l, requested_speed_r;                                                       /**<  requested speed_l and speed_r for MD49 */
-    int actual_speed_l, actual_speed_r;                                                     /**<  buffers actual set speed_l and speed_r */
-
+    int actual_speed_l, actual_speed_r;                                                             /**<  buffers actual set speed_l and speed_r */
+    int initial_md49_mode;                                                                          /**<  MD49 Mode, is read from parameters server */
+    int initial_md49_acceleration;                                                                  /**<  MD49 Acceleration,  is read from parameters server */
+    bool initial_md49_timeout;                                                                      /**<  MD49 Timeout-Mode, is read from parameters server */
+    bool initial_md49_regulator;                                                                    /**<  MD40 Regulator-Mode , is read from parameters server */
+    //int initial_speed_l;
+    //int initial_speed_r;
+    std::string serialport;                                                                         /**<  used serialport on pcDuino, is read from parameters server */
+    int serialport_bps;                                                                             /**<  used baudrate, is read from parameters server */
    // ros::NodeHandle n;
    // ros::Subscriber sub;
    // ros::Publisher md49_encoders_pub;
@@ -405,12 +447,7 @@ public:
 
 int main( int argc, char* argv[] ){
 
-    int initial_md49_mode;                                                                          /**<  MD49 Mode, is read from parameters server */
-    int initial_md49_acceleration;                                                                  /**<  MD49 Acceleration,  is read from parameters server */
-    bool initial_md49_timeout;                                                                      /**<  MD49 Timeout-Mode, is read from parameters server */
-    bool initial_md49_regulator;                                                                    /**<  MD40 Regulator-Mode , is read from parameters server */
-    int initial_speed_l;
-    int initial_speed_r;
+
 
     // *****************
     // * Init ROS node *
@@ -418,36 +455,29 @@ int main( int argc, char* argv[] ){
     ros::init(argc, argv, "base_controller" );                                                      /**< Create an object of class SubscribeAndPublish */
     SubscribeAndPublish SubscribeAndPublish;
     ros::Rate loop_rate(10);
-    SubscribeAndPublish.n.param<std::string>("serialport/name", serialport, "/dev/ttyS0");         // Get serialportname from ROS Parameter sevice, default is ttyS0 (pcDuinos GPIO UART)
-    SubscribeAndPublish.n.param("serialport/bps", serialport_bps, 38400);                          // Get serialport bps from ROS Parameter sevice, default is 38400Bps
-    SubscribeAndPublish.n.param("md49/mode", initial_md49_mode, 0);                                // Get MD49 Mode from ROS Parameter sevice, default is Mode=0
-    SubscribeAndPublish.n.param("md49/acceleration", initial_md49_acceleration, 5);                // Get MD49 Acceleration from ROS Parameter sevice, default is Acceleration=0
-    SubscribeAndPublish.n.param("md49/regulator", initial_md49_regulator, true);                   // Get MD49 Regulator from ROS Parameter sevice, default is Regulator=ON
-    SubscribeAndPublish.n.param("md49/timeout", initial_md49_timeout, true);                       // Get MD49 Timeout from ROS Parameter sevice, default is Timeout=ON
-    SubscribeAndPublish.n.param("md49/speed_l", initial_speed_l, 128);                           // Get MD49 speed_l from ROS Parameter sevice, default is spee_l=128
-    SubscribeAndPublish.n.param("md49/speed_r", initial_speed_r, 128);                           // Get MD49 speed_r from ROS Parameter sevice, default is spee_r=128
+
     ROS_INFO("base_controller: base_controller running...");
 
-    SubscribeAndPublish.set_actual_speed_l(initial_speed_l);
-    SubscribeAndPublish.set_actual_speed_r(initial_speed_r);
-    SubscribeAndPublish.set_requested_speed_l(initial_speed_l);
-    SubscribeAndPublish.set_requested_speed_r(initial_speed_r);
+    //SubscribeAndPublish.set_actual_speed_l(initial_speed_l);
+    //SubscribeAndPublish.set_actual_speed_r(initial_speed_r);
+    //SubscribeAndPublish.set_requested_speed_l(initial_speed_l);
+    //SubscribeAndPublish.set_requested_speed_r(initial_speed_r);
 
     // *******************
     // * Open serialport *
     // *******************
-    try{ device.open(serialport.c_str(), serialport_bps); }
+    try{ device.open(SubscribeAndPublish.get_serialport().c_str(), SubscribeAndPublish.get_serialport_bps()); }
     catch(cereal::Exception& e)
     {
-        ROS_FATAL("base_controller: Failed to open serialport %s!",serialport.c_str());
+        ROS_FATAL("base_controller: Failed to open serialport %s!",SubscribeAndPublish.get_serialport().c_str());
         ROS_BREAK();
     }
-    ROS_INFO("base_controller: Opened Serialport at %s with %i bps.",serialport.c_str(),serialport_bps);
+    ROS_INFO("base_controller: Opened Serialport at %s with %i bps.",SubscribeAndPublish.get_serialport().c_str(),SubscribeAndPublish.get_serialport_bps());
 
     // ***************************************************************************************
     // * Generate instance mymd49 of class md49 and set initial settings through constructor *
     // ***************************************************************************************
-    md49 mymd49(SubscribeAndPublish.get_requested_speed_l(),SubscribeAndPublish.get_requested_speed_r(),initial_md49_mode,initial_md49_acceleration,initial_md49_timeout,initial_md49_regulator);
+    md49 mymd49(SubscribeAndPublish.get_requested_speed_l(),SubscribeAndPublish.get_requested_speed_r(), SubscribeAndPublish.get_initial_md49_mode(), SubscribeAndPublish.get_initial_md49_acceleration(), SubscribeAndPublish.get_initial_md49_timeout(), SubscribeAndPublish.get_initial_md49_regulator());
 
     // ************
     // * Mainloop *
