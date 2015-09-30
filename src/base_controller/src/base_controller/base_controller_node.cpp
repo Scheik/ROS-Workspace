@@ -38,28 +38,29 @@
 #include <custom_messages/md49_encoders.h>                                                      /**<  custom message /md49_encoders */
 
 #define TIMEOUT 1000                                                                            /**<  timeout for reading serialport in ms */
-
 cereal::CerealPort device;                                                                      /**<  serialport */
-
 char reply[8];                                                                                  /**<  max buffersize serial input */
 
 
-class SubscribeAndPublish
+class BaseController
 {
 public:
 
     ros::NodeHandle n;
-    //ros::Subscriber sub;
     ros::Publisher md49_encoders_pub;
     ros::Publisher md49_data_pub;
 
-    SubscribeAndPublish()
+    /**
+     * @brief BaseController
+     */
+    BaseController()
       {
-        //Topics you want to publish
+        //Topics to publish
         md49_encoders_pub = n.advertise<custom_messages::md49_encoders>("md49_encoders",10);
         md49_data_pub = n.advertise<custom_messages::md49_data>("md49_data",10);
-        //Topic you want to subscribe
-        sub = n.subscribe("/cmd_vel", 1, &SubscribeAndPublish::cmd_vel_callback, this);
+        //Topic to subscribe
+        sub_cmd_vel = n.subscribe("/cmd_vel", 1, &BaseController::cmd_vel_callback, this);
+        // Read initial parameters from parameter service
         n.param<std::string>("serialport/name", serialport, "/dev/ttyS0");                      // Get serialportname from ROS Parameter sevice, default is ttyS0 (pcDuinos GPIO UART)
         n.param("serialport/bps", serialport_bps, 38400);                                       // Get serialport bps from ROS Parameter sevice, default is 38400Bps
         n.param("md49/mode", initial_md49_mode, 0);                                             // Get MD49 Mode from ROS Parameter sevice, default is Mode=0
@@ -95,66 +96,117 @@ public:
 
         ROS_INFO("base_controller: Received /cmd_vel message. Requested speed_l=%i, speed_r=%i",requested_speed_l,requested_speed_r);
     }
-
+    /**
+     * @brief get_requested_speed_l
+     * @return
+     */
     int get_requested_speed_l()
     {
         return requested_speed_l;
     }
+    /**
+     * @brief get_requested_speed_r
+     * @return
+     */
     int get_requested_speed_r()
     {
         return requested_speed_r;
     }
+    /**
+     * @brief set_requested_speed_l
+     * @param speed_l
+     */
     void set_requested_speed_l(int speed_l)
     {
         requested_speed_l=speed_l;
     }
+    /**
+     * @brief set_requested_speed_r
+     * @param speed_r
+     */
     void set_requested_speed_r(int speed_r)
     {
         requested_speed_r=speed_r;
     }
-
+    /**
+     * @brief get_actual_speed_l
+     * @return
+     */
     int get_actual_speed_l()
     {
         return actual_speed_l;
     }
+    /**
+     * @brief get_actual_speed_r
+     * @return
+     */
     int get_actual_speed_r()
     {
         return actual_speed_r;
     }
+    /**
+     * @brief set_actual_speed_l
+     * @param speed_l
+     */
     void set_actual_speed_l(int speed_l)
     {
         actual_speed_l=speed_l;
     }
+    /**
+     * @brief set_actual_speed_r
+     * @param speed_r
+     */
     void set_actual_speed_r(int speed_r)
     {
         actual_speed_r=speed_r;
     }
-
+    /**
+     * @brief get_initial_md49_mode
+     * @return
+     */
     int get_initial_md49_mode()
     {
         return initial_md49_mode;
-    }
+    }/**
+     * @brief get_initial_md49_acceleration
+     * @return
+     */
     int get_initial_md49_acceleration()
     {
         return initial_md49_acceleration;
     }
+    /**
+     * @brief get_initial_md49_timeout
+     * @return
+     */
     int get_initial_md49_timeout()
     {
         return initial_md49_timeout;
     }
+    /**
+     * @brief get_initial_md49_regulator
+     * @return
+     */
     int get_initial_md49_regulator()
     {
         return initial_md49_regulator;
     }
+    /**
+     * @brief get_serialport
+     * @return
+     */
     std::string get_serialport()
     {
         return serialport;
     }
+    /**
+     * @brief get_serialport_bps
+     * @return
+     */
     int get_serialport_bps()
     {
         return serialport_bps;
     }
-
 
 private:
 
@@ -167,7 +219,7 @@ private:
     std::string serialport;                                                                         /**<  used serialport on pcDuino, is read from parameters server */
     int serialport_bps;                                                                             /**<  used baudrate, is read from parameters server */
    // ros::NodeHandle n;
-    ros::Subscriber sub;
+    ros::Subscriber sub_cmd_vel;
    // ros::Publisher md49_encoders_pub;
    // ros::Publisher md49_data_pub;
 }; //End of class SubscribeAndPublish
@@ -445,49 +497,46 @@ public:
 
 int main( int argc, char* argv[] ){
 
-
-
     // *****************
     // * Init ROS node *
     // *****************
     ros::init(argc, argv, "base_controller" );                                                      /**< Create an object of class SubscribeAndPublish */
-    SubscribeAndPublish SubscribeAndPublish;
+    BaseController myBaseController;
     ros::Rate loop_rate(10);
-
     ROS_INFO("base_controller: base_controller running...");
 
     // *******************
     // * Open serialport *
     // *******************
-    try{ device.open(SubscribeAndPublish.get_serialport().c_str(), SubscribeAndPublish.get_serialport_bps()); }
+    try{ device.open(myBaseController.get_serialport().c_str(), myBaseController.get_serialport_bps()); }
     catch(cereal::Exception& e)
     {
-        ROS_FATAL("base_controller: Failed to open serialport %s!",SubscribeAndPublish.get_serialport().c_str());
+        ROS_FATAL("base_controller: Failed to open serialport %s!",myBaseController.get_serialport().c_str());
         ROS_BREAK();
     }
-    ROS_INFO("base_controller: Opened Serialport at %s with %i bps.",SubscribeAndPublish.get_serialport().c_str(),SubscribeAndPublish.get_serialport_bps());
+    ROS_INFO("base_controller: Opened Serialport at %s with %i bps.",myBaseController.get_serialport().c_str(),myBaseController.get_serialport_bps());
 
     // ***************************************************************************************
     // * Generate instance mymd49 of class md49 and set initial settings through constructor *
     // ***************************************************************************************
-    md49 mymd49(SubscribeAndPublish.get_requested_speed_l(),SubscribeAndPublish.get_requested_speed_r(), SubscribeAndPublish.get_initial_md49_mode(), SubscribeAndPublish.get_initial_md49_acceleration(), SubscribeAndPublish.get_initial_md49_timeout(), SubscribeAndPublish.get_initial_md49_regulator());
+    md49 mymd49(myBaseController.get_requested_speed_l(),myBaseController.get_requested_speed_r(), myBaseController.get_initial_md49_mode(), myBaseController.get_initial_md49_acceleration(), myBaseController.get_initial_md49_timeout(), myBaseController.get_initial_md49_regulator());
 
     // ************
     // * Mainloop *
     // ************
-    while(SubscribeAndPublish.n.ok())
+    while(myBaseController.n.ok())
     {
         // set speed on MD49 via UART as set through /cmd_vel if speed_l or speed_r changed since last cycle
-        if ((SubscribeAndPublish.get_requested_speed_l() != SubscribeAndPublish.get_actual_speed_l()) || (SubscribeAndPublish.get_requested_speed_r() != SubscribeAndPublish.get_actual_speed_r()))
+        if ((myBaseController.get_requested_speed_l() != myBaseController.get_actual_speed_l()) || (myBaseController.get_requested_speed_r() != myBaseController.get_actual_speed_r()))
         {
-            mymd49.set_speed(SubscribeAndPublish.get_requested_speed_l(),SubscribeAndPublish.get_requested_speed_r());
-            SubscribeAndPublish.set_actual_speed_l(SubscribeAndPublish.get_requested_speed_l());
-            SubscribeAndPublish.set_actual_speed_r(SubscribeAndPublish.get_requested_speed_r());
-            ROS_INFO("base_controller: Set speed_l=%i and speed_r=%i on MD49", SubscribeAndPublish.get_requested_speed_l(), SubscribeAndPublish.get_requested_speed_r());
+            mymd49.set_speed(myBaseController.get_requested_speed_l(),myBaseController.get_requested_speed_r());
+            myBaseController.set_actual_speed_l(myBaseController.get_requested_speed_l());
+            myBaseController.set_actual_speed_r(myBaseController.get_requested_speed_r());
+            ROS_INFO("base_controller: Set speed_l=%i and speed_r=%i on MD49", myBaseController.get_requested_speed_l(), myBaseController.get_requested_speed_r());
         }
         // Read encoder- data from MD49 via UART and publish encoder values as read to topic /md49_encoders
         mymd49.get_encoders();
-        SubscribeAndPublish.md49_encoders_pub.publish(mymd49.md49_encoders);
+        myBaseController.md49_encoders_pub.publish(mymd49.md49_encoders);
         // Read other- data from MD49 via UART and publish MD49 data as read to topic /md49_data
         mymd49.md49_data.speed_l=mymd49.get_speed_l();
         mymd49.md49_data.speed_r=mymd49.get_speed_r();
@@ -497,7 +546,7 @@ int main( int argc, char* argv[] ){
         mymd49.md49_data.acceleration=mymd49.get_acceleration();
         mymd49.md49_data.mode=mymd49.get_mode();
         mymd49.md49_data.error=mymd49.get_error();
-        SubscribeAndPublish.md49_data_pub.publish(mymd49.md49_data);
+        myBaseController.md49_data_pub.publish(mymd49.md49_data);
         // Loop
         ros::spinOnce();
         loop_rate.sleep();
