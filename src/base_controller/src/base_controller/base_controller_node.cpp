@@ -94,19 +94,19 @@ public:
         set_speed(speed_l,speed_r);
         set_mode(mode);
         set_acceleration(acceleration);
-        if (timeout=true)
+        if (timeout==true)
         {
             enable_timeout();
         }
-        else if (timeout=false)
+        else if (timeout==false)
         {
             disable_timeout();
         }
-        if (regulator=true)
+        if (regulator==true)
         {
             enable_regulator();
         }
-        else if (regulator=false)
+        else if (regulator==false)
         {
             disable_regulator();
         }
