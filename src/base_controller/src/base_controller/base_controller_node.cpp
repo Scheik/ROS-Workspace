@@ -83,7 +83,7 @@ public:
             requested_speed_l = 128 - (127*vel_cmd.angular.z);
             requested_speed_r = 128 + (127*vel_cmd.angular.z);
         }
-        actual_speed_l=requested_speed_l; actual_speed_r=requested_speed_r;
+
         ROS_INFO("base_controller: Received /cmd_vel message. Requested speed_l=%i, speed_r=%i",requested_speed_l,requested_speed_r);
     }
 
@@ -458,6 +458,8 @@ int main( int argc, char* argv[] ){
         if ((SubscribeAndPublish.get_requested_speed_l() != SubscribeAndPublish.get_actual_speed_l()) || (SubscribeAndPublish.get_requested_speed_r() != SubscribeAndPublish.get_actual_speed_r()))
         {
             mymd49.set_speed(SubscribeAndPublish.get_requested_speed_l(),SubscribeAndPublish.get_requested_speed_r());
+            SubscribeAndPublish.set_actual_speed_l(SubscribeAndPublish.get_requested_speed_l());
+            SubscribeAndPublish.set_actual_speed_r(SubscribeAndPublish.get_requested_speed_r());
             ROS_INFO("base_controller: Set speed_l=%i and speed_r=%i on MD49", SubscribeAndPublish.get_requested_speed_l(), SubscribeAndPublish.get_requested_speed_r());
         }
         // Read encoder- data from MD49 via UART and publish encoder values as read to topic /md49_encoders
