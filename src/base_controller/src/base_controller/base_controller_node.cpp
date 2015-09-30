@@ -66,27 +66,7 @@ public:
         n.param("md49/speed_r",  requested_speed_r, 128);                                       // Get MD49 speed_r from ROS Parameter sevice, default is spee_r=128
         actual_speed_l=requested_speed_l;
         actual_speed_r=requested_speed_r;
-        // Set initial Parameters for MD49
-        set_speed(requested_speed_l,requested_speed_r);
-        set_mode(initial_md49_mode);
-        set_acceleration(initial_md49_acceleration);
-        if (initial_md49_timeout==true)
-        {
-            enable_timeout();
-        }
-        else if (initial_md49_timeout==false)
-        {
-            disable_timeout();
-        }
-        if (initial_md49_regulator==true)
-        {
-            enable_regulator();
-        }
-        else if (initial_md49_regulator==false)
-        {
-            disable_regulator();
-        }
-      }//end.constructor.BaseController
+      }
 
     /**
      * @brief cmd_vel_callback
@@ -142,6 +122,38 @@ public:
         md49_data.mode=get_mode();
         md49_data.error=get_error();
         md49_data_pub.publish(md49_data);
+    }
+
+    /**
+     * @brief init_md49
+     * @param speed_l
+     * @param speed_r
+     * @param mode
+     * @param acceleration
+     * @param timeout
+     * @param regulator
+     */
+    void init_md49(int speed_l, int speed_r, int mode, int acceleration, bool timeout, bool regulator)
+    {
+        set_speed(speed_l,speed_r);
+        set_mode(mode);
+        set_acceleration(acceleration);
+        if (timeout==true)
+        {
+            enable_timeout();
+        }
+        else if (timeout==false)
+        {
+            disable_timeout();
+        }
+        if (regulator==true)
+        {
+            enable_regulator();
+        }
+        else if (regulator==false)
+        {
+            disable_regulator();
+        }
     }
     /**
      * @brief set_speed
@@ -500,6 +512,11 @@ int main( int argc, char* argv[] ){
     // * Open serialport *
     // *******************
     myBaseController.open_serialport();
+
+    // *****************************
+    // * Set initial MD49 settings *
+    // *****************************
+    myBaseController.init_md49(myBaseController.get_requested_speed_l(),myBaseController.get_requested_speed_r(),myBaseController.get_initial_md49_mode(),myBaseController.get_initial_md49_acceleration(),myBaseController.get_initial_md49_timeout(),myBaseController.get_initial_md49_regulator());
 
     // ************
     // * Mainloop *
