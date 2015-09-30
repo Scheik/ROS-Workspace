@@ -96,6 +96,18 @@ public:
 
         ROS_INFO("base_controller: Received /cmd_vel message. Requested speed_l=%i, speed_r=%i",requested_speed_l,requested_speed_r);
     }
+
+    void open_serialport()
+    {
+        try{ device.open(serialport.c_str(), serialport_bps); }
+        catch(cereal::Exception& e)
+        {
+            ROS_FATAL("base_controller: Failed to open serialport %s!",serialport.c_str());
+            ROS_BREAK();
+        }
+        ROS_INFO("base_controller: Opened Serialport at %s with %i bps.",serialport.c_str(),serialport_bps);
+    }
+
     /**
      * @brief get_requested_speed_l
      * @return
@@ -190,22 +202,6 @@ public:
     int get_initial_md49_regulator()
     {
         return initial_md49_regulator;
-    }
-    /**
-     * @brief get_serialport
-     * @return
-     */
-    std::string get_serialport()
-    {
-        return serialport;
-    }
-    /**
-     * @brief get_serialport_bps
-     * @return
-     */
-    int get_serialport_bps()
-    {
-        return serialport_bps;
     }
 
 private:
@@ -508,13 +504,7 @@ int main( int argc, char* argv[] ){
     // *******************
     // * Open serialport *
     // *******************
-    try{ device.open(myBaseController.get_serialport().c_str(), myBaseController.get_serialport_bps()); }
-    catch(cereal::Exception& e)
-    {
-        ROS_FATAL("base_controller: Failed to open serialport %s!",myBaseController.get_serialport().c_str());
-        ROS_BREAK();
-    }
-    ROS_INFO("base_controller: Opened Serialport at %s with %i bps.",myBaseController.get_serialport().c_str(),myBaseController.get_serialport_bps());
+    myBaseController.open_serialport();
 
     // ***************************************************************************************
     // * Generate instance mymd49 of class md49 and set initial settings through constructor *
