@@ -36,6 +36,7 @@
 #include <serialport/serialport.h>                                                              /**<  library for serial communications via UART*/
 #include <custom_messages/md49_data.h>                                                          /**<  custom message /md49_data */
 #include <custom_messages/md49_encoders.h>                                                      /**<  custom message /md49_encoders */
+#include "base_controller/base_controller_class.h"
 
 #define TIMEOUT 1000                                                                            /**<  timeout for reading serialport in ms */                                                                               /**<  max buffersize serial input */
 
