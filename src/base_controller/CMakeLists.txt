@@ -186,7 +186,7 @@ include_directories(
  include(FindPkgConfig)
  pkg_check_modules(SQLITE sqlite3)
 
-add_executable(base_controller src/base_controller/base_controller_node.cpp ${QT_MOC})
+add_executable(base_controller src/base_controller/base_controller_node.cpp include/base_controller/base_controller_class.h)
 target_link_libraries(base_controller ${catkin_LIBRARIES})
 add_dependencies(base_controller custom_messages_generate_messages_cpp)
 add_dependencies(base_controller base_controller_EXPORTED_TARGETS)
