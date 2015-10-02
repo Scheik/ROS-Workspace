@@ -516,7 +516,8 @@ int main( int argc, char* argv[] ){
     // *****************************
     // * Set initial MD49 settings *
     // *****************************
-    myBaseController.init_md49(myBaseController.get_requested_speed_l(),myBaseController.get_requested_speed_r(),myBaseController.get_initial_md49_mode(),myBaseController.get_initial_md49_acceleration(),myBaseController.get_initial_md49_timeout(),myBaseController.get_initial_md49_regulator());
+    myBaseController.init_md49(myBaseController.get_requested_speed_l(), myBaseController.get_requested_speed_r(), myBaseController.get_initial_md49_mode(), \
+                               myBaseController.get_initial_md49_acceleration(), myBaseController.get_initial_md49_timeout(), myBaseController.get_initial_md49_regulator());
 
     // ************
     // * Mainloop *
