@@ -197,7 +197,7 @@ rosserial_configure_client(
   TOOLCHAIN_FILE ${ROSSERIAL_ARDUINO_TOOLCHAIN}
 )
 
-rosserial_add_client_target(firmware arduino_nano_example_chatter ALL)
-rosserial_add_client_target(firmware arduino_nano_example_chatter-upload)
-rosserial_add_client_target(firmware arduino_nano_example_subscriber ALL)
-rosserial_add_client_target(firmware arduino_nano_example_subscriber-upload)
+rosserial_add_client_target(firmware arduino_example_chatter ALL)
+rosserial_add_client_target(firmware arduino_example_chatter-upload)
+rosserial_add_client_target(firmware arduino_example_subscriber ALL)
+rosserial_add_client_target(firmware arduino_example_subscriber-upload)
