@@ -43,10 +43,10 @@ import sys
    
 if __name__=="__main__":
 
-    rospy.init_node("serial_node_arduinoMega")
+    rospy.init_node("serial_node_arduinoNano1")
     rospy.loginfo("ROS Serial Python Node")
 
-    port_name = rospy.get_param('~port','/dev/ttyACM0')
+    port_name = rospy.get_param('~port','/dev/ttyUSB0')
     baud = int(rospy.get_param('~baud','57600'))
 
     # TODO: should these really be global?
