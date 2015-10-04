@@ -10,3 +10,9 @@ generate_arduino_firmware(arduino_nano_example_chatter
   BOARD nano328
   PORT /dev/ttyUSB0
 )
+
+generate_arduino_firmware(arduino_nano_example_subscriber
+  SRCS arduino_nano_example_subscriber.cpp ${ROS_LIB_DIR}/time.cpp
+  BOARD nano328
+  PORT /dev/ttyUSB0
+)

@@ -199,3 +199,5 @@ rosserial_configure_client(
 
 rosserial_add_client_target(firmware arduino_nano_example_chatter ALL)
 rosserial_add_client_target(firmware arduino_nano_example_chatter-upload)
+rosserial_add_client_target(firmware arduino_nano_example_subscriber ALL)
+rosserial_add_client_target(firmware arduino_nano_example_subscriber-upload)
