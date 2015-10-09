@@ -1,0 +1,55 @@
+.menutitle{
+font-family:Luckiest Guy;
+font-weight:bold;
+text-align:center;
+margin:8px;
+}
+
+.menucontainer {
+font-family:Luckiest Guy;
+border:1px solid #000000;
+width:175px;
+margin:10px;
+}
+
+a.menu {
+ display:block;
+ padding:18px;
+ border:1px solid #000000;
+ text-align:center;
+ text-decoration:none;
+ color:#1155CC;
+ background-color:#A4C2F4;
+ }
+
+a.menu:link, a.menu:visited
+{
+  font-weight:normal;
+}
+a.menu:active, a.menu:hover
+{
+   font-weight:bold;
+}
+
+#header{
+height:180px;
+background-color:#FFFFFF;
+/*border:1px solid #000000;*/
+}
+
+#content{
+border:1px solid #000000;
+background-color:#FFFFFF;
+height:680px;
+width:1000px;
+float:left;
+}
+
+#menu {
+height:590px;
+width:200px;
+float:left;
+margin-top:90px;
+/*border:1px solid #000000;*/
+background-color:#FFFFFF;
+}
