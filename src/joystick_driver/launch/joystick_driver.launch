@@ -3,7 +3,7 @@
    <rosparam
      command="load"
      ns="/joy_node"
-     file="$(find base_controller)/config/joystick_defaults.yaml"
+     file="$(find joystick_driver)/config/joystick_defaults.yaml"
    />
    <!-- Run joy_node -->
    <node 
@@ -16,7 +16,7 @@
    <!-- Run joystick_driver node -->
    <node
      name="joystick_driver"
-     pkg="base_controller"
+     pkg="joystick_driver"
      type="joystick_driver"
      required="true"
      output="screen"
