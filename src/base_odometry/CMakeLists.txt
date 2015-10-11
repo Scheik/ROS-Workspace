@@ -191,7 +191,7 @@ include_directories(
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-add_executable(base_odometry src/odometry/base_odometry_node.cpp)
+add_executable(base_odometry src/base_odometry/base_odometry_node.cpp)
 target_link_libraries(base_odometry ${catkin_LIBRARIES})
 add_dependencies(base_odometry custom_messages_generate_messages_cpp)
 add_dependencies(base_odometry base_odometry_EXPORTED_TARGETS)

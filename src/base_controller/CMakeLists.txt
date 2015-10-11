@@ -9,16 +9,15 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
-#  tf
   serialport
   message_generation
   custom_messages
 )
 
-find_package(serialport REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
+find_package(serialport REQUIRED)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -96,7 +95,6 @@ catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES base_controller
    CATKIN_DEPENDS geometry_msgs roscpp rospy std_msgs message_runtime 
-#tf
 #  DEPENDS system_lib
 )
 
