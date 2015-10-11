@@ -14,6 +14,7 @@ Package "joystick_driver" with node:
 Package "sqlite_connector" with node: 
  "sqlite_connector"
 
+--------------------------
 
 This Robot Hardware is build around an embedded Linux PC (pcDuino). 
 
@@ -33,3 +34,8 @@ $ git clone https://github.com/scheik/ROS-Workspace.git
 $ cd ~/ROS-Workspace
 
 $ catkin_make
+
+---------------------------
+The complete documentation of the project can be found on
+
+www.the-starbearer.de
