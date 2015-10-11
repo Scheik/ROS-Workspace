@@ -9,7 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
-  tf
+#  tf
   serialport
   message_generation
   custom_messages
@@ -95,7 +95,8 @@ find_package(serialport REQUIRED)
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES base_controller
-   CATKIN_DEPENDS geometry_msgs roscpp rospy std_msgs message_runtime tf
+   CATKIN_DEPENDS geometry_msgs roscpp rospy std_msgs message_runtime 
+#tf
 #  DEPENDS system_lib
 )
 
@@ -181,7 +182,4 @@ target_link_libraries(base_controller ${catkin_LIBRARIES})
 add_dependencies(base_controller custom_messages_generate_messages_cpp)
 add_dependencies(base_controller base_controller_EXPORTED_TARGETS)
 
-add_executable(odometry src/odometry/odometry_node.cpp)
-target_link_libraries(odometry ${catkin_LIBRARIES})
-add_dependencies(odometry custom_messages_generate_messages_cpp)
-add_dependencies(odometry odometry_EXPORTED_TARGETS)
+
