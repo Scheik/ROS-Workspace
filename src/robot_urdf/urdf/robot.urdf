@@ -1,11 +1,88 @@
-<?xml version=!1.0"?>
-<robot name="robot">
-  <link name="base_link">
-	<visual>
+<?xml version="1.0"?>
+<robot name="myRobot">
+	<link name="base_link">
+	 <visual>
 		<geometry>
-			<box size="0.5 0.5 0.1"/>
-
+		 <box size="0.290 0.360 0.070"/>
 		</geometry>
-	</visual>
-  </link>  
+		<origin rpy="0 0 0" xyz="0 0 0.035"/>
+		<material name="white">
+		 <color rgba="1 1 1 1"/>
+		</material>
+	 </visual>
+	</link>
+	
+	<link name="l_front_wheel">
+	 <visual>
+		<geometry>
+		 <cylinder length="0.065" radius="0.035"/>
+		</geometry>
+		<origin rpy="0 1.57075 0" xyz="-.1775 .1475 .035"/>
+		<material name="blue">
+		 <color rgba="0 0 .8 1"/>
+		</material>
+	 </visual>
+	</link>
+
+	<joint name="base_to_l_front_wheel" type="fixed">
+	 <parent link="base_link"/>
+	 <child link="l_front_wheel"/>
+	 <origin xyz="0 0 0"/>
+	</joint>
+
+	<link name="r_front_wheel">
+	 <visual>
+		<geometry>
+		 <cylinder length="0.065" radius="0.035"/>
+		</geometry>
+		<origin rpy="0 1.57075 0" xyz=".1775 .1475 .035"/>
+		<material name="blue">
+		 <color rgba="0 0 .8 1"/>
+		</material>
+	 </visual>
+	</link>
+
+	<joint name="base_to_r_front_wheel" type="fixed">
+	 <parent link="base_link"/>
+	 <child link="r_front_wheel"/>
+	 <origin xyz="0 0 0"/>
+	</joint>
+
+
+	<link name="l_rear_wheel">
+	 <visual>
+		<geometry>
+		 <cylinder length="0.065" radius="0.035"/>
+		</geometry>
+		<origin rpy="0 1.57075 0" xyz="-.1775 -.1475 .035"/>
+		<material name="blue">
+		 <color rgba="0 0 .8 1"/>
+		</material>
+	 </visual>
+	</link>
+
+	<joint name="base_to_l_rear_wheel" type="fixed">
+	 <parent link="base_link"/>
+	 <child link="l_rear_wheel"/>
+	 <origin xyz="0 0 0"/>
+	</joint>
+
+	<link name="r_rear_wheel">
+	 <visual>
+		<geometry>
+		 <cylinder length="0.065" radius="0.035"/>
+		</geometry>
+		<origin rpy="0 1.57075 0" xyz=".1775 -.1475 .035"/>
+		<material name="blue">
+		 <color rgba="0 0 .8 1"/>
+		</material>
+	 </visual>
+	</link>
+
+	<joint name="base_to_r_rear_wheel" type="fixed">
+	 <parent link="base_link"/>
+	 <child link="r_rear_wheel"/>
+	 <origin xyz="0 0 0"/>
+	</joint>
+
 </robot>
