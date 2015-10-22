@@ -3,7 +3,7 @@
 	<link name="base_link">
 	 <visual>
 		<geometry>
-		 <box size="0.290 0.360 0.070"/>
+		 <box size="0.360 0.290 0.070"/>
 		</geometry>
 		<origin rpy="0 0 0" xyz="0 0 0.035"/>
 		<material name="white">
@@ -17,7 +17,7 @@
 		<geometry>
 		 <cylinder length="0.065" radius="0.035"/>
 		</geometry>
-		<origin rpy="0 1.57075 0" xyz="-.1775 .1475 .035"/>
+		<origin rpy="1.57075 0 0" xyz="-.1475 .1775 .035"/>
 		<material name="blue">
 		 <color rgba="0 0 .8 1"/>
 		</material>
@@ -35,7 +35,7 @@
 		<geometry>
 		 <cylinder length="0.065" radius="0.035"/>
 		</geometry>
-		<origin rpy="0 1.57075 0" xyz=".1775 .1475 .035"/>
+		<origin rpy="1.57075 0 0" xyz=".1475 .1775 .035"/>
 		<material name="blue">
 		 <color rgba="0 0 .8 1"/>
 		</material>
@@ -54,7 +54,7 @@
 		<geometry>
 		 <cylinder length="0.065" radius="0.035"/>
 		</geometry>
-		<origin rpy="0 1.57075 0" xyz="-.1775 -.1475 .035"/>
+		<origin rpy="1.57075 0 0" xyz="-.1475 -.1775 .035"/>
 		<material name="blue">
 		 <color rgba="0 0 .8 1"/>
 		</material>
@@ -72,7 +72,7 @@
 		<geometry>
 		 <cylinder length="0.065" radius="0.035"/>
 		</geometry>
-		<origin rpy="0 1.57075 0" xyz=".1775 -.1475 .035"/>
+		<origin rpy="1.57075 0 0" xyz=".1475 -.1775 .035"/>
 		<material name="blue">
 		 <color rgba="0 0 .8 1"/>
 		</material>

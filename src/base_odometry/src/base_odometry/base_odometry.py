@@ -10,7 +10,7 @@ from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
 from custom_messages.msg import md49_encoders
 from tf.broadcaster import TransformBroadcaster
-from std_msgs.msg import Int16
+#from std_msgs.msg import Int16
  
 #############################################################################
 class DiffTf:
