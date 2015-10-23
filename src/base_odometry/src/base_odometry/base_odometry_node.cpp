@@ -29,12 +29,13 @@ ros::Time current_time_encoder, last_time_encoder;
 */
 
 
-int32_t ticks_meter=4900;
-double base_width=0.5;
-int32_t encoder_min=-2147483647;
-int32_t encoder_max=2147483647;
+int32_t ticks_per_meter;
+double base_width;
+int32_t encoder_min;
+int32_t encoder_max;
 int32_t encoder_low_wrap= (encoder_max - encoder_min) * 0.3 +encoder_min;
 int32_t encoder_high_wrap= (encoder_max - encoder_min) * 0.7 +encoder_min;
+ros::Time current_time, last_time;
 
 // wheel encoder readings
 int32_t prev_lencoder=0;
@@ -64,13 +65,19 @@ void encoderdata_callback(const custom_messages::md49_encoders& md49_encoders){
 
 int main( int argc, char* argv[] ){
 
-    ros::init(argc, argv, "odometry" );
+    ros::init(argc, argv, "base_odometry" );
     ros::NodeHandle n;
     ros::Subscriber sub = n.subscribe("/md49_encoders", 100, encoderdata_callback);
     ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("odom", 50);
     tf::TransformBroadcaster odom_broadcaster;
 
-    ros::Time current_time, last_time;
+    n.param("base_odometry_parameters/ticks_per_meter", ticks_per_meter,4900);
+    n.param("base_odometry_parameters/encoder_min", encoder_min,-2147483647);
+    n.param("base_odometry_parameters/encoder_max", encoder_max,2147483647);
+    n.param("base_odometry_parameters/base_width", base_width,0.5);
+
+    ROS_INFO("Node base_odometry started");
+
     current_time = ros::Time::now();
     last_time = ros::Time::now();
 
@@ -85,8 +92,8 @@ int main( int argc, char* argv[] ){
         // ********************
         // * compute odometry *
         // ********************
-        d_left = delta_left/ticks_meter;
-        d_right=delta_right/ticks_meter;
+        d_left = delta_left/ticks_per_meter;
+        d_right=delta_right/ticks_per_meter;
         //distance traveled as average of both wheels
         d = (d_left + d_right)/2;
         th = (d_right - d_left)/ base_width;

@@ -1,0 +1,14 @@
+<launch>
+  <rosparam
+    command="load"
+    ns="/base_odometry_parameters"
+    file="$(find base_odometry)/config/base_odometry_parameters.yaml"
+  />
+  <node
+    name="base_odometry"
+    pkg="base_odometry"
+    type="base_odometry"
+    required="true"
+    output="screen"
+  />
+</launch>
