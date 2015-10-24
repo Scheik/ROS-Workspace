@@ -23,7 +23,7 @@
   <rosparam
     command="load"
     ns="/joy_node"
-    file="$(find joystick_driver)/config/joystick_defaults.yaml"
+    file="$(find robot_teleop)/config/joystick_defaults.yaml"
   />
 
   <!-- Run base_controller node -->
@@ -46,7 +46,7 @@
   <!-- Run joystick_driver node -->
   <node
     name="joystick_driver"
-    pkg="joystick_driver"
+    pkg="robot_teleop"
     type="joystick_driver"
     required="true"
     output="screen"
