@@ -1,0 +1,16 @@
+<launch>
+  <!-- urdf xml robot description loaded on the Parameter Server-->
+  <param name="robot_description" textfile="$(find robot_urdf)/urdf/robot.urdf" />
+ 
+  <!-- source that publishes the joint positions as a sensor_msgs/JointState -->
+  <param name="use_gui" value="true"/>
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+ 
+  <!-- robot visualization -->
+  <node name="rviz" pkg="rviz" type="rviz" required="true" args="-d $(find robot_urdf)/urdf.rviz"/>
+ 
+  <!-- publish all the frames to TF -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher">
+    <param name="publish_frequency" value="50"/> <!-- Hz -->
+  </node>
+</launch>
