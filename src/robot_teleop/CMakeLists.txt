@@ -191,3 +191,5 @@ include_directories(
 add_executable(joystick_teleop src/joystick_teleop/joystick_teleop_node.cpp)
 target_link_libraries(joystick_teleop ${catkin_LIBRARIES})
 
+add_executable(keyboard_teleop src/keyboard_teleop/keyboard_teleop_node.cpp)
+target_link_libraries(keyboard_teleop ${catkin_LIBRARIES})
