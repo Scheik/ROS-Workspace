@@ -93,7 +93,7 @@ void onExit( void )
 int main(int argc, char **argv)
 {
   atexit(onExit);
-  ros::init(argc, argv, "joystick_driver");
+  ros::init(argc, argv, "joystick_teleop");
   ros::NodeHandle n;
   ros::Subscriber sub = n.subscribe("joy", 100, Joy_Callback);
   ros::Publisher cmd_vel_pub = n.advertise<geometry_msgs::Twist>("/cmd_vel", 100);
