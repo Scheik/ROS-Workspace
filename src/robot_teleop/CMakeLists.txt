@@ -188,6 +188,6 @@ include_directories(
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-add_executable(robot_teleop src/joystick_teleop/joystick_teleop_node.cpp)
-target_link_libraries(robot_teleop ${catkin_LIBRARIES})
+add_executable(joystick_teleop src/joystick_teleop/joystick_teleop_node.cpp)
+target_link_libraries(joystick_teleop ${catkin_LIBRARIES})
 

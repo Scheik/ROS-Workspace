@@ -87,7 +87,7 @@ void Joy_Callback (const sensor_msgs::Joy::ConstPtr& msg)
 void onExit( void )
 {
     // Run cleanup code here!
-    ROS_INFO("joystick_driver: Exit node");
+    ROS_INFO("joystick_teleop: Exit node");
 }
 
 int main(int argc, char **argv)

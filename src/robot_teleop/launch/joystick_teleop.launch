@@ -45,9 +45,9 @@
   />
   <!-- Run joystick_driver node -->
   <node
-    name="joystick_driver"
+    name="joystick_teleop"
     pkg="robot_teleop"
-    type="joystick_driver"
+    type="joystick_teleop"
     required="true"
     output="screen"
   />
