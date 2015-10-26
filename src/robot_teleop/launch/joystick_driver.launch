@@ -1,3 +1,4 @@
+<!-- This launchfile starts joy_node + joystick_driver on workstationOS -->
 <launch>
    <!-- Load parameters for joy_node -->
    <rosparam

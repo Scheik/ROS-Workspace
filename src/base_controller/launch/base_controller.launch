@@ -1,3 +1,4 @@
+<!-- This launchfile starts nodes base_controller on robotOS and -->
 <launch>
   <machine
     name="robotOS"

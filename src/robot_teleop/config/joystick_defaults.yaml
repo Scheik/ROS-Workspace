@@ -18,4 +18,4 @@
 #use /dev/input/js2 for Joystick connected to VM
 #use ...
 
-{dev: /dev/input/js2}
+{dev: /dev/input/js1}
