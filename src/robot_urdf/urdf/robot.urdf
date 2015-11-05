@@ -38,7 +38,7 @@
 	<joint name="base_to_l_front_wheel" type="continuous">
 	 <parent link="base_link"/>
 	 <child link="l_front_wheel"/>
-	 <origin xyz="-.1475 .1775 .035" rpy="0 0 0" />
+	 <origin xyz="-.1475 .1775 0" rpy="0 0 0" />
 	 <axis xyz="0 1 0" rpy="0 0 0" />
 	</joint>
 
@@ -55,7 +55,7 @@
 	<joint name="base_to_r_front_wheel" type="continuous">
 	 <parent link="base_link"/>
 	 <child link="r_front_wheel"/>
-	 <origin xyz=".1475 .1775 .035" rpy="0 0 0"/>
+	 <origin xyz=".1475 .1775 0" rpy="0 0 0"/>
 	 <axis xyz="0 1 0" rpy="0 0 0" />
 	</joint>
 
@@ -73,7 +73,7 @@
 	<joint name="base_to_l_rear_wheel" type="continuous">
 	 <parent link="base_link"/>
 	 <child link="l_rear_wheel"/>
-	 <origin xyz="-.1475 -.1775 .035" rpy="0 0 0"/>
+	 <origin xyz="-.1475 -.1775 0" rpy="0 0 0"/>
 	 <axis xyz="0 1 0" rpy="0 0 0" />
 	</joint>
 
@@ -90,7 +90,7 @@
 	<joint name="base_to_r_rear_wheel" type="continuous">
 	 <parent link="base_link"/>
 	 <child link="r_rear_wheel"/>
-	 <origin xyz=".1475 -.1775 .035" rpy="0 0 0" />
+	 <origin xyz=".1475 -.1775 0" rpy="0 0 0" />
 	 <axis xyz="0 1 0" rpy="0 0 0" />
 	</joint>
 

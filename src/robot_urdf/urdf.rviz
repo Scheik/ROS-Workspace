@@ -66,6 +66,10 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
+        base_footprint:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         base_link:
           Alpha: 1
           Show Axes: false
@@ -102,14 +106,16 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
+        base_footprint:
+          Value: true
         base_link:
+          Value: true
+        encoder/odom:
           Value: true
         l_front_wheel:
           Value: false
         l_rear_wheel:
           Value: false
-        odom:
-          Value: true
         r_front_wheel:
           Value: false
         r_rear_wheel:
@@ -120,22 +126,23 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        odom:
-          base_link:
-            l_front_wheel:
-              {}
-            l_rear_wheel:
-              {}
-            r_front_wheel:
-              {}
-            r_rear_wheel:
-              {}
+        encoder/odom:
+          base_footprint:
+            base_link:
+              l_front_wheel:
+                {}
+              l_rear_wheel:
+                {}
+              r_front_wheel:
+                {}
+              r_rear_wheel:
+                {}
       Update Interval: 0
       Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: odom
+    Fixed Frame: encoder/odom
     Frame Rate: 30
   Name: root
   Tools:
@@ -156,22 +163,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 1.26654
+      Distance: 0.476326
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.930552
-        Y: 0.487909
-        Z: 0.468224
+        X: 2.17878
+        Y: 0.37062
+        Z: 0.599626
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.540398
+      Pitch: 0.0503983
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 1.94855
+      Yaw: 1.39855
     Saved: ~
 Window Geometry:
   Displays:
