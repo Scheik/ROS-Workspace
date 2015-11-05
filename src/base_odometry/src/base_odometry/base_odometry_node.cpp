@@ -56,11 +56,11 @@ int main( int argc, char* argv[] ){
     n.param("base_odometry_parameters/transform_tf", transform_tf,true);
 
     ROS_INFO("Node base_odometry started");
-    if (transform_tf=true)
+    if (transform_tf==true)
     {
         ROS_INFO("Publishing transform to topic /tf");
     }
-    if (transform_tf=false)
+    if (transform_tf==false)
     {
         ROS_INFO("Not publishing transform to topic /tf");
     }
@@ -109,7 +109,7 @@ int main( int argc, char* argv[] ){
         geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(self_th);
 
         //first, we'll publish the transform to tf if parameter transform_tf is set to true
-        if (transform_tf=true)
+        if (transform_tf==true)
         {
             geometry_msgs::TransformStamped odom_trans;
             odom_trans.header.stamp = current_time;
