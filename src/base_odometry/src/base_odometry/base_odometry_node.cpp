@@ -6,35 +6,13 @@
 #include <geometry_msgs/Quaternion.h>
 #include <geometry_msgs/Twist.h>
 
-
-//int16_t EncoderL;
-//int16_t EncoderR;
-/*
-int32_t previous_EncoderL;
-int32_t previous_EncoderR;
-double deltaLeft;
-double deltaRight;
-double ticks_meter =4800;
-double x = 0.0;
-double y = 0.0;
-double th = 0.0;
-double v_linear=0.0;
-double v_angular=0.0;
-double distance_traveled=0.0;
-double base_width=0.4;
-double vx;
-double vy;
-double vth;
-ros::Time current_time_encoder, last_time_encoder;
-*/
-
-
 int32_t ticks_per_meter;
 double base_width;
 int32_t encoder_min;
 int32_t encoder_max;
 int32_t encoder_low_wrap= (encoder_max - encoder_min) * 0.3 +encoder_min;
 int32_t encoder_high_wrap= (encoder_max - encoder_min) * 0.7 +encoder_min;
+bool transform_tf;
 ros::Time current_time, last_time;
 
 // wheel encoder readings
@@ -68,15 +46,24 @@ int main( int argc, char* argv[] ){
     ros::init(argc, argv, "base_odometry" );
     ros::NodeHandle n;
     ros::Subscriber sub = n.subscribe("/md49_encoders", 100, encoderdata_callback);
-    ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("odom", 50);
+    ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("encoder/odom", 30);
     tf::TransformBroadcaster odom_broadcaster;
 
     n.param("base_odometry_parameters/ticks_per_meter", ticks_per_meter,4900);
     n.param("base_odometry_parameters/encoder_min", encoder_min,-2147483647);
     n.param("base_odometry_parameters/encoder_max", encoder_max,2147483647);
     n.param("base_odometry_parameters/base_width", base_width,0.5);
+    n.param("base_odometry_parameters/transform_tf", transform_tf,true);
 
     ROS_INFO("Node base_odometry started");
+    if (transform_tf=true)
+    {
+        ROS_INFO("Publishing transform to topic /tf");
+    }
+    if (transform_tf=false)
+    {
+        ROS_INFO("Not publishing transform to topic /tf");
+    }
 
     current_time = ros::Time::now();
     last_time = ros::Time::now();
@@ -121,22 +108,25 @@ int main( int argc, char* argv[] ){
         //since all odometry is 6DOF we'll need a quaternion created from yaw
         geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(self_th);
 
-        //first, we'll publish the transform over tf
-        geometry_msgs::TransformStamped odom_trans;
-        odom_trans.header.stamp = current_time;
-        odom_trans.header.frame_id = "odom";
-        odom_trans.child_frame_id = "base_footprint";
-        odom_trans.transform.translation.x = self_x;
-        odom_trans.transform.translation.y = self_y;
-        odom_trans.transform.translation.z = 0.0;
-        odom_trans.transform.rotation = odom_quat;
-        //send the transform
-        odom_broadcaster.sendTransform(odom_trans);
+        //first, we'll publish the transform to tf if parameter transform_tf is set to true
+        if (transform_tf=true)
+        {
+            geometry_msgs::TransformStamped odom_trans;
+            odom_trans.header.stamp = current_time;
+            odom_trans.header.frame_id = "encoder/odom";
+            odom_trans.child_frame_id = "base_footprint";
+            odom_trans.transform.translation.x = self_x;
+            odom_trans.transform.translation.y = self_y;
+            odom_trans.transform.translation.z = 0.0;
+            odom_trans.transform.rotation = odom_quat;
+            //send the transform
+            odom_broadcaster.sendTransform(odom_trans);
+        }
 
         //next, we'll publish the odom message
         nav_msgs::Odometry odom;
         odom.header.stamp = current_time;
-        odom.header.frame_id = "odom";
+        odom.header.frame_id = "encoder/odom";
         //set the position
         odom.pose.pose.position.x = self_x;
         odom.pose.pose.position.y = self_y;
