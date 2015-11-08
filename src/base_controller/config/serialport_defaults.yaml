@@ -26,4 +26,7 @@
 #use /dev/ttyS1 for pcDuino
 
 
-{bps: 38400, name: /dev/ttyS1}
+{
+bps: 38400,
+name: /dev/ttyS1
+}

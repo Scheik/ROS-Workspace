@@ -2,96 +2,120 @@
 <robot name="robot">
 
 	<link name="base_footprint">
-	 <origin rpy="0 0 0" xyz="0 0 0"/>
+		<origin rpy="0 0 0" xyz="0 0 0"/>
 	</link>
 
 	<link name="base_link">
-	 <visual>
-		<geometry>
-		 <box size="0.360 0.290 0.070"/>
-		</geometry>
-		<origin rpy="0 0 0" xyz="0 0 0"/>
-		<material name="yellow">
-		 <color rgba="0.8 0.8 0 1"/>
-		</material>
-	 </visual>
+		<visual>
+			<geometry>
+				<box size="0.360 0.290 0.070"/>
+			</geometry>
+			<origin rpy="0 0 0" xyz="0 0 0"/>
+			<material name="yellow">
+				<color rgba="0.8 0.8 0 1"/>
+			</material>
+		</visual>
+		<collision>
+			<geometry>
+				<box size="0.360 0.290 0.070"/>
+			</geometry>
+		</collision>
 	</link>
 	
-	<joint name="base_footprint_to_base_link" type="fixed">
-	 <parent link="base_footprint"/>
-	 <child link="base_link"/>
-	 <origin rpy="0 0 0" xyz="0 0 0.035"/>
+	<joint name="base_footprint_joint" type="fixed">
+		<parent link="base_footprint"/>
+		<child link="base_link"/>
+		<origin rpy="0 0 0" xyz="0 0 0.035"/>
+	</joint>
+
+	<link name="l_rear_wheel">
+		<visual>
+			<geometry>
+				<cylinder length="0.065" radius="0.035"/>
+			</geometry>
+			<origin rpy="1.57075 0 0" xyz="0 0 0"/>
+			<material name="black">
+				<color rgba="0.05 0.05 0.05 1"/>
+			</material>
+		</visual>
+		<collision>
+			<geometry>
+				<cylinder length="0.065" radius="0.035"/>
+			</geometry>
+		</collision>
+	</link>
+
+	<joint name="l_rear_wheel_joint" type="continuous">
+		<parent link="base_link"/>
+		<child link="l_rear_wheel"/>
+		<origin xyz="-.1475 .1775 0" rpy="0 0 0" />
+		<axis xyz="0 1 0" rpy="0 0 0" />
 	</joint>
 
 	<link name="l_front_wheel">
-	 <visual>
-		<geometry>
-		 <cylinder length="0.065" radius="0.035"/>
-		</geometry>
-		<origin rpy="1.57075 0 0" xyz="0 0 0"/>
-		<material name="black">
-		 <color rgba="0.05 0.05 0.05 1"/>
-		</material>
-	 </visual>
+		<visual>
+			<geometry>
+				<cylinder length="0.065" radius="0.035"/>
+			</geometry>
+			<origin rpy="1.57075 0 0" xyz="0 0 0"/>
+			<material name="black"/>
+		</visual>
+		<collision>
+			<geometry>
+				<cylinder length="0.065" radius="0.035"/>
+			</geometry>
+		</collision>
 	</link>
 
-	<joint name="base_to_l_front_wheel" type="continuous">
-	 <parent link="base_link"/>
-	 <child link="l_front_wheel"/>
-	 <origin xyz="-.1475 .1775 0" rpy="0 0 0" />
-	 <axis xyz="0 1 0" rpy="0 0 0" />
-	</joint>
-
-	<link name="r_front_wheel">
-	 <visual>
-		<geometry>
-		 <cylinder length="0.065" radius="0.035"/>
-		</geometry>
-		<origin rpy="1.57075 0 0" xyz="0 0 0"/>
-		<material name="black"/>
-	 </visual>
-	</link>
-
-	<joint name="base_to_r_front_wheel" type="continuous">
-	 <parent link="base_link"/>
-	 <child link="r_front_wheel"/>
-	 <origin xyz=".1475 .1775 0" rpy="0 0 0"/>
-	 <axis xyz="0 1 0" rpy="0 0 0" />
-	</joint>
-
-
-	<link name="l_rear_wheel">
-	 <visual>
-		<geometry>
-		 <cylinder length="0.065" radius="0.035"/>
-		</geometry>
-		<origin rpy="1.57075 0 0" xyz="0 0 0"/>
-		<material name="black"/>
-	 </visual>
-	</link>
-
-	<joint name="base_to_l_rear_wheel" type="continuous">
-	 <parent link="base_link"/>
-	 <child link="l_rear_wheel"/>
-	 <origin xyz="-.1475 -.1775 0" rpy="0 0 0"/>
-	 <axis xyz="0 1 0" rpy="0 0 0" />
+	<joint name="l_front_wheel_joint" type="continuous">
+		<parent link="base_link"/>
+		<child link="l_front_wheel"/>
+		<origin xyz=".1475 .1775 0" rpy="0 0 0"/>
+		<axis xyz="0 1 0" rpy="0 0 0" />
 	</joint>
 
 	<link name="r_rear_wheel">
-	 <visual>
-		<geometry>
-		 <cylinder length="0.065" radius="0.035"/>
-		</geometry>
-		<origin rpy="1.57075 0 0" xyz="0 0 0"/>
-		<material name="black"/>
-	 </visual>
+		<visual>
+			<geometry>
+				<cylinder length="0.065" radius="0.035"/>
+			</geometry>
+			<origin rpy="1.57075 0 0" xyz="0 0 0"/>
+			<material name="black"/>
+		</visual>
+		<collision>
+			<geometry>
+				<cylinder length="0.065" radius="0.035"/>
+			</geometry>
+		</collision>
 	</link>
 
-	<joint name="base_to_r_rear_wheel" type="continuous">
-	 <parent link="base_link"/>
-	 <child link="r_rear_wheel"/>
-	 <origin xyz=".1475 -.1775 0" rpy="0 0 0" />
-	 <axis xyz="0 1 0" rpy="0 0 0" />
+	<joint name="r_rear_wheel_joint" type="continuous">
+		<parent link="base_link"/>
+		<child link="r_rear_wheel"/>
+		<origin xyz="-.1475 -.1775 0" rpy="0 0 0"/>
+		<axis xyz="0 1 0" rpy="0 0 0" />
 	</joint>
 
+	<link name="r_front_wheel">
+		<visual>
+			<geometry>
+				<cylinder length="0.065" radius="0.035"/>
+			</geometry>
+			<origin rpy="1.57075 0 0" xyz="0 0 0"/>
+			<material name="black"/>
+		</visual>
+		<collision>
+			<geometry>
+				<cylinder length="0.065" radius="0.035"/>
+			</geometry>
+		</collision>
+	</link>
+
+	<joint name="r_front_wheel_joint" type="continuous">
+		<parent link="base_link"/>
+		<child link="r_front_wheel"/>
+		<origin xyz=".1475 -.1775 0" rpy="0 0 0" />
+		<axis xyz="0 1 0" rpy="0 0 0" />
+	</joint>
+ 
 </robot>

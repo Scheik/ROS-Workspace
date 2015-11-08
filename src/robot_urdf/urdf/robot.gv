@@ -1,17 +1,20 @@
 digraph G {
 node [shape=box];
+"base_footprint" [label="base_footprint"];
 "base_link" [label="base_link"];
 "l_front_wheel" [label="l_front_wheel"];
 "l_rear_wheel" [label="l_rear_wheel"];
 "r_front_wheel" [label="r_front_wheel"];
 "r_rear_wheel" [label="r_rear_wheel"];
 node [shape=ellipse, color=blue, fontcolor=blue];
-"base_link" -> "base_to_l_front_wheel" [label="xyz: -0.1475 0.1775 0.035 \nrpy: 0 -0 0"]
-"base_to_l_front_wheel" -> "l_front_wheel"
-"base_link" -> "base_to_l_rear_wheel" [label="xyz: -0.1475 -0.1775 0.035 \nrpy: 0 -0 0"]
-"base_to_l_rear_wheel" -> "l_rear_wheel"
-"base_link" -> "base_to_r_front_wheel" [label="xyz: 0.1475 0.1775 0.035 \nrpy: 0 -0 0"]
-"base_to_r_front_wheel" -> "r_front_wheel"
-"base_link" -> "base_to_r_rear_wheel" [label="xyz: 0.1475 -0.1775 0.035 \nrpy: 0 -0 0"]
-"base_to_r_rear_wheel" -> "r_rear_wheel"
+"base_footprint" -> "base_footprint_joint" [label="xyz: 0 0 0.035 \nrpy: 0 -0 0"]
+"base_footprint_joint" -> "base_link"
+"base_link" -> "l_front_wheel_joint" [label="xyz: -0.1475 0.1775 0 \nrpy: 0 -0 0"]
+"l_front_wheel_joint" -> "l_front_wheel"
+"base_link" -> "l_rear_wheel_joint" [label="xyz: -0.1475 -0.1775 0 \nrpy: 0 -0 0"]
+"l_rear_wheel_joint" -> "l_rear_wheel"
+"base_link" -> "r_front_wheel_joint" [label="xyz: 0.1475 0.1775 0 \nrpy: 0 -0 0"]
+"r_front_wheel_joint" -> "r_front_wheel"
+"base_link" -> "rear_wheel_joint" [label="xyz: 0.1475 -0.1775 0 \nrpy: 0 -0 0"]
+"rear_wheel_joint" -> "r_rear_wheel"
 }
