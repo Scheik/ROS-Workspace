@@ -1,0 +1,13 @@
+<launch>
+    
+    <!-- Run base_controller and nodes for joystick teleoperation -->
+    <include file="$(find robot_teleop)/launch/joystick_teleop.launch"/>
+
+    <!-- Run configuration and move_base for navigation stack -->
+    <include file="$(find robot_2dnav)/launch/robot_configuration.launch"/>
+    <include file="$(find robot_2dnav)/launch/move_base.launch"/>
+
+    <!-- Run rviz with our robot modell -->
+    <include file="$(find robot_urdf)/launch/robot_rviz.launch"/>
+
+</launch>
