@@ -48,5 +48,5 @@ devel/
 .DS_Store
 
 # Sublime project files
-.sublime-project
-.sublime-workspace
+*.sublime-project
+*.sublime-workspace
