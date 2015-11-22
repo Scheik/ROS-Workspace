@@ -46,3 +46,7 @@ devel/
 
 # OSX Files
 .DS_Store
+
+# Sublime project files
+.sublime-project
+.sublime-workspace
