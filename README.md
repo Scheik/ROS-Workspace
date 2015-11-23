@@ -2,17 +2,36 @@ ROS-Workspace
 ========================
 Includes the following ROS Packages for my mobile Robot:
 
-Package "base_controller" with node: 
+ Package "base_odometry" with node: 
+ "base_odometry"
+ 
+ Package "base_controller" with node: 
  "base_controller"
  
-Package "joystick_driver" with node:
- "joystick_driver"
+ Package "robot_teleop" with nodes:
+ "joystick_teleop", 
+ "keyboard_teleop"
+
+ Package "robot_urdf" for visualization
+ of robot in rviz
  
- Package "base_odometry" with node:
-  "base_odometry"
+ Package "robot_2dnav" for implementation
+ of the navigation stack
+
+ Package "robot_maps" with maps
+ to use with the navigation stack
  
-Package "sqlite_connector" with node: 
+ Package "sqlite_connector" with node: 
  "sqlite_connector"
+ 
+ Package "arduino_examples" to demonstrate
+ usage of Arduinos as ROS- Nodes
+ 
+ Package "custom_messages" implementing 
+ custom ROS messages
+ 
+ Package "serialport" as C++ function
+ library for serialports
 
 --------------------------
 
@@ -22,7 +41,7 @@ Robots drives are two EMG-49 geared Motors with wheelencoders, connected to MD49
 
 ROS Distribution on pcDuino and Ubuntu-Workstation is Indigo.
 
-robotOS and workstationOS is Ubuntu 14
+robots OS and workstations OS is both Ubuntu 14
 
 INSTALL INTO CATKIN_WORKSPACE:
 ---------------------------
