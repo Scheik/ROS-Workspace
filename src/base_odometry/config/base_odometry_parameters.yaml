@@ -1,7 +1,41 @@
+###############################
+# base_odometry_parameters.yaml
+###############################
+# 
+# XML config file with all parameters for base_odometry node
+#
+# When base_odometry node is started manually via rosrun these parameters 
+# should be read into namespace /base_odometry_parameters with the following console command:
+# rosparam load -v ~/ROS-Workspace/src/base_odometry/config/base_odometry_parameters.yaml /base_odometry_parameters
+# Otherwise hardcoded defaults from base_odometry_node.cpp will be used
+# 
+# Recommended way is to start the node via launchfile base_odometry.launch, which reads 
+# parameters before node is started
+
 {
+##########################################
+#/base_odometry_parameters/ticks_per_meter
+##########################################
+# 
 ticks_per_meter: 4900,
+##########################################
+#/base_odometry_parameters/encoder_min
+##########################################
+# 
 encoder_min: -2147483647,
+##########################################
+#/base_odometry_parameters/encoder_max
+##########################################
+# 
 encoder_max: 2147483647,
+##########################################
+#/base_odometry_parameters/base_width
+##########################################
+# 
 base_width: 0.5,
+##########################################
+#/base_odometry_parameters/transform_tf
+##########################################
+# 
 transform_tf: true
 }
