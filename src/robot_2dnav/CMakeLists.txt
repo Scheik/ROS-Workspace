@@ -6,6 +6,9 @@ project(robot_2dnav)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   move_base
+  move_base_msgs
+  actionlib
+  roscpp
 )
 
 ## System dependencies are found with CMake's conventions
@@ -127,6 +130,7 @@ include_directories(
 
 ## Declare a C++ executable
 # add_executable(robot_2dnav_node src/robot_2dnav_node.cpp)
+add_executable(example_simple_navigation_goals src/example_simple_navigation_goals.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -136,6 +140,7 @@ include_directories(
 # target_link_libraries(robot_2dnav_node
 #   ${catkin_LIBRARIES}
 # )
+target_link_libraries(example_simple_navigation_goals ${catkin_LIBRARIES})
 
 #############
 ## Install ##
