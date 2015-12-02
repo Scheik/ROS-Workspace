@@ -44,7 +44,7 @@ regulator: true,
 # Automatic motor timeout: 
 # true:  The MD49 will automatically stop the motors if there is no serial communication within 2 sec
 # false: Turn of that feature
-timeout: true
+timeout: true,
 ###################
 #/md49/speed_l
 ###################
