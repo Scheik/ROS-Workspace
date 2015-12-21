@@ -1,0 +1,26 @@
+<!-- This launchfile starts nodes base_controller on robotOS and -->
+<launch>
+  
+  <!-- Load parameters for base_controller_node -->
+  <rosparam
+    command="load"
+    ns="/md49"
+    file="$(find base_controller)/config/md49_defaults.yaml"
+  />
+  <rosparam
+    command="load"
+    ns="/serialport"
+    file="$(find base_controller)/config/serialport_defaults.yaml"
+  />
+
+  <!-- Run base_controller_node -->
+  <node 
+    name="base_controller" 
+    pkg="base_controller"   
+    type="base_controller"
+    required="true"
+    output="screen"
+    machine="robotOS"
+  />
+
+</launch>

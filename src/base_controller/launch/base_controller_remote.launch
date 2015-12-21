@@ -1,5 +1,6 @@
 <!-- This launchfile starts nodes base_controller on robotOS and -->
 <launch>
+
   <machine
     name="robotOS"
     address="robotOS.local"
@@ -7,6 +8,7 @@
     user="robot"
     password="hacker#1977"
   />
+
   <!-- Load parameters for base_controller_node -->
   <rosparam
     command="load"
@@ -28,4 +30,5 @@
     output="screen"
     machine="robotOS"
   />
+
 </launch>
