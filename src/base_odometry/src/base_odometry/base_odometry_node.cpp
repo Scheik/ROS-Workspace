@@ -1,5 +1,5 @@
 #include "ros/ros.h"
-#include <custom_messages/md49_encoders.h>
+#include <md49_messages/md49_encoders.h>
 //#include <sensor_msgs/JointState.h>
 #include <tf/transform_broadcaster.h>
 #include <nav_msgs/Odometry.h>
@@ -32,7 +32,7 @@ double dr=0;
 
 
 
-void encoderdata_callback(const custom_messages::md49_encoders& md49_encoders){
+void encoderdata_callback(const md49_messages::md49_encoders& md49_encoders){
 
     delta_left = md49_encoders.encoder_l - prev_lencoder ;
     prev_lencoder=md49_encoders.encoder_l;

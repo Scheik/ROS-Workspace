@@ -7,11 +7,11 @@
 #include <ctype.h>                                          /* isxxx() */
 #include <sqlite3.h>
 #include <ros/ros.h>                                        /* ROS */
-#include <custom_messages/md49_encoders.h>
-#include <custom_messages//md49_data.h>                       /* Custom message /encoders */
+#include <md49_messages/md49_encoders.h>
+#include <md49_messages//md49_data.h>                       /* Custom message /encoders */
 
-custom_messages::md49_encoders md49_encoders;
-custom_messages::md49_data md49_data;
+md49_messages::md49_encoders md49_encoders;
+md49_messages::md49_data md49_data;
 
 // sqlite globals
 sqlite3 *db;
