@@ -35,6 +35,8 @@ Includes the following ROS Packages for my mobile Robot:
 
 --------------------------
 
+![alt tag](http://url/to/img.png)
+
 This Robot Hardware is build around an embedded Linux PC (pcDuino). 
 
 Robots drives are two EMG-49 geared Motors with wheelencoders, connected to MD49 Driverboard (both from Devantech) with serial connection to pcDuino.
