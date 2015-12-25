@@ -26,7 +26,7 @@ Includes the following ROS Packages for my mobile Robot:
 
 --------------------------
 
-![alt tag](http://url/to/img.png)
+![alt tag](https://lh6.googleusercontent.com/we0kl1mcxLBJpval98sbbL2CT1FiYYqXRJyM5y4gqjYNgS1Xtcx_fwEJW8Bqt_fHuJilFhEuCryC-tjv-CLroqFDi_z8FauCzEEIiIgElaLXdqGjIZgfMQKCKQT-kbKO7-nwxSzY)
 
 This Robot Hardware is build around an embedded Linux PC (pcDuino). 
 
