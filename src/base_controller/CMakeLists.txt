@@ -11,7 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   serialport
   message_generation
-  custom_messages
+  md49_messages
 )
 
 
@@ -122,7 +122,7 @@ add_executable(base_controller src/base_controller/base_controller_node.cpp incl
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 # add_dependencies(base_controller_node base_controller_generate_messages_cpp)
-add_dependencies(base_controller custom_messages_generate_messages_cpp)
+add_dependencies(base_controller md49_messages_generate_messages_cpp)
 add_dependencies(base_controller base_controller_EXPORTED_TARGETS)
 
 ## Specify libraries to link a library or executable target against

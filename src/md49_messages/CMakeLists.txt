@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.4.6)
-project(custom_messages)
+project(md49_messages)
 
 find_package(catkin REQUIRED COMPONENTS std_msgs message_generation)
 

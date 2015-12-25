@@ -15,8 +15,8 @@ public:
     BaseController()
       {
         // Topics to publish
-        md49_encoders_pub = n.advertise<custom_messages::md49_encoders>("md49_encoders",10);
-        md49_data_pub = n.advertise<custom_messages::md49_data>("md49_data",10);
+        md49_encoders_pub = n.advertise<md49_messages::md49_encoders>("md49_encoders",10);
+        md49_data_pub = n.advertise<md49_messages::md49_data>("md49_data",10);
         // Topic to subscribe
         sub_cmd_vel = n.subscribe("/cmd_vel", 1, &BaseController::cmd_vel_callback, this);
         // Read initial parameters from parameter service
@@ -462,8 +462,8 @@ private:
     int serialport_bps;                                                                             /**<  used baudrate, is read from parameters server */
     //ros::NodeHandle n;
     ros::Subscriber sub_cmd_vel;
-    custom_messages::md49_data md49_data;                                                           /**<  topic /md49_data */
-    custom_messages::md49_encoders md49_encoders;                                                   /**<  topic /md49_encoders */
+    md49_messages::md49_data md49_data;                                                           /**<  topic /md49_data */
+    md49_messages::md49_encoders md49_encoders;                                                   /**<  topic /md49_encoders */
     ros::Publisher md49_encoders_pub;
     ros::Publisher md49_data_pub;
 }; //End of class BaseController

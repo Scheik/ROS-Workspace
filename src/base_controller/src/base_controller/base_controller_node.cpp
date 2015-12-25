@@ -34,8 +34,8 @@
 #include <ros/ros.h>                                                                            /**<  ROS */
 #include <geometry_msgs/Twist.h>                                                                /**<  ROS Twist message */
 #include <serialport/serialport.h>                                                              /**<  library for serial communications via UART*/
-#include <custom_messages/md49_data.h>                                                          /**<  custom message /md49_data */
-#include <custom_messages/md49_encoders.h>                                                      /**<  custom message /md49_encoders */
+#include <md49_messages/md49_data.h>                                                          /**<  custom message /md49_data */
+#include <md49_messages/md49_encoders.h>                                                      /**<  custom message /md49_encoders */
 #include "base_controller/base_controller_class.h"
 
 int main( int argc, char* argv[] ){
