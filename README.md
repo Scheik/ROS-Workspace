@@ -2,35 +2,26 @@ ROS-Workspace
 ========================
 Includes the following ROS Packages for my mobile Robot:
 
- Package "base_odometry" with node: 
+ - Package "base_odometry" with node: 
  "base_odometry"
- 
- Package "base_controller" with node: 
+ - Package "base_controller" with node: 
  "base_controller"
- 
- Package "robot_teleop" with nodes:
+ - Package "robot_teleop" with nodes:
  "joystick_teleop", 
  "keyboard_teleop"
-
- Package "robot_urdf" for visualization
+ - Package "robot_urdf" for visualization
  of robot in rviz
- 
- Package "robot_2dnav" for implementation
+ - Package "robot_2dnav" for implementation
  of the navigation stack
-
- Package "robot_maps" with maps
+ - Package "robot_maps" with maps
  to use with the navigation stack
- 
- Package "sqlite_connector" with node: 
+ - Package "sqlite_connector" with node: 
  "sqlite_connector"
- 
- Package "arduino_examples" to demonstrate
+ - Package "arduino_examples" to demonstrate
  usage of Arduinos as ROS- Nodes
- 
- Package "md49_messages" implementing 
+ - Package "md49_messages" implementing 
  custom ROS messages
- 
- Package "serialport" as C++ function
+ - Package "serialport" as C++ function
  library for serialports
 
 --------------------------
