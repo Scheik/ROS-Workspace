@@ -52,6 +52,8 @@ $ git clone https://github.com/scheik/ROS-Workspace.git
 
 $ cd ~/ROS-Workspace
 
+$ rosdep install --from-paths . --ignore-src --rosdistro indigo
+
 $ catkin_make
 
 ---------------------------
