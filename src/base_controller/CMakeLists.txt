@@ -117,15 +117,19 @@ include_directories(
 
 ## Declare a cpp executable
 # add_executable(base_controller_node src/base_controller_node.cpp)
+add_executable(base_controller src/base_controller/base_controller_node.cpp include/base_controller/base_controller_class.h)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 # add_dependencies(base_controller_node base_controller_generate_messages_cpp)
+add_dependencies(base_controller custom_messages_generate_messages_cpp)
+add_dependencies(base_controller base_controller_EXPORTED_TARGETS)
 
 ## Specify libraries to link a library or executable target against
 # target_link_libraries(base_controller_node
 #   ${catkin_LIBRARIES}
 # )
+target_link_libraries(base_controller ${catkin_LIBRARIES})
 
 #############
 ## Install ##
@@ -142,18 +146,22 @@ include_directories(
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS base_controller base_controller_node
+install(TARGETS base_controller
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 
 ## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#   PATTERN ".svn" EXCLUDE
-# )
+install(DIRECTORY include/${PROJECT_NAME}/
+    DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+    FILES_MATCHING PATTERN "*.h"
+    PATTERN ".svn" EXCLUDE
+)
+
+install(DIRECTORY launch config
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES
@@ -174,10 +182,3 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-
-add_executable(base_controller src/base_controller/base_controller_node.cpp include/base_controller/base_controller_class.h)
-target_link_libraries(base_controller ${catkin_LIBRARIES})
-add_dependencies(base_controller custom_messages_generate_messages_cpp)
-add_dependencies(base_controller base_controller_EXPORTED_TARGETS)
-
-
