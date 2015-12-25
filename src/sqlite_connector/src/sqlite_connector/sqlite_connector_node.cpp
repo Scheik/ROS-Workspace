@@ -8,7 +8,7 @@
 #include <sqlite3.h>
 #include <ros/ros.h>                                        /* ROS */
 #include <md49_messages/md49_encoders.h>
-#include <md49_messages//md49_data.h>                       /* Custom message /encoders */
+#include <md49_messages/md49_data.h>                       /* Custom message /encoders */
 
 md49_messages::md49_encoders md49_encoders;
 md49_messages::md49_data md49_data;
