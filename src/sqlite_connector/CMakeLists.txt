@@ -10,7 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   message_generation
-  custom_messages
+  md49_messages
 )
 
 ## System dependencies are found with CMake's conventions
@@ -196,5 +196,5 @@ pkg_check_modules(SQLITE sqlite3)
 add_executable(sqlite_connector src/sqlite_connector/sqlite_connector_node.cpp)
 target_link_libraries(sqlite_connector ${catkin_LIBRARIES})
 target_link_libraries(sqlite_connector sqlite3)
-add_dependencies(sqlite_connector custom_messages_generate_messages_cpp)
+add_dependencies(sqlite_connector md49_messages_generate_messages_cpp)
 add_dependencies(sqlite_connector sqlite_connector_EXPORTED_TARGETS)

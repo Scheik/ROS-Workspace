@@ -11,7 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   tf
   message_generation
-  custom_messages
+  md49_messages
 )
 
 ## System dependencies are found with CMake's conventions
@@ -193,6 +193,6 @@ include_directories(
 
 add_executable(base_odometry src/base_odometry/base_odometry_node.cpp)
 target_link_libraries(base_odometry ${catkin_LIBRARIES})
-add_dependencies(base_odometry custom_messages_generate_messages_cpp)
+add_dependencies(base_odometry md49_messages_generate_messages_cpp)
 add_dependencies(base_odometry base_odometry_EXPORTED_TARGETS)
 
