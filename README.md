@@ -27,7 +27,7 @@ Includes the following ROS Packages for my mobile Robot:
  Package "arduino_examples" to demonstrate
  usage of Arduinos as ROS- Nodes
  
- Package "custom_messages" implementing 
+ Package "md49_messages" implementing 
  custom ROS messages
  
  Package "serialport" as C++ function
