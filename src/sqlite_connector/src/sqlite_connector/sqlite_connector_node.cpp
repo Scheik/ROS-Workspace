@@ -24,7 +24,7 @@ char sql_buffer[400];
 void open_sqlite_db_md49data(void);
 void execute_update_sqlite(void);
 
-void md49_encoders_callback(const custom_messages::md49_encoders& md49_encoders){
+void md49_encoders_callback(const md49_messages::md49_encoders& md49_encoders){
 
     // Write data read from MD49 into
     // sqlite3 database md49data.db
