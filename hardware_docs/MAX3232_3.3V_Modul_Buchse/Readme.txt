@@ -1,0 +1,1 @@
+Platine RS232_5V_Modul kann verwendet werden. Bestückungsplan beachten! (0,1µF statt 1µF Kondensatoren)
