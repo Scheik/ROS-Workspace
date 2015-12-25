@@ -42,7 +42,7 @@ void md49_encoders_callback(const md49_messages::md49_encoders& md49_encoders){
     execute_update_sqlite();
 }
 
-void md49_data_callback(const custom_messages::md49_data& md49_data){
+void md49_data_callback(const md49_messages::md49_data& md49_data){
         // SpeedL, SpeedR, Volts, CurrentL, CurrentR, Error, Acceleration, Mode, Regulator, Timeout
         cx = snprintf (sql_buffer,400,"UPDATE md49data SET SpeedL=%i, SpeedR=%i, " \
                        "Volts=%i, CurrentL=%i, CurrentR=%i, Error=%i, Acceleration=%i, Mode=%i, " \
