@@ -1,7 +1,9 @@
 <launch>
     
     <!-- Run base_controller and nodes for joystick teleoperation -->
-    <include file="$(find robot_teleop)/launch/joystick_teleop.launch"/>
+    <!-- <include file="$(find robot_teleop)/launch/joystick_teleop.launch"/> -->
+    <include file ="$(find base_controller)/launch/base_controller_remote.launch"/>
+    <include file ="$(find robot_teleop)/launch/joystick_driver.launch"/>
 
     <!-- Run configuration and move_base for navigation stack -->
     <include file="$(find robot_2dnav)/launch/robot_configuration.launch"/>
