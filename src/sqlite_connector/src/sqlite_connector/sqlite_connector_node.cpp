@@ -69,7 +69,7 @@ int main( int argc, char* argv[] ){
     // Open sqlite database md49data.db
     // ********************************
     open_sqlite_db_md49data();
-    ROS_INFO("Opend md49data.db database");
+    ROS_INFO("Opened md49data.db database");
 
     // Mainloop
     // ********
@@ -91,7 +91,7 @@ void open_sqlite_db_md49data(void){
 
     // Open database md49data.db and add table md49data
     // ************************************************
-    rc = sqlite3_open("webserver_data/md49data.db", &db);
+    rc = sqlite3_open("/home/user/webserver_root/sqlite_connector/md49data.db", &db);
     if( rc ){
         ROS_WARN("Can't open database md49data.db: %s,", sqlite3_errmsg(db));
         //fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
