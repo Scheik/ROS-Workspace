@@ -33,7 +33,7 @@
 
 #include <ros/ros.h>                                                                            /**<  ROS */
 #include <geometry_msgs/Twist.h>                                                                /**<  ROS Twist message */
-#include <serialport/serialport.h>                                                              /**<  library for serial communications via UART*/
+#include <md49_serialport/md49_serialport.h>                                                              /**<  library for serial communications via UART*/
 #include <md49_messages/md49_data.h>                                                          /**<  custom message /md49_data */
 #include <md49_messages/md49_encoders.h>                                                      /**<  custom message /md49_encoders */
 #include "base_controller/base_controller_class.h"

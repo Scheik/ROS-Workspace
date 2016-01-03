@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>serialport</name>
+  <name>md49_serialport</name>
   <version>0.0.0</version>
-  <description>The serialport package</description>
+  <description>The md49_serialport package</description>
 
   <author email="scheik.todeswache@googlemail.com">Fabian Prinzing</author>
 

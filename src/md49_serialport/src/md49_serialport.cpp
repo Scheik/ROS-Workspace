@@ -10,7 +10,7 @@
 #include <fstream>
 #include <stdexcept>
 
-#include "serialport/serialport.h"
+#include "md49_serialport/md49_serialport.h"
 
 //! Macro for throwing an exception with a message, passing args
 #define CEREAL_EXCEPT(except, msg, ...) \
