@@ -62,8 +62,9 @@ int main( int argc, char* argv[] ){
     // ************
     // * Mainloop *
     // ************
-    while(myBaseController.n.ok())
-    {
+    //while(myBaseController.n.ok())
+    while (ros::ok())	    
+	{
         // set speed on MD49 via UART as set through /cmd_vel if speed_l or speed_r changed since last cycle
         if ((myBaseController.get_requested_speed_l() != myBaseController.get_actual_speed_l()) || (myBaseController.get_requested_speed_r() != myBaseController.get_actual_speed_r()))
         {
