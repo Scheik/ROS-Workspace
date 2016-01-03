@@ -137,6 +137,7 @@ void MarkerServer::createInteractiveMarkers()
   control.orientation.z = 0;
   control.name = "rotate_z";
   control.interaction_mode = InteractiveMarkerControl::ROTATE_AXIS;
+  //control.interaction_mode = InteractiveMarkerControl::MOVE_ROTATE;
   int_marker.controls.push_back(control);
 
   // Commented out for non-holonomic robot. If holonomic, can move in y.
