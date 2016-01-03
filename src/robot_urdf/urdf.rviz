@@ -7,11 +7,9 @@ Panels:
         - /Global Options1
         - /Status1
         - /TF1/Frames1
-        - /Map1
         - /Map1/Position1
-        - /base_footprint1
-        - /Path1
         - /Path1/Offset1
+        - /InteractiveMarkers1
       Splitter Ratio: 0.5
     Tree Height: 670
   - Class: rviz/Selection
@@ -123,8 +121,6 @@ Visualization Manager:
           Value: true
         base_link:
           Value: true
-        encoder/odom:
-          Value: true
         l_front_wheel:
           Value: true
         l_rear_wheel:
@@ -143,31 +139,17 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        encoder/odom:
-          base_footprint:
-            base_link:
-              l_front_wheel:
-                {}
-              l_rear_wheel:
-                {}
-              l_track:
-                {}
-              r_front_wheel:
-                {}
-              r_rear_wheel:
-                {}
-              r_track:
-                {}
+        {}
       Update Interval: 0
       Value: true
     - Alpha: 0.7
       Class: rviz/Map
       Color Scheme: map
       Draw Behind: false
-      Enabled: true
+      Enabled: false
       Name: Map
       Topic: /move_base/local_costmap/costmap
-      Value: true
+      Value: false
     - Alpha: 1
       Class: rviz/Polygon
       Color: 0; 255; 0
@@ -188,6 +170,15 @@ Visualization Manager:
         Y: 0
         Z: 0
       Topic: /move_base/TrajectoryPlannerROS/global_plan
+      Value: true
+    - Class: rviz/InteractiveMarkers
+      Enable Transparency: true
+      Enabled: true
+      Name: InteractiveMarkers
+      Show Axes: false
+      Show Descriptions: false
+      Show Visual Aids: true
+      Update Topic: /twist_marker_server/update
       Value: true
   Enabled: true
   Global Options:
