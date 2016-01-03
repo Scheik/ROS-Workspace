@@ -45,7 +45,7 @@ class MarkerServer
 {
   public:
     MarkerServer()
-      : nh(), server("twist_marker_server")
+      : nh("~"), server("twist_marker_server")
     {
       std::string cmd_vel_topic;
 
