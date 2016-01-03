@@ -7,12 +7,12 @@ class BaseController
 {
 public:
 
-    //ros::NodeHandle n;
+    ros::NodeHandle n;
 
     /**
      * @brief Constructor for class BaseController
      */
-    BaseController() : n()
+    BaseController() 
       {
         // Topics to publish
         md49_encoders_pub = n.advertise<md49_messages::md49_encoders>("md49_encoders",10);
@@ -460,7 +460,7 @@ private:
     bool initial_md49_regulator;                                                                    /**<  MD40 Regulator-Mode , is read from parameters server */
     std::string serialport;                                                                         /**<  used serialport on pcDuino, is read from parameters server */
     int serialport_bps;                                                                             /**<  used baudrate, is read from parameters server */
-    ros::NodeHandle n;
+    //ros::NodeHandle n;
     ros::Subscriber sub_cmd_vel;
     md49_messages::md49_data md49_data;                                                           /**<  topic /md49_data */
     md49_messages::md49_encoders md49_encoders;                                                   /**<  topic /md49_encoders */
