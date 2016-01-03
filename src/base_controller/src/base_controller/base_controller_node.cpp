@@ -62,8 +62,8 @@ int main( int argc, char* argv[] ){
     // ************
     // * Mainloop *
     // ************
-    while(myBaseController.n.ok())
-    {
+    //while(myBaseController.n.ok())
+    //{
         // set speed on MD49 via UART as set through /cmd_vel if speed_l or speed_r changed since last cycle
         if ((myBaseController.get_requested_speed_l() != myBaseController.get_actual_speed_l()) || (myBaseController.get_requested_speed_r() != myBaseController.get_actual_speed_r()))
         {
@@ -77,9 +77,10 @@ int main( int argc, char* argv[] ){
         // Read other- data from MD49 via UART and publish MD49 data as read to topic /md49_data
         myBaseController.publish_md49_data();
         // Loop
-        ros::spinOnce();
-        loop_rate.sleep();
-    }// end.mainloop
-    return 1;
+	ros::spin();        
+	//ros::spinOnce();
+        //loop_rate.sleep();
+    //}// end.mainloop
+    //return 1;
 } // end.main
 
