@@ -78,8 +78,7 @@ int main( int argc, char* argv[] ){
         // Read other- data from MD49 via UART and publish MD49 data as read to topic /md49_data
         myBaseController.publish_md49_data();
         // Loop
-	//ros::spin();        
-	ros::spinOnce();
+        ros::spinOnce();
         loop_rate.sleep();
     }// end.mainloop
     return 1;
