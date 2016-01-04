@@ -1,7 +1,8 @@
+<!-- This launchfile starts nodes base_controller remote on robotOS and joy_node + joystick_driver on workstationOS -->
+<!-- Then Navigation stack and visualization in RViz ist started -->
 <launch>
     
     <!-- Run base_controller and nodes for joystick teleoperation -->
-    <!-- <include file="$(find robot_teleop)/launch/joystick_teleop.launch"/> -->
     <include file ="$(find base_controller)/launch/base_controller_remote.launch"/>
     <include file ="$(find robot_teleop)/launch/joystick_driver.launch"/>
 
