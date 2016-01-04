@@ -11,11 +11,6 @@ float angular_z_button=0;
 float linear_x_stick=0;
 float angular_z_stick=0;
 
-bool stick_up_down_pressed=false;
-bool stick_left_right_pressed=false;
-bool button_up_down_pressed=false;
-bool button_left_right_pressed=false;
-
 // Defines
 #define Joystick_Stick_Left_Right msg->axes[4]
 #define Joystick_Stick_Up_Down msg->axes[5]
@@ -32,53 +27,41 @@ void Joy_Callback (const sensor_msgs::Joy::ConstPtr& msg)
     // Test if joystick buttons are pressed?
     if (Joystick_Button_Left_Right>0) {
         angular_z_button=Joystick_Button_Left_Right;
-        button_left_right_pressed=true;
     }
     if (Joystick_Button_Left_Right<0) {
         angular_z_button=Joystick_Button_Left_Right;
-        button_left_right_pressed=true;
     }
     if (Joystick_Button_Up_Down>0) {
         linear_x_button=Joystick_Button_Up_Down/5;
-        button_up_down_pressed=true;
     }
     if (Joystick_Button_Up_Down<0) {
         linear_x_button=Joystick_Button_Up_Down/5;
-        button_up_down_pressed=true;
     }
     if (Joystick_Button_Up_Down==0) {
         linear_x_button=Joystick_Button_Up_Down;
-        button_up_down_pressed=false;
     }
     if (Joystick_Button_Left_Right==0) {
         angular_z_button=Joystick_Button_Left_Right;
-        button_left_right_pressed=false;
     }
 
     // Test if joystick stick is pressed?
     if (Joystick_Stick_Left_Right>0) {
         angular_z_stick=Joystick_Stick_Left_Right;
-        stick_left_right_pressed=true;
     }
     if (Joystick_Stick_Left_Right<0) {
         angular_z_stick=Joystick_Stick_Left_Right;
-        stick_left_right_pressed=true;
     }
     if (Joystick_Stick_Up_Down>0) {
         linear_x_stick=Joystick_Stick_Up_Down/5;
-        stick_up_down_pressed=true;
     }
     if (Joystick_Stick_Up_Down<0) {
         linear_x_stick=Joystick_Stick_Up_Down/5;
-        stick_up_down_pressed=true;
     }
     if (Joystick_Stick_Up_Down==0) {
         linear_x_stick=Joystick_Stick_Up_Down;
-        stick_up_down_pressed=false;
     }
     if (Joystick_Stick_Left_Right==0) {
         angular_z_stick=Joystick_Stick_Left_Right;
-        stick_left_right_pressed=false;
     }
 
 
@@ -96,28 +79,22 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "joystick_teleop");
   ros::NodeHandle n;
   ros::Subscriber sub = n.subscribe("joy", 100, Joy_Callback);
-  ros::Publisher cmd_vel_pub = n.advertise<geometry_msgs::Twist>("/cmd_vel", 100);
-  ros::Rate loop_rate(50);                                                  //Sets the loop to publish at a rate of 10Hz
+  ros::Publisher cmd_vel_pub = n.advertise<geometry_msgs::Twist>("/cmd_vel", 1);
+  ros::Rate loop_rate(20);                                                  //Sets the loop to publish at a rate of 10Hz
   geometry_msgs::Twist cmd_vel_msg;                                         //Declares the message to be sent
   while (n.ok()){   
 
-    if ((stick_left_right_pressed==false) && (stick_up_down_pressed==false))
-    {
-        if ((cmd_vel_msg.linear.x != linear_x_button) || (cmd_vel_msg.angular.z != angular_z_button)){
-          cmd_vel_msg.linear.x=linear_x_button;
-          cmd_vel_msg.angular.z=angular_z_button;
-          cmd_vel_pub.publish(cmd_vel_msg);
-          ROS_INFO("linear.x = %f angular.z = %f",cmd_vel_msg.linear.x,cmd_vel_msg.angular.z);
-        }
+    if ((cmd_vel_msg.linear.x != linear_x_button) || (cmd_vel_msg.angular.z != angular_z_button)){
+      cmd_vel_msg.linear.x=linear_x_button;
+      cmd_vel_msg.angular.z=angular_z_button;
+      cmd_vel_pub.publish(cmd_vel_msg);
+      ROS_INFO("linear.x = %f angular.z = %f",cmd_vel_msg.linear.x,cmd_vel_msg.angular.z);
     }
-    if ((button_left_right_pressed==false) && (button_up_down_pressed==false))
-    {
-        if ((cmd_vel_msg.linear.x != linear_x_stick) || (cmd_vel_msg.angular.z != angular_z_stick)){
-          cmd_vel_msg.linear.x=linear_x_stick;
-          cmd_vel_msg.angular.z=angular_z_stick;
-          cmd_vel_pub.publish(cmd_vel_msg);
-          ROS_INFO("linear.x = %f angular.z = %f",cmd_vel_msg.linear.x,cmd_vel_msg.angular.z);
-        }
+    if ((cmd_vel_msg.linear.x != linear_x_stick) || (cmd_vel_msg.angular.z != angular_z_stick)){
+      cmd_vel_msg.linear.x=linear_x_stick;
+      cmd_vel_msg.angular.z=angular_z_stick;
+      cmd_vel_pub.publish(cmd_vel_msg);
+      ROS_INFO("linear.x = %f angular.z = %f",cmd_vel_msg.linear.x,cmd_vel_msg.angular.z);
     }
 
     ros::spinOnce();
