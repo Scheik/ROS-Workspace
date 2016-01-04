@@ -20,7 +20,6 @@
     type="base_controller"
     required="true"
     output="screen"
-    machine="robotOS"
   />
 
 </launch>
