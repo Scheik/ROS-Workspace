@@ -45,7 +45,7 @@ int main( int argc, char* argv[] ){
     // *****************
     ros::init(argc, argv, "base_controller" );
     BaseController myBaseController;
-    ros::Rate loop_rate(10);
+    ros::Rate loop_rate(20);
     ROS_INFO("base_controller: base_controller running...");
 
     // *******************
