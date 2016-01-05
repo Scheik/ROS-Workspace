@@ -9,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   move_base_msgs
   actionlib
   roscpp
+  sensor_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -103,7 +104,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES robot_2dnav
-#  CATKIN_DEPENDS move_base
+   CATKIN_DEPENDS move_base roscpp
 #  DEPENDS system_lib
 )
 
@@ -131,6 +132,7 @@ include_directories(
 ## Declare a C++ executable
 # add_executable(robot_2dnav_node src/robot_2dnav_node.cpp)
 add_executable(example_simple_navigation_goals src/example_simple_navigation_goals.cpp)
+add_executable(laser_scan_publisher src/laser.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -141,6 +143,7 @@ add_executable(example_simple_navigation_goals src/example_simple_navigation_goa
 #   ${catkin_LIBRARIES}
 # )
 target_link_libraries(example_simple_navigation_goals ${catkin_LIBRARIES})
+target_link_libraries(laser_scan_publisher ${catkin_LIBRARIES})
 
 #############
 ## Install ##
