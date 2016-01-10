@@ -1,12 +1,13 @@
+<!-- robot configuration for navigation stack -->
 <launch>
   
-<!--
-  <node pkg="sensor_node_pkg" type="sensor_node_type" name="sensor_node_name" output="screen">
-    <param name="sensor_param" value="param_value" />
-  </node>  
--->
+  <include file="$(find robot_kinect)/launch/depthimage_to_laserscan.launch" />
 
-  <node pkg="base_odometry" type="base_odometry" name="base_odometry" output="screen">
+  <node 
+	pkg="base_odometry" 
+	type="base_odometry" 
+	name="base_odometry" 
+	output="screen">
   </node>
 
 <!--
