@@ -1,19 +1,29 @@
 <?xml version="1.0"?>
-<robot name="robot">
+<robot name="robot">	
+	<material name="yellow">
+		<color rgba="0.8 0.8 0 1"/>
+	</material>
 
-	<link name="base_footprint">
-		<origin rpy="0 0 0" xyz="0 0 0"/>
-	</link>
+	<material name="lightgray">
+		<color rgba="0.7 0.7 0.7 1"/>
+	</material>
+
+	<material name="darkgray">
+		<color rgba="0.3 0.3 0.3 1.0"/>
+	</material>
+
+	<material name="black">
+		<color rgba="0 0 0 1.0"/>
+	</material>
+
+	<link name="base_footprint"/>
 
 	<link name="base_link">
 		<visual>
 			<geometry>
 				<box size="0.360 0.290 0.070"/>
-			</geometry>
-			<origin rpy="0 0 0" xyz="0 0 0"/>
-			<material name="yellow">
-				<color rgba="0.8 0.8 0 1"/>
-			</material>
+			</geometry>			
+			<material name="lightgray"/>
 		</visual>
 		<collision>
 			<geometry>
@@ -28,15 +38,32 @@
 		<origin rpy="0 0 0" xyz="0 0 0.035"/>
 	</joint>
 
+	<link name="torso">
+		<visual>
+			<geometry>
+				<box size="0.360 0.420 0.120" />
+			</geometry>
+			<material name="lightgray"/>
+		</visual>
+		<collision>
+			<geometry>
+				<box size="0.360 0.290 0.070"/>
+			</geometry>
+		</collision>
+	</link>
+	
+	<joint name="torso_joint" type="fixed">
+		<parent link="base_link"/>
+		<child link="torso"/>
+		<origin rpy="0 0 0" xyz="0 0 0.098"/>
+	</joint>
+
 	<link name="l_rear_wheel">
 		<visual>
 			<geometry>
 				<cylinder length="0.065" radius="0.035"/>
 			</geometry>
-			<origin rpy="1.57075 0 0" xyz="0 0 0"/>
-			<material name="darkgray">
-				<color rgba="0.3 0.3 0.3 1"/>
-			</material>
+			<material name="darkgray"/>
 		</visual>
 		<collision>
 			<geometry>
@@ -48,7 +75,7 @@
 	<joint name="l_rear_wheel_joint" type="continuous">
 		<parent link="base_link"/>
 		<child link="l_rear_wheel"/>
-		<origin xyz="-.1475 .1775 0" rpy="0 0 0" />
+		<origin xyz="-.1475 .1775 0" rpy="1.57075 0 0" />
 		<axis xyz="0 1 0" rpy="0 0 0" />
 	</joint>
 
@@ -57,7 +84,6 @@
 			<geometry>
 				<cylinder length="0.065" radius="0.035"/>
 			</geometry>
-			<origin rpy="1.57075 0 0" xyz="0 0 0"/>
 			<material name="darkgray"/>
 		</visual>
 		<collision>
@@ -70,7 +96,7 @@
 	<joint name="l_front_wheel_joint" type="continuous">
 		<parent link="base_link"/>
 		<child link="l_front_wheel"/>
-		<origin xyz=".1475 .1775 0" rpy="0 0 0"/>
+		<origin xyz=".1475 .1775 0" rpy="1.57075 0 0"/>
 		<axis xyz="0 1 0" rpy="0 0 0" />
 		<mimic joint="l_rear_wheel_joint" multplier="1.0" offset="0.0" />
 	</joint>
@@ -80,7 +106,6 @@
 			<geometry>
 				<box size="0.290 0.065 0.070"/>
 			</geometry>
-			<origin rpy="0 0 0" xyz="0 0 0"/>
 			<material name="darkgray"/>
 		</visual>
 		<collision>
@@ -101,7 +126,6 @@
 			<geometry>
 				<cylinder length="0.065" radius="0.035"/>
 			</geometry>
-			<origin rpy="1.57075 0 0" xyz="0 0 0"/>
 			<material name="darkgray"/>
 		</visual>
 		<collision>
@@ -114,7 +138,7 @@
 	<joint name="r_rear_wheel_joint" type="continuous">
 		<parent link="base_link"/>
 		<child link="r_rear_wheel"/>
-		<origin xyz="-.1475 -.1775 0" rpy="0 0 0"/>
+		<origin xyz="-.1475 -.1775 0" rpy="1.57075 0 0"/>
 		<axis xyz="0 1 0" rpy="0 0 0" />
 	</joint>
 
@@ -123,7 +147,6 @@
 			<geometry>
 				<cylinder length="0.065" radius="0.035"/>
 			</geometry>
-			<origin rpy="1.57075 0 0" xyz="0 0 0"/>
 			<material name="darkgray"/>
 		</visual>
 		<collision>
@@ -136,7 +159,7 @@
 	<joint name="r_front_wheel_joint" type="continuous">
 		<parent link="base_link"/>
 		<child link="r_front_wheel"/>
-		<origin xyz=".1475 -.1775 0" rpy="0 0 0" />
+		<origin xyz=".1475 -.1775 0" rpy="1.57075 0 0" />
 		<axis xyz="0 1 0" rpy="0 0 0" />
 		<mimic joint="r_rear_wheel_joint" multplier="1.0" offset="0.0" />
 	</joint>
@@ -146,7 +169,6 @@
 			<geometry>
 				<box size="0.290 0.065 0.070"/>
 			</geometry>
-			<origin rpy="0 0 0" xyz="0 0 0"/>
 			<material name="darkgray"/>
 		</visual>
 		<collision>
@@ -161,5 +183,58 @@
 		<child link="r_track"/>
 		<origin rpy="0 0 0" xyz="0 -0.1775 0"/>
 	</joint>
- 
+
+	<link name="kinect_link">
+		<visual>
+			<geometry>
+				<box size="0.064 0.280 0.03" />
+			</geometry>
+		<material name="black" />
+		</visual>
+		<inertial>
+			<mass value="0.0001" />
+			<origin xyz="0 0 0" />
+			<inertia ixx="0.0001" ixy="0.0" ixz="0.0"
+			       iyy="0.0001" iyz="0.0" 
+			       izz="0.0001" />
+		</inertial>
+	</link>
+
+	<joint name="kinect_link_to_torso" type="fixed">
+		<origin xyz="0.148 0 0.075" rpy="0 0 0" />
+		<parent link="torso" />
+		<child link="kinect_link" />
+	</joint>
+
+	<joint name="kinect_depth_joint" type="fixed">
+		<origin xyz="0 0.028 0" rpy="0 0 0" />
+		<parent link="kinect_link" />
+		<child link="camera_depth_frame" />
+	</joint>
+
+	<link name="camera_depth_frame">
+		<inertial>
+			<mass value="0.0001" />
+			<origin xyz="0 0 0" />
+			<inertia ixx="0.0001" ixy="0.0" ixz="0.0"
+			       iyy="0.0001" iyz="0.0" 
+			       izz="0.0001" />
+		</inertial>
+	</link>
+
+	<joint name="depth_optical_joint" type="fixed">
+		<origin xyz="0 0 0" rpy="1.57075 0 -1.57075" />
+		<parent link="camera_depth_frame" />
+		<child link="kinect_depth_optical_frame" />
+	</joint>
+
+	<link name="kinect_depth_optical_frame">
+		<inertial>
+		<mass value="0.0001" />
+		<origin xyz="0 0 0" />
+		<inertia ixx="0.0001" ixy="0.0" ixz="0.0"
+		       iyy="0.0001" iyz="0.0" 
+		       izz="0.0001" />
+		</inertial>
+	</link>
 </robot>
