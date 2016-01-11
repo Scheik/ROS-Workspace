@@ -23,7 +23,7 @@
 			<geometry>
 				<box size="0.360 0.290 0.070"/>
 			</geometry>			
-			<material name="lightgray"/>
+			<material name="yellow"/>
 		</visual>
 		<collision>
 			<geometry>
@@ -43,7 +43,7 @@
 			<geometry>
 				<box size="0.360 0.420 0.120" />
 			</geometry>
-			<material name="lightgray"/>
+			<material name="yellow"/>
 		</visual>
 		<collision>
 			<geometry>
@@ -184,7 +184,7 @@
 		<origin rpy="0 0 0" xyz="0 -0.1775 0"/>
 	</joint>
 
-	<link name="kinect_link">
+	<link name="camera_link">
 		<visual>
 			<geometry>
 				<box size="0.064 0.280 0.03" />
@@ -200,15 +200,15 @@
 		</inertial>
 	</link>
 
-	<joint name="kinect_link_to_torso" type="fixed">
+	<joint name="camera_link_to_torso" type="fixed">
 		<origin xyz="0.148 0 0.075" rpy="0 0 0" />
 		<parent link="torso" />
-		<child link="kinect_link" />
+		<child link="camera_link" />
 	</joint>
 
 	<joint name="kinect_depth_joint" type="fixed">
 		<origin xyz="0 0.028 0" rpy="0 0 0" />
-		<parent link="kinect_link" />
+		<parent link="camera_link" />
 		<child link="camera_depth_frame" />
 	</joint>
 
