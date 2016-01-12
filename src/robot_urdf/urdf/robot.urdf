@@ -184,100 +184,63 @@
 		<origin rpy="0 0 0" xyz="0 -0.1775 0"/>
 	</joint>
 
-<joint name="camera_rgb_joint" type="fixed">
-	<origin xyz="0.148 0 0.0965" rpy="0 0 0"/>
-	<parent link="torso"/>
-	<child link="camera_rgb_frame" />
-  </joint>
+	<link name="camera_link">
+		<visual>
+			<geometry>
+				<mesh filename="package://robot_urdf/meshes/sensors/kinect.dae"/>
+			</geometry>
+			<origin xyz="0 0 0" rpy="0 0 1.5707"/>
+		</visual>
+		<collision>
+      			<origin xyz="0.0 0.0 0.0" rpy="0 0 1.5707"/>
+      			<geometry>
+        			<box size="0.07271 0.27794 0.073"/>
+      			</geometry>
+    		</collision>
+    		<inertial>
+      			<mass value="0.001" />
+      			<origin xyz="0 0 0" />
+      			<inertia ixx="0.0001" ixy="0.0" ixz="0.0"
+               		iyy="0.0001" iyz="0.0"
+               		izz="0.0001" />
+    		</inertial>
+	</link>
 
-  <link name="camera_rgb_frame">
-      <inertial>
-        <mass value="0.001" />
-        <origin xyz="0 0 0" />
-        <inertia ixx="0.0001" ixy="0.0" ixz="0.0"
-                 iyy="0.0001" iyz="0.0"
-                 izz="0.0001" />
-      </inertial>
-  </link>
+	<joint name="camera_link_to_torso" type="fixed">
+		<origin xyz="0.148 0 0.0965" rpy="0 0 0"/>
+		<parent link="torso" />
+		<child link="camera_link" />
+	</joint>
 
+	<joint name="kinect_depth_joint" type="fixed">
+		<origin xyz="0 0.028 0" rpy="0 0 0" />
+		<parent link="camera_link" />
+		<child link="camera_depth_frame" />
+	</joint>
 
+	<link name="camera_depth_frame">
+		<inertial>
+			<mass value="0.0001" />
+			<origin xyz="0 0 0" />
+			<inertia ixx="0.0001" ixy="0.0" ixz="0.0"
+			       iyy="0.0001" iyz="0.0" 
+			       izz="0.0001" />
+		</inertial>
+	</link>
 
-  <joint name="camera_rgb_optical_joint" type="fixed">
-      <origin xyz="0 0 0" rpy="-1.5707 0 -1.5707" />
-      <parent link="camera_rgb_frame" />
-      <child link="camera_rgb_optical_frame" />
-  </joint>
+	<joint name="depth_optical_joint" type="fixed">
+		<origin xyz="0 0 0" rpy="1.57075 0 -1.57075" />
+		<parent link="camera_depth_frame" />
+		<child link="kinect_depth_optical_frame" />
+	</joint>
 
-  <link name="camera_rgb_optical_frame">
-      <inertial>
-        <mass value="0.001" />
-        <origin xyz="0 0 0" />
-        <inertia ixx="0.0001" ixy="0.0" ixz="0.0"
-                 iyy="0.0001" iyz="0.0"
-                 izz="0.0001" />
-      </inertial>
-  </link>
-
-  <joint name="camera_joint" type="fixed">
-    <origin xyz="-0.031 -0.0125 -0.016" rpy="0 0 0"/>
-    <parent link="camera_rgb_frame"/>
-    <child link="camera_link"/>
-  </joint>
-  
-  <link name="camera_link">
-    <visual>
-	<origin xyz="0 0 0" rpy="0 0 1.5707"/>
-	<geometry>
-		<mesh filename="package://robot_urdf/meshes/sensors/kinect.dae"/>
-	</geometry>
-    </visual>
-    <collision>
-      <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
-      <geometry>
-        <box size="0.07271 0.27794 0.073"/>
-      </geometry>
-    </collision>
-    <inertial>
-      <mass value="0.001" />
-      <origin xyz="0 0 0" />
-      <inertia ixx="0.0001" ixy="0.0" ixz="0.0"
-               iyy="0.0001" iyz="0.0"
-               izz="0.0001" />
-    </inertial>
-  </link>
-	  
-  <!-- The fixed joints & links below are usually published by static_transformers launched by the OpenNi launch 
-       files. However, for Gazebo simulation we need them, so we add them here.
-       (Hence, don't publish them additionally!) -->
-  <joint name="camera_depth_joint" type="fixed">
-	  <origin xyz="0 0.0250 0" rpy="0 0 0" />
-	  <parent link="camera_rgb_frame" />
-	  <child link="camera_depth_frame" />
-  </joint>
-
-  <link name="camera_depth_frame">
-    <inertial>
-      <mass value="0.001" />
-      <origin xyz="0 0 0" />
-      <inertia ixx="0.0001" ixy="0.0" ixz="0.0"
-               iyy="0.0001" iyz="0.0"
-               izz="0.0001" />
-    </inertial>
-  </link>
-
-  <joint name="camera_depth_optical_joint" type="fixed">
-	  <origin xyz="0 0 0" rpy="-1.5707 0 -1.5707" />
-	  <parent link="camera_depth_frame" />
-	  <child link="camera_depth_optical_frame" />
-  </joint>
-
-  <link name="camera_depth_optical_frame">
-    <inertial>
-      <mass value="0.001" />
-      <origin xyz="0 0 0" />
-      <inertia ixx="0.0001" ixy="0.0" ixz="0.0"
-               iyy="0.0001" iyz="0.0"
-               izz="0.0001" />
-    </inertial>
-  </link>
+	<link name="kinect_depth_optical_frame">
+		<inertial>
+		<mass value="0.0001" />
+		<origin xyz="0 0 0" />
+		<inertia ixx="0.0001" ixy="0.0" ixz="0.0"
+		       iyy="0.0001" iyz="0.0" 
+		       izz="0.0001" />
+		</inertial>
+	</link>
 </robot>
