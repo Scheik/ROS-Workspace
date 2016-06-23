@@ -1,6 +1,5 @@
 <!-- launches freenect and depthimage_to_laserscan -->
 <launch>
-<!--
 	<include file="$(find freenect_launch)/launch/freenect.launch">
 	    <arg name="rgb_processing"                  value="false" />
 	    <arg name="ir_processing"                   value="false" />
@@ -9,7 +8,7 @@
 	    <arg name="disparity_processing"            value="false" />
 	    <arg name="disparity_registered_processing" value="false" />
 	</include>
--->
+
 	<node
 	name="depthimage_to_laserscan"
 	pkg="depthimage_to_laserscan"
