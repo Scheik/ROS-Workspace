@@ -4,17 +4,35 @@ node [shape=box];
 "base_link" [label="base_link"];
 "l_front_wheel" [label="l_front_wheel"];
 "l_rear_wheel" [label="l_rear_wheel"];
+"l_track" [label="l_track"];
 "r_front_wheel" [label="r_front_wheel"];
 "r_rear_wheel" [label="r_rear_wheel"];
+"r_track" [label="r_track"];
+"torso" [label="torso"];
+"camera_link" [label="camera_link"];
+"camera_depth_frame" [label="camera_depth_frame"];
+"kinect_depth_optical_frame" [label="kinect_depth_optical_frame"];
 node [shape=ellipse, color=blue, fontcolor=blue];
 "base_footprint" -> "base_footprint_joint" [label="xyz: 0 0 0.035 \nrpy: 0 -0 0"]
 "base_footprint_joint" -> "base_link"
-"base_link" -> "l_front_wheel_joint" [label="xyz: -0.1475 0.1775 0 \nrpy: 0 -0 0"]
+"base_link" -> "l_front_wheel_joint" [label="xyz: 0.1475 0.1775 0 \nrpy: 1.57075 -0 0"]
 "l_front_wheel_joint" -> "l_front_wheel"
-"base_link" -> "l_rear_wheel_joint" [label="xyz: -0.1475 -0.1775 0 \nrpy: 0 -0 0"]
+"base_link" -> "l_rear_wheel_joint" [label="xyz: -0.1475 0.1775 0 \nrpy: 1.57075 -0 0"]
 "l_rear_wheel_joint" -> "l_rear_wheel"
-"base_link" -> "r_front_wheel_joint" [label="xyz: 0.1475 0.1775 0 \nrpy: 0 -0 0"]
+"base_link" -> "l_track_joint" [label="xyz: 0 0.1775 0 \nrpy: 0 -0 0"]
+"l_track_joint" -> "l_track"
+"base_link" -> "r_front_wheel_joint" [label="xyz: 0.1475 -0.1775 0 \nrpy: 1.57075 -0 0"]
 "r_front_wheel_joint" -> "r_front_wheel"
-"base_link" -> "rear_wheel_joint" [label="xyz: 0.1475 -0.1775 0 \nrpy: 0 -0 0"]
-"rear_wheel_joint" -> "r_rear_wheel"
+"base_link" -> "r_rear_wheel_joint" [label="xyz: -0.1475 -0.1775 0 \nrpy: 1.57075 -0 0"]
+"r_rear_wheel_joint" -> "r_rear_wheel"
+"base_link" -> "r_track_joint" [label="xyz: 0 -0.1775 0 \nrpy: 0 -0 0"]
+"r_track_joint" -> "r_track"
+"base_link" -> "torso_joint" [label="xyz: 0 0 0.098 \nrpy: 0 -0 0"]
+"torso_joint" -> "torso"
+"torso" -> "camera_link_to_torso" [label="xyz: 0.148 0 0.0965 \nrpy: 0 -0 0"]
+"camera_link_to_torso" -> "camera_link"
+"camera_link" -> "kinect_depth_joint" [label="xyz: 0 0.028 0 \nrpy: 0 -0 0"]
+"kinect_depth_joint" -> "camera_depth_frame"
+"camera_depth_frame" -> "depth_optical_joint" [label="xyz: 0 0 0 \nrpy: 1.57075 -0 -1.57075"]
+"depth_optical_joint" -> "kinect_depth_optical_frame"
 }
