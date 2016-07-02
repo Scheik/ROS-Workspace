@@ -1,0 +1,30 @@
+###############################
+# base_controller_defaults.yaml
+###############################
+# 
+# XML config file with all parameters for configuration of base_controller. 
+# The parameters set here are used from base_controller_node
+#
+# When base_controller node is started manually via rosrun these parameters 
+# should be read into namespace /base_controller with the following console command:
+# rosparam load -v ~/ROS-Workspace/src/base_controller/config/base_controller_defaults.yaml /base_controller
+# Otherwise hardcoded defaults from base_controller_node.cpp will be used
+# 
+# Recommended way is to start the node via launchfile base_controller_remote.launch
+# or base_controller_local.launch, which reads parameters before node is started
+
+{
+#################################
+# /base_controller/max_linear_x
+#################################
+# Maximum linear velocity in m/s
+# default: 0.2
+max_linear_x: 0.2,
+
+#################################
+# /base_controller/max_angular_z
+#################################
+# Maximum angular velocity in rad
+# default: 1
+max_angular_z: 1,
+}
