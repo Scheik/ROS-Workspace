@@ -10,53 +10,64 @@
 # rosparam load -v ~/ROS-Workspace/src/base_controller/config/md49_defaults.yaml /md49
 # Otherwise hardcoded defaults from base_controller_node.cpp will be used
 # 
-# Recommended way is to start the node via launchfile base_controller.launch, which reads 
-# parameters before node is started
+# Recommended way is to start the node via launchfile base_controller_remote.launch
+# or base_comtroller_local.launch, which reads parameters before node is started
 #
 # For a detailed description of all parameters see the documentation of MD49 (docs/md49.pdf)
 
 {
 ###################
-#/md49/acceleration
+# /md49/acceleration
 ###################
 # Acceleration Rate
 # Accepted values: 1 up to 10
 # For details see docs/md49.pdf
+# default: 5
 acceleration: 5,
+
 ###################
-#/md49/mode
+# /md49/mode
 ###################
 # MD49 Mode
 # The mode parameter changes the way the speed/turn values are used
 # Accepted values: 0,1,2,3
 # For details see docs/md49.pdf
+# default: 0
 mode: 0,
+
 ###################
-#/md49/regulator
+# /md49/regulator
 ###################
 # Automatic speed regulation
 # true:  By using feedback from encoders, MD49 is able to dynamically increase power as required
 # false: Turn off that feature
+# default: true
 regulator: true,
+
 ###################
-#/md49/timeout
+# /md49/timeout
 ###################
 # Automatic motor timeout: 
 # true:  The MD49 will automatically stop the motors if there is no serial communication within 2 sec
 # false: Turn of that feature
+# default: true
 timeout: true,
+
 ###################
-#/md49/speed_l
+# /md49/speed_l
 ###################
 # Initial speed for right drive
 # With selected mode=0: 128=STOP
 # Accepted values with selected mode=0: 0(Full Reverse)-255(Full Forward)
+# default: 128
 speed_l: 128,
+
 ###################
-#/md49/speed_r
+# /md49/speed_r
 ###################
 # Initial speed for left drive
 # With selected mode=0: 128=STOP
 # Accepted values with selected mode=0: 0(Full Reverse)-255(Full Forward)
+# default: 128
 speed_r: 128,
 }
