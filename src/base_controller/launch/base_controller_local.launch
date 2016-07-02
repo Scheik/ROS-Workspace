@@ -12,6 +12,11 @@
     ns="/serialport"
     file="$(find base_controller)/config/serialport_defaults.yaml"
   />
+  <rosparam
+    command="load"
+    ns="/base_controller"
+    file="$(find base_controller)/config/base_controller_defaults.yaml"
+  />
 
   <!-- Run base_controller_node -->
   <node 

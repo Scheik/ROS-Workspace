@@ -26,5 +26,5 @@ max_linear_x: 0.2,
 #################################
 # Maximum angular velocity in rad
 # default: 1
-max_angular_z: 1,
+max_angular_z: 1.0,
 }
