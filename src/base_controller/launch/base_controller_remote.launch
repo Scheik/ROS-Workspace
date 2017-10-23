@@ -4,9 +4,9 @@
   <machine
     name="robotOS"
     address="robotOS.local"
-    env-loader="/opt/ros/indigo/myenv.sh"
+    env-loader="/opt/ros/kinetic/myenv.sh"
     user="robot"
-    password="hacker#1977"
+    password="hacker1977"
   />
 
   <!-- Load parameters for base_controller_node -->
