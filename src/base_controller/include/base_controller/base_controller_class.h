@@ -17,7 +17,7 @@ class BaseController
             // Topic to subscribe
             sub_cmd_vel = n.subscribe("/cmd_vel", 1, &BaseController::cmd_vel_callback, this);
             // Read initial parameters from parameter service
-            n.param<std::string>("serialport/name", serialport, "/dev/ttyS0");                      // Get serialportname from ROS Parameter sevice, default is ttyS0 (pcDuinos GPIO UART)
+            n.param<std::string>("serialport/name", serialport, "/dev/ttyS1");                      // Get serialportname from ROS Parameter sevice, default is ttyS0 (pcDuinos GPIO UART)
             n.param("serialport/bps", serialport_bps, 38400);                                       // Get serialport bps from ROS Parameter sevice, default is 38400Bps
             n.param("md49/mode", initial_md49_mode, 0);                                             // Get MD49 Mode from ROS Parameter sevice, default is Mode=0
             n.param("md49/acceleration", initial_md49_acceleration, 5);                             // Get MD49 Acceleration from ROS Parameter sevice, default is Acceleration=0
