@@ -2,15 +2,15 @@
 # joystick_defaults.yaml
 ########################
 #
-# XML config file with all ROS parameters for third party node joy_node. 
+# XML config file with all ROS parameters for third party node joy_node.
 # The parameters set here are used from joy_node
 #
-# When joy_node is started manually via rosrun these parameters 
+# When joy_node is started manually via rosrun these parameters
 # should be read into namespace /joy_node with the following console command:
 # - rosparam load -v ~/ROS-Workspace/src/robot_teleop/config/joystick_defaults.yaml /joy_node
 # - rosrun joy joy_node
 #
-# Recommended way is to start the node via launchfile joystick_driver.launch, which reads 
+# Recommended way is to start the node via launchfile joystick_driver.launch, which reads
 # parameters before node is started
 
 {
@@ -20,5 +20,5 @@
 #use /dev/input/js1 for Joystick connected to Laptop workstationOS
 #use /dev/input/js2 for Joystick connected to VM workstationOS
 #use /dev/input/js0 for Joystick connected to Desktop workstationOS
-dev: /dev/input/js0
+dev: /dev/input/js2
 }
