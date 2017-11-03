@@ -260,7 +260,7 @@ class BaseController
 void BaseController::cmd_vel_callback(const geometry_msgs::Twist& vel_cmd)
 {
     // Drive For- or Backward:
-    if (vel_cmd.linear.x != 0){
+    if (vel_cmd.linear.x != 0 && vel_cmd.angular.z==0){
         requested_speed_l = 128+(635*vel_cmd.linear.x);
         requested_speed_r = 128+(635*vel_cmd.linear.x);
     }
@@ -270,10 +270,12 @@ void BaseController::cmd_vel_callback(const geometry_msgs::Twist& vel_cmd)
         requested_speed_r = 128;
     }
     // Turn clock- or counterclockwise:
-    if (vel_cmd.angular.z != 0){
+    if (vel_cmd.angular.z != 0 && vel_cmd.linear.x==0){
         requested_speed_l = 128 - (127*vel_cmd.angular.z);
         requested_speed_r = 128 + (127*vel_cmd.angular.z);
     }
+		//Yaw left or right
+
     ROS_INFO("base_controller: Received /cmd_vel message. Requested speed_l=%i, speed_r=%i",requested_speed_l,requested_speed_r);
 }
 
