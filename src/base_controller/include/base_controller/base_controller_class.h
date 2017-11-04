@@ -600,6 +600,38 @@ int BaseController::get_error()
         ROS_ERROR("base_controller: Timeout reading MD49 errorbyte!");
     }
     //ROS_INFO("Got this reply (error): %i", reply[0]);
+		if (reply[0]==128){
+			ROS_INFO("Got this reply (error): %i", reply[0]);
+			ROS_INFO("Bit 7: UNDER 16V, stops power being switched to the motor because source has dropped below 16V lower threshold. When the supply gets back to 18V the error will clear and power will be outputted again");
+		}
+		if (reply[0]==64){
+			ROS_INFO("Got this reply (error): %i", reply[0]);
+			ROS_INFO("Bit 6: OVER 30V, lockout prevents excess voltage being outputted to the motor, the error will be cleared and power outputted when the supply lowers to 28V or below");
+		}
+		if (reply[0]==32){
+			ROS_INFO("Got this reply (error): %i", reply[0]);
+			ROS_INFO("Bit 5: MOTOR2 SHORT, indicates a direct short has been detected across motor 2 output. This error will remain until power has been cycled");
+		}
+		if (reply[0]==16){
+			ROS_INFO("Got this reply (error): %i", reply[0]);
+			ROS_INFO("Bit 4: MOTOR1 SHORT, indicates a direct short has been detected across motor 1 output. This error will remain until power has been cycled");
+		}
+		if (reply[0]==48){
+			ROS_INFO("Got this reply (error): %i", reply[0]);
+			ROS_INFO("Bit 4: MOTOR1+2 SHORT, indicates a direct short has been detected across motor 1+2 output. This error will remain until power has been cycled");
+		}
+		if (reply[0]==8){
+			ROS_INFO("Got this reply (error): %i", reply[0]);
+			ROS_INFO("Bit 3: MOTOR2 TRIP, is set when the current drawn by motor 2 is greater than 10A. This error will remain until power has been cycled");
+		}
+		if (reply[0]==4){
+			ROS_INFO("Got this reply (error): %i", reply[0]);
+			ROS_INFO("Bit 2: MOTOR1 TRIP, is set when the current drawn by motor 1 is greater than 10A. This error will remain until power has been cycled");
+		}
+		if (reply[0]==12){
+			ROS_INFO("Got this reply (error): %i", reply[0]);
+			ROS_INFO("Bit 2+3: MOTOR1+2 TRIP, is set when the current drawn by motor 1+2 is greater than 10A. This error will remain until power has been cycled");
+		}
     return reply[0];
 }
 
