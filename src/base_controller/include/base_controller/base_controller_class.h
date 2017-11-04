@@ -277,7 +277,7 @@ void BaseController::cmd_vel_callback(const geometry_msgs::Twist& vel_cmd)
 				//requested_speed_l = 128 - (127*vel_cmd.angular.z);
 			  //requested_speed_r = 128 + (127*vel_cmd.angular.z);
 				requested_speed_l = 128+(127*vel_cmd.angular.z);
-        requested_speed_r = 128;
+        requested_speed_r = 255;
     }
 		// Yaw left or right
 		// ...
