@@ -274,8 +274,8 @@ void BaseController::cmd_vel_callback(const geometry_msgs::Twist& vel_cmd)
     }
     // Turn clock- or counterclockwise:
     if (vel_cmd.angular.z != 0 && vel_cmd.linear.x==0){
-        requested_speed_l = 128+(127*vel_cmd.angular.z);
-        requested_speed_r = 255;
+        requested_speed_r = 128+(127*vel_cmd.angular.z);
+        requested_speed_l = 255;
     }
 		// Yaw left or right
 		// ...
