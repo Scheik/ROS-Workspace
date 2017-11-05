@@ -29,6 +29,7 @@ class BaseController
 	    			n.param("base_controller/max_angular_z", max_angular_z, 1.0);
             actual_speed_l=requested_speed_l;
             actual_speed_r=requested_speed_r;
+						faktor_linear_x=127/max_linear_x;
         }
 
         /**
@@ -249,8 +250,9 @@ class BaseController
         md49_messages::md49_encoders md49_encoders;                                                   /**<  topic /md49_encoders */
         ros::Publisher md49_encoders_pub;
         ros::Publisher md49_data_pub;
-	double max_linear_x;
-	double max_angular_z;
+				double max_linear_x;
+				double max_angular_z;
+				int faktor_linear_x;
 }; //End of class BaseController
 
 /**
@@ -262,8 +264,8 @@ void BaseController::cmd_vel_callback(const geometry_msgs::Twist& vel_cmd)
     // Drive For- or Backward:
     if (vel_cmd.linear.x != 0 && vel_cmd.angular.z==0){
 				// MD49 Mode = 0 *************************************
-				requested_speed_l = 128+(635*vel_cmd.linear.x);
-        requested_speed_r = 128+(635*vel_cmd.linear.x);
+				requested_speed_l = 128+(faktor_linear_x*vel_cmd.linear.x);
+        requested_speed_r = 128+(faktor_linear_x*vel_cmd.linear.x);
 
 				// MD49 Mode = 2 *************************************
 				//requested_speed_l = 128+(635*vel_cmd.linear.x);
@@ -277,8 +279,8 @@ void BaseController::cmd_vel_callback(const geometry_msgs::Twist& vel_cmd)
     // Turn clock- or counterclockwise:
     if (vel_cmd.angular.z != 0 && vel_cmd.linear.x==0){
 				// MD49 Mode = 0 *************************************
-				requested_speed_l = 128 - (635*vel_cmd.angular.z);
-			  requested_speed_r = 128 + (635*vel_cmd.angular.z);
+				requested_speed_l = 128 - (faktor_linear_x*vel_cmd.angular.z);
+			  requested_speed_r = 128 + (faktor_linear_x*vel_cmd.angular.z);
 
 				// MD49 Mode = 2 *************************************
 				//requested_speed_l = 128-(127*vel_cmd.angular.z);
