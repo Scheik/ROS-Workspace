@@ -264,8 +264,8 @@ void BaseController::cmd_vel_callback(const geometry_msgs::Twist& vel_cmd)
     // Drive For- or Backward:
     if (vel_cmd.linear.x != 0 && vel_cmd.angular.z==0){
 				// MD49 Mode = 0 *************************************
-				requested_speed_l = 128+(faktor_linear_x*vel_cmd.linear.x);
-        requested_speed_r = 128+(faktor_linear_x*vel_cmd.linear.x);
+				requested_speed_l = 128+((127/max_linear_x)*vel_cmd.linear.x);
+        requested_speed_r = 128+((127/max_linear_x)*vel_cmd.linear.x);
 
 				// MD49 Mode = 2 *************************************
 				//requested_speed_l = 128+(635*vel_cmd.linear.x);
