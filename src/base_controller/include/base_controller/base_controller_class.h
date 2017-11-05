@@ -19,8 +19,7 @@ class BaseController
             // Read initial parameters from parameter service
             n.param<std::string>("serialport/name", serialport, "/dev/ttyS1");                      // Get serialportname from ROS Parameter sevice, default is ttyS0 (pcDuinos GPIO UART)
             n.param("serialport/bps", serialport_bps, 38400);                                       // Get serialport bps from ROS Parameter sevice, default is 38400Bps
-            //n.param("md49/mode", initial_md49_mode, 0);                                           // Get MD49 Mode from ROS Parameter sevice, default is Mode=0
-						n.param("md49/mode", initial_md49_mode, 2);                                             // Get MD49 Mode from ROS Parameter sevice, default is Mode=2
+						n.param("md49/mode", initial_md49_mode, 0);                                             // Get MD49 Mode from ROS Parameter sevice, default is Mode=0
             n.param("md49/acceleration", initial_md49_acceleration, 5);                             // Get MD49 Acceleration from ROS Parameter sevice, default is Acceleration=0
             n.param("md49/regulator", initial_md49_regulator, true);                                // Get MD49 Regulator from ROS Parameter sevice, default is Regulator=ON
             n.param("md49/timeout", initial_md49_timeout, true);                                    // Get MD49 Timeout from ROS Parameter sevice, default is Timeout=ON
@@ -262,10 +261,13 @@ void BaseController::cmd_vel_callback(const geometry_msgs::Twist& vel_cmd)
 {
     // Drive For- or Backward:
     if (vel_cmd.linear.x != 0 && vel_cmd.angular.z==0){
-        //requested_speed_l = 128+(635*vel_cmd.linear.x);
-        //requested_speed_r = 128+(635*vel_cmd.linear.x);
+				// MD49 Mode = 0 *************************************
 				requested_speed_l = 128+(635*vel_cmd.linear.x);
-				requested_speed_r = 128;
+        requested_speed_r = 128+(635*vel_cmd.linear.x);
+
+				// MD49 Mode = 2 *************************************
+				//requested_speed_l = 128+(635*vel_cmd.linear.x);
+				//requested_speed_r = 128;
     }
     // Drive stopped:
     if (vel_cmd.linear.x==0 && vel_cmd.angular.z==0){
@@ -274,15 +276,18 @@ void BaseController::cmd_vel_callback(const geometry_msgs::Twist& vel_cmd)
     }
     // Turn clock- or counterclockwise:
     if (vel_cmd.angular.z != 0 && vel_cmd.linear.x==0){
-				//requested_speed_l = 128 - (127*vel_cmd.angular.z);
-			  //requested_speed_r = 128 + (127*vel_cmd.angular.z);
-				requested_speed_l = 128-(127*vel_cmd.angular.z);
-				if (vel_cmd.angular.z < 0){
-						requested_speed_r = 128-(127*vel_cmd.angular.z);
-				}
-				if (vel_cmd.angular.z > 0){
-						requested_speed_r = 128+(127*vel_cmd.angular.z);
-				}
+				// MD49 Mode = 0 *************************************
+				requested_speed_l = 128 - (127*vel_cmd.angular.z);
+			  requested_speed_r = 128 + (127*vel_cmd.angular.z);
+
+				// MD49 Mode = 2 *************************************
+				//requested_speed_l = 128-(127*vel_cmd.angular.z);
+				//if (vel_cmd.angular.z < 0){
+				//		requested_speed_r = 128-(127*vel_cmd.angular.z);
+				//}
+				//if (vel_cmd.angular.z > 0){
+				//		requested_speed_r = 128+(127*vel_cmd.angular.z);
+				//}
     }
 		// Yaw left or right
 		// ...

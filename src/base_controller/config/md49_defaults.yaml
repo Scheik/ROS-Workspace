@@ -33,7 +33,7 @@ acceleration: 5,
 # Accepted values: 0,1,2,3
 # For details see docs/md49.pdf
 # default: 0
-mode: 2,
+mode: 0,
 
 ###################
 # /md49/regulator
