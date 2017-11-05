@@ -25,8 +25,8 @@ class BaseController
             n.param("md49/timeout", initial_md49_timeout, true);                                    // Get MD49 Timeout from ROS Parameter sevice, default is Timeout=ON
             n.param("md49/speed_l", requested_speed_l, 128);                                        // Get MD49 speed_l from ROS Parameter sevice, default is speed_l=128
             n.param("md49/speed_r",  requested_speed_r, 128);                                       // Get MD49 speed_r from ROS Parameter sevice, default is speed_r=128
-	    n.param("base_controller/max_linear_x", max_linear_x, 0.2);
-	    n.param("base_controller/max_angular_z", max_angular_z, 1.0);
+	    			n.param("base_controller/max_linear_x", max_linear_x, 0.2);
+	    			n.param("base_controller/max_angular_z", max_angular_z, 1.0);
             actual_speed_l=requested_speed_l;
             actual_speed_r=requested_speed_r;
         }
@@ -277,8 +277,8 @@ void BaseController::cmd_vel_callback(const geometry_msgs::Twist& vel_cmd)
     // Turn clock- or counterclockwise:
     if (vel_cmd.angular.z != 0 && vel_cmd.linear.x==0){
 				// MD49 Mode = 0 *************************************
-				requested_speed_l = 128 - (127*vel_cmd.angular.z);
-			  requested_speed_r = 128 + (127*vel_cmd.angular.z);
+				requested_speed_l = 128 - ((127/max_linear_x)*vel_cmd.angular.z);
+			  requested_speed_r = 128 + ((127/max_linear_x)*vel_cmd.angular.z);
 
 				// MD49 Mode = 2 *************************************
 				//requested_speed_l = 128-(127*vel_cmd.angular.z);
