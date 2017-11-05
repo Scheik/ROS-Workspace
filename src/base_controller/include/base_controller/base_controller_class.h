@@ -14,7 +14,7 @@ class BaseController
             // Topics to publish
             md49_encoders_pub = n.advertise<md49_messages::md49_encoders>("md49_encoders",10);
             md49_data_pub = n.advertise<md49_messages::md49_data>("md49_data",10);
-            // Topic to subscribe
+            // Topics to subscribe
             sub_cmd_vel = n.subscribe("/cmd_vel", 1, &BaseController::cmd_vel_callback, this);
             // Read initial parameters from parameter service
             n.param<std::string>("serialport/name", serialport, "/dev/ttyS1");                      // Get serialportname from ROS Parameter sevice, default is ttyS0 (pcDuinos GPIO UART)
@@ -29,7 +29,6 @@ class BaseController
 	    			n.param("base_controller/max_angular_z", max_angular_z, 1.0);
             actual_speed_l=requested_speed_l;
             actual_speed_r=requested_speed_r;
-						faktor_linear_x=127/max_linear_x;
         }
 
         /**
@@ -252,7 +251,6 @@ class BaseController
         ros::Publisher md49_data_pub;
 				double max_linear_x;
 				double max_angular_z;
-				int faktor_linear_x;
 }; //End of class BaseController
 
 /**
